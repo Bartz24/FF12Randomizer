@@ -12,10 +12,10 @@ using namespace std;
 class LicenseRename
 {
 private:
-	map<int, string> names;
 	map<string, int> nameCount;
 	string data[362] = {};
 	string suffix[362] = {};
+	string augmentNames[129] = {};
 	string bpFileName;
 public:
 	LicenseRename();

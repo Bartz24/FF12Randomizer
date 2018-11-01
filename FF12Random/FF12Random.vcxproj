@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\ILMerge.3.0.18\build\ILMerge.props" Condition="Exists('..\packages\ILMerge.3.0.18\build\ILMerge.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,6 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,12 +152,18 @@
   <ItemGroup>
     <ClInclude Include="ActionData.h" />
     <ClInclude Include="AttributeData.h" />
+    <ClInclude Include="AugmentData.h" />
+    <ClInclude Include="AugmentRand.h" />
+    <ClInclude Include="AugmentRename.h" />
+    <ClInclude Include="BazaarData.h" />
+    <ClInclude Include="BazaarRename.h" />
     <ClInclude Include="CharData.h" />
     <ClInclude Include="CharRand.h" />
     <ClInclude Include="CharValue.h" />
     <ClInclude Include="ElementalValue.h" />
     <ClInclude Include="EquipData.h" />
     <ClInclude Include="EquipRand.h" />
+    <ClInclude Include="FileSizeTableFix.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemFlagValue.h" />
     <ClInclude Include="ItemRand.h" />
@@ -168,21 +177,33 @@
     <ClInclude Include="LootRand.h" />
     <ClInclude Include="MagicData.h" />
     <ClInclude Include="MagicRand.h" />
+    <ClInclude Include="MapData.h" />
+    <ClInclude Include="RenameMain.h" />
+    <ClInclude Include="RewardData.h" />
+    <ClInclude Include="RewardRand.h" />
     <ClInclude Include="ShopData.h" />
     <ClInclude Include="ShopRand.h" />
     <ClInclude Include="StatusValue.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TreasureData.h" />
+    <ClInclude Include="TreasureRand.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionData.cpp" />
     <ClCompile Include="AttributeData.cpp" />
+    <ClCompile Include="AugmentData.cpp" />
+    <ClCompile Include="AugmentRand.cpp" />
+    <ClCompile Include="AugmentRename.cpp" />
+    <ClCompile Include="BazaarData.cpp" />
+    <ClCompile Include="BazaarRename.cpp" />
     <ClCompile Include="CharData.cpp" />
     <ClCompile Include="CharRand.cpp" />
     <ClCompile Include="CharValue.cpp" />
     <ClCompile Include="ElementalValue.cpp" />
     <ClCompile Include="EquipData.cpp" />
     <ClCompile Include="EquipRand.cpp" />
+    <ClCompile Include="FileSizeTableFix.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemFlagValue.cpp" />
     <ClCompile Include="ItemRand.cpp" />
@@ -197,6 +218,10 @@
     <ClCompile Include="LootRand.cpp" />
     <ClCompile Include="MagicData.cpp" />
     <ClCompile Include="MagicRand.cpp" />
+    <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="RenameMain.cpp" />
+    <ClCompile Include="RewardData.cpp" />
+    <ClCompile Include="RewardRand.cpp" />
     <ClCompile Include="ShopData.cpp" />
     <ClCompile Include="ShopRand.cpp" />
     <ClCompile Include="StatusValue.cpp" />
@@ -206,8 +231,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TreasureData.cpp" />
+    <ClCompile Include="TreasureRand.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILMerge.3.0.18\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.18\build\ILMerge.props'))" />
+  </Target>
 </Project>

@@ -2,7 +2,7 @@
 #include "EquipRand.h"
 
 EquipData EquipRand::equipData[557] = {};
-AttributeData EquipRand::attributeData[114] = {};
+AttributeData EquipRand::attributeData[173] = {};
 
 EquipRand::EquipRand()
 {
@@ -38,14 +38,14 @@ void EquipRand::load()
 
 		delete[] buffer;
 		char * buffer2;
-		size = 114 * 24; //Num attributes * data size
+		size = 173 * 24; //Num attributes * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
 		file.seekg(int(AttributeData::getDataIndex()));
 		buffer2 = new char[size];
 		file.read(buffer2, size);
 		file.close();
 
-		for (int i = 0; i < 114; i++)
+		for (int i = 0; i < 173; i++)
 		{
 			char data[24];
 			for (int i2 = 0; i2 < 24; i2++)
@@ -112,12 +112,12 @@ void EquipRand::save()
 	delete[] buffer;
 
 	char * buffer2;
-	size = 114 * 24; //Num attributes * data size
+	size = 173 * 24; //Num attributes * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
 	file.seekp(int(AttributeData::getDataIndex()));
 	buffer2 = new char[size];
 
-	for (int i = 0; i < 114; i++)
+	for (int i = 0; i < 173; i++)
 	{
 		AttributeData d = attributeData[i];
 		buffer2[i * 24] = U{ d.hp }.c[0];
@@ -161,7 +161,6 @@ void EquipRand::process()
 	cout << "\t e: Randomize equipment elements" << endl;
 	cout << "\t s: Randomize equipment status effects" << endl;
 	cout << "\t t: Randomize weapon charge time" << endl;
-	cout << "\t u: Make all equipment unsellable" << endl;
 	string flags = Helpers::readFlags("acestu");
 	if (flags.find('a') != string::npos)
 	{
@@ -183,10 +182,6 @@ void EquipRand::process()
 	{
 		randChargeTime();
 	}
-	if (flags.find('u') != string::npos)
-	{
-		unsellable();
-	}
 }
 
 void EquipRand::randCost()
@@ -204,7 +199,7 @@ void EquipRand::randElements()
 	{
 		setElement(equipData[i].element, 22);
 	}
-	for (int i = 0; i < 114; i++)
+	for (int i = 0; i < 173; i++)
 	{	
 		setElementMultiple(attributeData[i].absorbElement, 3);
 		setElementMultiple(attributeData[i].immuneElement, 5);
@@ -254,7 +249,7 @@ void EquipRand::randStatusEffects()
 		else
 			equipData[i].hitChance = 0;
 	}
-	for (int i = 0; i < 114; i++)
+	for (int i = 0; i < 173; i++)
 	{
 		setStatus(attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4, 30);
 		setStatus(attributeData[i].immuneStatus1, attributeData[i].immuneStatus2, attributeData[i].immuneStatus3, attributeData[i].immuneStatus4, 30);
@@ -298,8 +293,8 @@ void EquipRand::randStatusEffects()
 void EquipRand::randArmorEffects()
 {
 	vector<int> effects = vector<int>();
+	effects.push_back(0xFF);	
 	effects.push_back(0x02);
-	effects.push_back(0xFF);
 	addRangeToVector(effects, 0x04, 0x12);
 	effects.push_back(0x19);
 	addRangeToVector(effects, 0x1B, 0x1D);
@@ -308,7 +303,7 @@ void EquipRand::randArmorEffects()
 	addRangeToVector(effects, 0x24, 0x25);
 	effects.push_back(0x27);
 	effects.push_back(0x67);
-	effects.push_back(0x72);
+	effects.push_back(0x72);	
 	for (int i = 0; i < 556; i++)
 	{
 		if (equipData[i].itemFlag >= 0x40)

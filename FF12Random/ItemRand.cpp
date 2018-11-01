@@ -76,7 +76,7 @@ void ItemRand::save()
 void ItemRand::process()
 {
 	cout << "Item Data Randomization Options:" << endl;
-	cout << "\t c: Randomize gil cost (50-60000, more common around 100 G)" << endl;
+	cout << "\t c: Randomize gil cost (10-6000, more common around 2000 G)" << endl;
 	string flags = Helpers::readFlags("c");
 	if (flags.find('c') != string::npos)
 	{
@@ -89,6 +89,6 @@ void ItemRand::randCost()
 	for (int i = 0; i < 63; i++)
 	{
 		float ran = float(rand() % 10000) / 100.f;
-		itemData[i].cost = unsigned short(82500.f / (1.f + exp(0.24f*ran - 1.f)) + 150 - ran);
+		itemData[i].cost = unsigned short(8250.f / (1.f + exp(0.04f*ran - 1.f)) - 39.f * ran + 10);
 	}
 }

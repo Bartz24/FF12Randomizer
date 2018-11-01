@@ -31,4 +31,8 @@
 *.out
 *.app
 /.vs
-/Debug/data/FF12RandomizedBase
+/Debug
+/Release
+/packages
+/FF12Random/Debug
+/FF12Random/Release

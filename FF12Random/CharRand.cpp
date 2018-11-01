@@ -175,11 +175,11 @@ void CharRand::initialEquip()
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[accessory[slot] - 4096].attribute / 24 - 3];
 				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
-				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) 
-					|| status.hasStatus(int(Status2::Disable), 1) || status.hasStatus(int(Status2::Immobilize), 1) 
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status2::Sap), 2)
+					|| status.hasStatus(int(Status2::Disable), 2) || status.hasStatus(int(Status2::Immobilize), 2) 
 					|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
 					|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
-					|| status.hasStatus(int(Status4::Berserk), 1) || status.hasStatus(int(Status4::XZone), 1))
+					|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4))
 				{
 					accessory.erase(accessory.begin() + slot);
 					slot--;
@@ -189,11 +189,11 @@ void CharRand::initialEquip()
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[head[slot] - 4096].attribute / 24 - 3];
 				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
-				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1)
-					|| status.hasStatus(int(Status2::Disable), 1) || status.hasStatus(int(Status2::Immobilize), 1)
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status2::Sap), 2)
+					|| status.hasStatus(int(Status2::Disable), 2) || status.hasStatus(int(Status2::Immobilize), 2)
 					|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
 					|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
-					|| status.hasStatus(int(Status4::Berserk), 1) || status.hasStatus(int(Status4::XZone), 1))
+					|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4))
 				{
 					head.erase(head.begin() + slot);
 					slot--;
@@ -203,11 +203,11 @@ void CharRand::initialEquip()
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[body[slot] - 4096].attribute / 24 - 3];
 				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
-				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1)
-					|| status.hasStatus(int(Status2::Disable), 1) || status.hasStatus(int(Status2::Immobilize), 1)
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status2::Sap), 2)
+					|| status.hasStatus(int(Status2::Disable), 2) || status.hasStatus(int(Status2::Immobilize), 2)
 					|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
 					|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
-					|| status.hasStatus(int(Status4::Berserk), 1) || status.hasStatus(int(Status4::XZone), 1))
+					|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4))
 				{
 					body.erase(body.begin() + slot);
 					slot--;
@@ -217,11 +217,11 @@ void CharRand::initialEquip()
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[offHand[slot] - 4096].attribute / 24 - 3];
 				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
-				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1)
-					|| status.hasStatus(int(Status2::Disable), 1) || status.hasStatus(int(Status2::Immobilize), 1)
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status2::Sap), 2)
+					|| status.hasStatus(int(Status2::Disable), 2) || status.hasStatus(int(Status2::Immobilize), 2)
 					|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
 					|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
-					|| status.hasStatus(int(Status4::Berserk), 1) || status.hasStatus(int(Status4::XZone), 1))
+					|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4))
 				{
 					offHand.erase(offHand.begin() + slot);
 					slot--;
@@ -287,10 +287,25 @@ void CharRand::initialEquip()
 			abilities.erase(abilities.begin() + index);
 			charData[i].itemCount[ability + 2] = 1;
 		}
-		for (int gambit = 0; gambit < 6; gambit++)
+		if (i != 6)
 		{
-			charData[i].items[gambit + 4] = rand() % 255 + 24576;
-			charData[i].itemCount[gambit + 4] = 1;
+			for (int gambit = 0; gambit < 6; gambit++)
+			{
+				charData[i].items[gambit + 4] = rand() % 255 + 24576;
+				charData[i].itemCount[gambit + 4] = 1;
+			}
+		}
+		else
+		{
+			for (int item = 0; item < 6; item++)
+			{
+				int type;
+				do {
+					type = rand() % 64;
+				} while (type >= 29 && type <= 41);
+				charData[i].items[item + 4] = type;
+				charData[i].itemCount[item + 4] = unsigned char(log2(float(rand() % 100) + 10.f) * 3.f - 8.f);
+			}
 		}
 	}
 }

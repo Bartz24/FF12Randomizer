@@ -74,7 +74,7 @@ void LootRand::save()
 void LootRand::process()
 {
 	cout << "Loot Data Randomization Options:" << endl;
-	cout << "\t c: Randomize gil cost (1-22000, more common around 200 G)" << endl; 
+	cout << "\t c: Randomize gil cost (2-60000, more common around 500 G)" << endl; 
 	string flags = Helpers::readFlags("c");
 	if (flags.find('c') != string::npos)
 	{
@@ -86,6 +86,6 @@ void LootRand::randCost()
 {
 	for (int i = 0; i < 266; i++)
 	{
-		lootData[i].cost = unsigned short(82500.f / (1.f + exp(0.1f*float(rand() % 10000) / 100.f + 1.f)));
+		lootData[i].cost = unsigned short(220000.f / (1.f + exp(0.1f*float(rand() % 10000) / 100.f + 1.f)) + 2.f);
 	}
 }

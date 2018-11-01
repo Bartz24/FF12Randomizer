@@ -1,33 +1,4 @@
-﻿  CharRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(47): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(174): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(188): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(202): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(216): warning C4018: '<': signed/unsigned mismatch
-  EquipRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(71): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(67): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(218): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(227): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(234): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(267): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(272): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(277): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(282): warning C4018: '<': signed/unsigned mismatch
-  FF12Random.cpp
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(26): warning C4244: 'initializing': conversion from 'time_t' to 'long', possible loss of data
-  ItemRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\itemrand.cpp(44): warning C4101: 'byte': unreferenced local variable
-  LicenseBoardRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(88): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(351): warning C4018: '<': signed/unsigned mismatch
-  LicenseRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(727): warning C4101: 'byte': unreferenced local variable
-  LootRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\lootrand.cpp(44): warning C4101: 'byte': unreferenced local variable
-  MagicRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(80): warning C4101: 'byte': unreferenced local variable
-  ShopRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(62): warning C4101: 'byte': unreferenced local variable
-  Generating Code...
+﻿  RewardRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\rewardrand.cpp(51): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\rewardrand.cpp(47): warning C4101: 'byte': unreferenced local variable
   FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12Random.exe

@@ -77,21 +77,13 @@ void LicenseRename::load()
 		myfile.close();
 	}
 
-	myfile = ifstream("data\\equipAbilityNames.txt");
+	myfile = ifstream("data\\augmentEffectNames.txt");
 	if (myfile.is_open())
 	{
-		while(getline(myfile, line))
+		for (int i = 0; i < 129; i++)
 		{
-			string id = line.substr(0, line.find(','));
-			trim(id);
-			int numID = stoi(id);
-			string name = line.substr(line.find(',') + 1, line.length());
-			name.erase(
-				remove(name.begin(), name.end(), '\"'),
-				name.end()
-			);
-			trim(name);
-			names.insert(pair <int, string>(numID, name));
+			getline(myfile, line);
+			augmentNames[i] = line;
 		}
 		myfile.close();
 	}
@@ -100,7 +92,7 @@ void LicenseRename::load()
 void LicenseRename::save()
 {
 	ofstream myfile;
-	myfile.open("temp.txt");
+	myfile.open("licenseNames.txt");
 	for (int i = 0; i < 362; i++)
 	{
 		myfile << data[i];
@@ -108,31 +100,6 @@ void LicenseRename::save()
 			myfile << endl;
 	}
 	myfile.close();
-
-	HMODULE hModule = GetModuleHandleW(NULL);
-	WCHAR path[MAX_PATH];
-	GetModuleFileNameW(hModule, path, MAX_PATH);
-	wstring ws(path);
-	string strPath(ws.begin(), ws.end());
-	strPath = strPath.substr(0, strPath.find_last_of("\\/"));
-	string s = "\"" + bpFileName + "\" \"" + strPath + "\\temp.txt\" \"" + bpFileName + "\"";
-	system(("LicenseNamePatcher.exe " + s).c_str());
-
-	remove("temp.txt");
-}
-
-string LicenseRename::getNameFromID(int id)
-{
-	if (id < 100)
-		id += 12288;
-	else if (id < 4000)
-		id += 16226;
-	map<int, string>::iterator it = names.find(id);
-	if (it != names.end())
-	{
-		return names[id];
-	}
-	return "";
 }
 
 string LicenseRename::getSameGroup(vector<int> nums)
@@ -271,43 +238,58 @@ string LicenseRename::getGroup(int a)
 
 void LicenseRename::process()
 {
-	for (int i = 0; i < 361; i++)
+	for (int i = 32; i < 361; i++)
 	{
 		if (i >= 300 && i <= 328 || i >= 219 && i <= 275)
-			continue;
-		vector<int> idsContained = vector<int>();
-		for (int slot = 0; slot < 8; slot++)
 		{
-			if (LicenseRand::licenseData[i].otherData[slot] != 0xFFFF)
-				idsContained.push_back(LicenseRand::licenseData[i].otherData[slot]);
-		}
-		if (idsContained.size() == 1)
-		{
-			string name = getNameFromID(idsContained[0]);
-			if (name != "")
-				data[i] = name;
-		}
-		else if (idsContained.size() >= 2)
-		{
-			bool canChange = true;
-			for (int i = 0; i < idsContained.size(); i++)
+			string name = augmentNames[LicenseRand::licenseData[i].otherData[0]];
+			map<string, int>::iterator it = nameCount.find(name);
+			if (it == nameCount.end())
 			{
-				if (getNameFromID(idsContained[i]) == "")
-					canChange = false;
+				nameCount.insert(pair <string, int>(name, 1));
 			}
-			if (canChange)
+			else
 			{
-				string name = getSameGroup(idsContained);
-				map<string, int>::iterator it = nameCount.find(name);
-				if (it == nameCount.end())
+				nameCount[name] = nameCount[name] + 1;
+			}
+			data[i] = name;
+		}
+		else
+		{
+			vector<int> idsContained = vector<int>();
+			for (int slot = 0; slot < 8; slot++)
+			{
+				if (LicenseRand::licenseData[i].otherData[slot] != 0xFFFF)
+					idsContained.push_back(LicenseRand::licenseData[i].otherData[slot]);
+			}
+			if (idsContained.size() == 1)
+			{
+				string name = getNameFromID(idsContained[0]);
+				if (name != "")
+					data[i] = name;
+			}
+			else if (idsContained.size() >= 2)
+			{
+				bool canChange = true;
+				for (int i = 0; i < idsContained.size(); i++)
 				{
-					nameCount.insert(pair <string, int>(name, 1));
+					if (getNameFromID(idsContained[i]) == "")
+						canChange = false;
 				}
-				else
+				if (canChange)
 				{
-					nameCount[name] = nameCount[name] + 1;
+					string name = getSameGroup(idsContained);
+					map<string, int>::iterator it = nameCount.find(name);
+					if (it == nameCount.end())
+					{
+						nameCount.insert(pair <string, int>(name, 1));
+					}
+					else
+					{
+						nameCount[name] = nameCount[name] + 1;
+					}
+					data[i] = name;
 				}
-				data[i] = name;
 			}
 		}
 	}
@@ -334,7 +316,7 @@ void LicenseRename::process()
 	for (int i = 0; i < 361; i++)
 	{
 		map<string, int>::iterator it = nameCount.find(data[licenseOrder[i]]);
-		if (it != nameCount.end())
+		if (it != nameCount.end() && nameCount[data[licenseOrder[i]]] > 1)
 		{
 			map<string, int>::iterator it2 = namesSeen.find(data[licenseOrder[i]]);
 			if (it2 == namesSeen.end())

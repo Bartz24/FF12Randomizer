@@ -11,7 +11,7 @@ private:
 
 public:
 	static EquipData equipData[557];
-	static AttributeData attributeData[114];
+	static AttributeData attributeData[173];
 	EquipRand();
 	~EquipRand();
 	void load();

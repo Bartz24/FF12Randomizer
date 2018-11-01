@@ -43,10 +43,15 @@ void LicenseRand::load()
 void LicenseRand::process()
 {
 	cout << "License Data Randomization Options:" << endl;
+	cout << "\t a: Randomize augments" << endl;
 	cout << "\t c: Randomize LP Cost (0-255)" << endl;
 	cout << "\t e: Randomize weapons/armor/accessories" << endl;
 	cout << "\t m: Randomize magick/technicks" << endl;
-	string flags = Helpers::readFlags("cem");
+	string flags = Helpers::readFlags("acem");
+	if (flags.find('a') != string::npos)
+	{
+		randAugments();
+	}
 	if (flags.find('c') != string::npos)
 	{
 		randCost();
@@ -495,6 +500,34 @@ void LicenseRand::randEquipment()
 			replaceAbilities(353, 354, equip);
 		}
 	}
+}
+
+void LicenseRand::randAugments()
+{
+	vector<int> augments = vector<int>();
+	addRangeToVector(augments, 0, 32);
+	addRangeToVector(augments, 35, 37);
+	addRangeToVector(augments, 39, 40);
+	addRangeToVector(augments, 42, 51);
+	addRangeToVector(augments, 53, 54);
+	augments.push_back(58);
+	addRangeToVector(augments, 60, 103);
+	addRangeToVector(augments, 116, 127);
+	for (int i = 0; i < 361; i++)
+	{
+		if (i >= 300 && i <= 328 || i >= 219 && i <= 275)
+		{
+			int index = rand() % augments.size();
+			licenseData[i].otherData[0] = augments[index];
+			augments.erase(augments.begin() + index);
+		}
+	}
+}
+
+void LicenseRand::addRangeToVector(vector<int>& data, int low, int high)
+{
+	for (int i = low; i <= high; i++)
+		data.push_back(i);
 }
 
 //White		License IDs:	182-189, 355, 208-211
