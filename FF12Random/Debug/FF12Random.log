@@ -1,4 +1,6 @@
-﻿  RewardRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\rewardrand.cpp(51): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\rewardrand.cpp(47): warning C4101: 'byte': unreferenced local variable
+﻿  ShopRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(86): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(82): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(218): warning C4244: '+=': conversion from 'double' to 'unsigned long', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(243): warning C4018: '>=': signed/unsigned mismatch
   FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12Random.exe

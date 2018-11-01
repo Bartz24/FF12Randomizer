@@ -155,3 +155,8 @@ bool StatusValue::hasStatus(int status, int group)
 		return find(status4.begin(), status4.end(), Status4(status)) != status4.end();
 	}
 }
+
+int StatusValue::getNumStatuses()
+{
+	return status1.size() + status2.size() + status3.size() + status4.size();
+}

@@ -194,33 +194,40 @@ void ShopRand::process()
 void ShopRand::randShops()
 {
 	vector<int> data = vector<int>();
-	addRangeToVector(data, 0, 28);
-	addRangeToVector(data, 42, 63);
-	addRangeToVector(data, 8192, 8192);
-	addRangeToVector(data, 8224, 8437);
-	addRangeToVector(data, 8448, 8461);
-	addRangeToVector(data, 8468, 8471);
-	addRangeToVector(data, 12288, 12368);
-	addRangeToVector(data, 16384, 16407);
-	addRangeToVector(data, 24576, 24830);
-	addRangeToVector(data, 4097, 4255);
-	addRangeToVector(data, 4258, 4259);
-	addRangeToVector(data, 4264, 4264);
-	addRangeToVector(data, 4266, 4274);
-	addRangeToVector(data, 4288, 4515);
-
+	for (int i = 0; i < 5; i++)
+	{
+		addRangeToVector(data, 0, 28);
+		addRangeToVector(data, 42, 63);
+		addRangeToVector(data, 8192, 8192);
+		addRangeToVector(data, 8224, 8437);
+		addRangeToVector(data, 8448, 8461);
+		addRangeToVector(data, 8468, 8471);
+		addRangeToVector(data, 12288, 12368);
+		addRangeToVector(data, 16384, 16407);
+		addRangeToVector(data, 4097, 4255);
+		addRangeToVector(data, 4258, 4259);
+		addRangeToVector(data, 4264, 4264);
+		addRangeToVector(data, 4266, 4274);
+		addRangeToVector(data, 4288, 4515);
+	}
 	for (int i = 0; i < 267; i++)
 	{
+		unsigned long gil = 0;
+		for (int c = 0; c < shopData[i].itemCount; c++)
+		{
+			gil += sqrt(float(rand() % 40000))*float(rand() % 150)*(1.f-shopData[i].itemCount * 0.0035) + rand() % 500 - 250;
+		}
 		for (int item = 0; item < shopData[i].itemCount; item++)
 		{
-			int itemID, cost = 99999;
+			int itemID, cost = 99999, attempts = 0, itemIDindex;
 			do
 			{
-				itemID = data[rand() % data.size()];
+				itemIDindex = rand() % data.size();
+				itemID = data[itemIDindex];
 				if (itemID < 64)
 					cost = ItemRand::itemData[itemID].cost;
 				else if (itemID < 4600)
-					cost = EquipRand::equipData[itemID - 4097].cost;
+					cost = EquipRand::equipData[itemID - 4096].cost;
 				else if (itemID < 9000)
 				{
 					cost = LootRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in shops
@@ -228,12 +235,23 @@ void ShopRand::randShops()
 				else if (itemID < 13000)
 					cost = MagicRand::magicData[itemID - 12288].cost;
 				else if (itemID < 17000)
-					cost = MagicRand::magicData[itemID - 16483 + 81].cost;
+					cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 				else
 					cost = 100;
+				attempts++;
 
-			} while (cost >= 40000 || rand() % 255 < int(sqrt(cost)));
-
+			} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil || cost >= 40000 || rand() % 255 < int(sqrt(cost))));
+			if (attempts >= 100)
+			{
+				do {
+					itemID = rand() % (24830 - 24576 + 1) + 24576;
+				} while (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end());
+				gil = 0;
+				cost = 0;
+			}
+			if (itemID < 17000)
+				data.erase(data.begin() + itemIDindex);
+			gil -= cost;
 			shopData[i].items[item] = itemID;
 		}
 	}
@@ -274,13 +292,13 @@ void ShopRand::replaceBazaarRecipes()
 		if (itemID < 64)
 			cost = ItemRand::itemData[itemID].cost;
 		else if (itemID < 4600)
-			cost = EquipRand::equipData[itemID - 4097].cost;
+			cost = EquipRand::equipData[itemID - 4096].cost;
 		else if (itemID < 9000)
 				cost = LootRand::lootData[itemID - 8192].cost;
 		else if (itemID < 13000)
 			cost = MagicRand::magicData[itemID - 12288].cost;
 		else if (itemID < 17000)
-			cost = MagicRand::magicData[itemID - 16483 + 81].cost;
+			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 		else
 			cost = 100;
 		if (cost < 40000)
@@ -357,13 +375,13 @@ void ShopRand::replaceBazaarRecipes()
 		if (itemID < 64)
 			cost = ItemRand::itemData[itemID].cost;
 		else if (itemID < 4600)
-			cost = EquipRand::equipData[itemID - 4097].cost;
+			cost = EquipRand::equipData[itemID - 4096].cost;
 		else if (itemID < 9000)
 			cost = LootRand::lootData[itemID - 8192].cost;
 		else if (itemID < 13000)
 			cost = MagicRand::magicData[itemID - 12288].cost;
 		else if (itemID < 17000)
-			cost = MagicRand::magicData[itemID - 16483 + 81].cost;
+			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 		else
 			cost = 100;
 		if (cost >= 40000)

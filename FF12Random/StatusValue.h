@@ -60,5 +60,6 @@ public:
 	int getNumValue(int group);
 	void addRandomStatus();
 	bool hasStatus(int status, int group);
+	int getNumStatuses();
 };
 

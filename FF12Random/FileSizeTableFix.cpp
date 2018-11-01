@@ -16,6 +16,7 @@ void FileSizeTableFix::load()
 	do
 	{
 		cout << "Select the FileSizeTables folder that contains the .fst files (the .fst files will be overwritten)" << endl;
+		cout << "This folder is in the same spot as the .vbf file for the game" << endl;
 		folder = Helpers::loadFile();
 
 	} while (!Helpers::fileExists(folder + "\\FileSizeTable_US.fst"));

@@ -233,14 +233,13 @@ void MagicRand::randStatus()
 {
 	for (int i = 279; i < 497; i++)
 	{
-		bool requiresStatus = actionData[i].type >= 0x01 && actionData[i].type <= 0x03 || actionData[i].type == 0x52 || actionData[i].type == 0x48;
+		StatusValue orig{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
 		actionData[i].status1 = actionData[i].status2 = actionData[i].status3 = actionData[i].status4 = 0;
-		if (requiresStatus)
+		while (StatusValue{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 }.getNumStatuses() < orig.getNumStatuses())
 			addStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4);
 		setStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4, 15);
-		setStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4, 12);
 		StatusValue status{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
-		if (status.status1.size() + status.status2.size() + status.status3.size() + status.status4.size() > 0)
+		if (status.getNumStatuses() > 0)
 			actionData[i].hitChance = rand() % 96 + 5;
 		else
 			actionData[i].hitChance = 0;

@@ -114,14 +114,17 @@ void RewardRand::randValue()
 		if (randNum < 80)
 		{
 			float ran = float(rand() % 10000) / 100.f;
-			rewardData[i].gil = unsigned int(4000000.f / (1.f + exp(0.15f*ran + 2.f)) + 200);
+			rewardData[i].gil = unsigned int(4000000.f / (1.f + exp(0.25f*ran + 2.f)) + 200 + ran);
 		}
 		else
 			rewardData[i].gil = 0;
 		if (randNum > 15)
 		{
 			rewardData[i].item1 = data[rand() % data.size()];
-			rewardData[i].item1Amt = rand() % 4 + 1;
+				if (rewardData[i].item1 < 9000 && rewardData[i].item1 > 8000)
+					rewardData[i].item1Amt = rand() % 4 + 1;
+				else
+					rewardData[i].item1Amt = 1;
 		}
 		else
 		{
@@ -131,7 +134,10 @@ void RewardRand::randValue()
 		if (randNum > 85)
 		{
 			rewardData[i].item2 = data[rand() % data.size()];
-			rewardData[i].item2Amt = rand() % 4 + 1;
+			if (rewardData[i].item2 < 9000 && rewardData[i].item2 > 8000)
+				rewardData[i].item2Amt = rand() % 4 + 1;
+			else
+				rewardData[i].item2Amt = 1;
 		}
 		else
 		{
