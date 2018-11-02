@@ -19,7 +19,7 @@ public:
 	void load();
 	void save();
 	string process(string preset);
-	void randShops();
+	string randShops(string preset);
 	void addRangeToVector(vector<int> &data, int low, int high);
 	void replaceBazaarRecipes();
 	int setItem(vector<int> &dataVec, unsigned short &data, unsigned char &amt, bool loot = false);

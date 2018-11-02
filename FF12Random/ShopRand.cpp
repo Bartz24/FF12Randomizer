@@ -171,6 +171,7 @@ void ShopRand::save()
 string ShopRand::process(string preset)
 {
 	string flags = preset;
+	string aFlags = "!", aFlagsOut = ".";
 	if (preset == "!")
 	{
 		cout << "Shop Data Randomization Options:" << endl;
@@ -178,9 +179,16 @@ string ShopRand::process(string preset)
 		cout << "\t b: Randomize all the bazaar recipes (Prioritize items worth more than 40000 G)" << endl;
 		flags = Helpers::readFlags("ab");
 	}
+	if (flags.find("a-") != string::npos)
+	{
+		string second = flags.substr(flags.find("a-") + 2, flags.length() - flags.find("a-") - 1);
+		aFlags = flags.substr(flags.find("a-") + 2, flags.length() - (second.length() - second.find("-")) - flags.find("a-") - 2);
+		flags = flags.substr(0, flags.find('a') + 1) + flags.substr(flags.find('a') + 3 + aFlags.length(), flags.length() - flags.find('a') - 2 - aFlags.length());
+	}
 	if (flags.find('a') != string::npos)
 	{
-		randShops();
+		aFlagsOut = randShops(aFlags);
+		flags = flags.substr(0, flags.find('a') + 1) + "-" + aFlagsOut + "-" + flags.substr(flags.find('a') + 1, flags.length() - flags.find('a'));
 	}
 	if (flags.find('b') != string::npos)
 	{
@@ -196,12 +204,25 @@ string ShopRand::process(string preset)
 //Gambits:			24576-24830
 //Equipment:		4097-4255, 4258-4259, 4264, 4266-4274, 4288-4515
 
-void ShopRand::randShops()
+string ShopRand::randShops(string preset)
 {
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Shop Special Data Randomization Options:" << endl;
+		cout << "\t e: No dark energy in shops" << endl;
+		cout << "\t m: No meme bow (seitengrat) in shops" << endl;
+		flags = Helpers::readFlags("em");
+	}
 	vector<int> data = vector<int>();
 	for (int i = 0; i < 5; i++)
 	{
-		addRangeToVector(data, 0, 28);
+		addRangeToVector(data, 0, 23);
+		if (flags.find('e') == string::npos)
+		{
+			addRangeToVector(data, 24, 24);
+		}
+		addRangeToVector(data, 25, 28);
 		addRangeToVector(data, 42, 63);
 		addRangeToVector(data, 8192, 8192);
 		addRangeToVector(data, 8224, 8437);
@@ -212,7 +233,11 @@ void ShopRand::randShops()
 		addRangeToVector(data, 4097, 4255);
 		addRangeToVector(data, 4258, 4259);
 		addRangeToVector(data, 4264, 4264);
-		addRangeToVector(data, 4266, 4274);
+		addRangeToVector(data, 4266, 4273);
+		if (flags.find('m') == string::npos)
+		{
+			addRangeToVector(data, 4274, 4274);
+		}
 		addRangeToVector(data, 4288, 4515);
 	}
 	for (int i = 0; i < 267; i++)
@@ -260,6 +285,7 @@ void ShopRand::randShops()
 			shopData[i].items[item] = itemID;
 		}
 	}
+	return flags;
 }
 
 void ShopRand::addRangeToVector(vector<int>& data, int low, int high)

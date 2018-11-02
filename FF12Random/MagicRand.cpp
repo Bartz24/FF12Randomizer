@@ -212,7 +212,7 @@ void MagicRand::randMPCost()
 {
 	for (int i = 0; i < 497; i++)
 	{
-		if (actionData[i].cost > 0)
+		if (actionData[i].cost > 0 && !(i>=262 && i <= 274))
 			actionData[i].cost = rand() % 99 + 1;
 	}
 }
@@ -221,7 +221,7 @@ void MagicRand::randCT()
 {
 	for (int i = 0; i < 497; i++)
 	{
-		if (actionData[i].ct > 0)
+		if (actionData[i].ct > 0 && !(i >= 262 && i <= 274))
 			actionData[i].ct = unsigned char(45.f / (1.f + exp(0.02f*float(rand() % 10000) / 100.f - 0.5f)));
 	}
 }
@@ -230,13 +230,14 @@ void MagicRand::randAoE()
 {
 	for (int i = 0; i < 497; i++)
 	{
+		if(!(i >= 262 && i <= 274))
 		actionData[i].aoeRange = rand() % 100 < 80 ? 0 : (rand() % 19 + 2);
 	}
 }
 
 void MagicRand::randStatus()
 {
-	for (int i = 279; i < 497; i++)
+	for (int i = 278; i < 497; i++)
 	{
 		StatusValue orig{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
 		actionData[i].status1 = actionData[i].status2 = actionData[i].status3 = actionData[i].status4 = 0;

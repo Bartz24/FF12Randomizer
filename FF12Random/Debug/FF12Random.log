@@ -1,14 +1,6 @@
-﻿  CharRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(47): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(179): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(193): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(207): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(221): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(238): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(248): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(258): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(268): warning C4018: '<': signed/unsigned mismatch
-  LicenseRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(790): warning C4101: 'byte': unreferenced local variable
-  Generating Code...
+﻿  ShopRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(86): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(82): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(248): warning C4244: '+=': conversion from 'double' to 'unsigned long', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(273): warning C4018: '>=': signed/unsigned mismatch
   FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12Random.exe
