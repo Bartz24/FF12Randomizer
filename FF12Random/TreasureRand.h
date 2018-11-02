@@ -7,7 +7,6 @@
 #include "MapData.h"
 #include "MagicRand.h"
 #include "ItemRand.h"
-#include "LootRand.h"
 #include "EquipRand.h"
 
 class TreasureRand
@@ -21,7 +20,7 @@ public:
 	~TreasureRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randTreasures();
 	int getItem(std::vector<int> &data, int minCost, int maxCost, int &cost);
 	void addRangeToVector(vector<int> &data, int low, int high);

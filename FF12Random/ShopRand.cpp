@@ -168,12 +168,16 @@ void ShopRand::save()
 	delete[] buffer;
 }
 
-void ShopRand::process()
+string ShopRand::process(string preset)
 {
-	cout << "Shop Data Randomization Options:" << endl;
-	cout << "\t a: Randomize all the items in all the shops (No items worth more than 40000 G)" << endl;
-	cout << "\t b: Randomize all the bazaar recipes (Prioritize items worth more than 40000 G)" << endl;
-	string flags = Helpers::readFlags("ab");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Shop Data Randomization Options:" << endl;
+		cout << "\t a: Randomize all the items in all the shops (No items worth more than 40000 G)" << endl;
+		cout << "\t b: Randomize all the bazaar recipes (Prioritize items worth more than 40000 G)" << endl;
+		flags = Helpers::readFlags("ab");
+	}
 	if (flags.find('a') != string::npos)
 	{
 		randShops();
@@ -182,6 +186,7 @@ void ShopRand::process()
 	{
 		replaceBazaarRecipes();
 	}
+	return flags;
 }
 
 //Usable Items:		0-28, 42-63
@@ -230,14 +235,14 @@ void ShopRand::randShops()
 					cost = EquipRand::equipData[itemID - 4096].cost;
 				else if (itemID < 9000)
 				{
-					cost = LootRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in shops
+					cost = ItemRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in shops
 				}
 				else if (itemID < 13000)
 					cost = MagicRand::magicData[itemID - 12288].cost;
 				else if (itemID < 17000)
 					cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 				else
-					cost = 100;
+					cost = ItemRand::gambitData[itemID - 24576].cost;
 				attempts++;
 
 			} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil || cost >= 40000 || rand() % 255 < int(sqrt(cost))));
@@ -294,13 +299,13 @@ void ShopRand::replaceBazaarRecipes()
 		else if (itemID < 4600)
 			cost = EquipRand::equipData[itemID - 4096].cost;
 		else if (itemID < 9000)
-				cost = LootRand::lootData[itemID - 8192].cost;
+				cost = ItemRand::lootData[itemID - 8192].cost;
 		else if (itemID < 13000)
 			cost = MagicRand::magicData[itemID - 12288].cost;
 		else if (itemID < 17000)
 			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 		else
-			cost = 100;
+			cost = ItemRand::gambitData[itemID - 24576].cost;
 		if (cost < 40000)
 			data.erase(data.begin() + i);
 	}
@@ -377,13 +382,13 @@ void ShopRand::replaceBazaarRecipes()
 		else if (itemID < 4600)
 			cost = EquipRand::equipData[itemID - 4096].cost;
 		else if (itemID < 9000)
-			cost = LootRand::lootData[itemID - 8192].cost;
+			cost = ItemRand::lootData[itemID - 8192].cost;
 		else if (itemID < 13000)
 			cost = MagicRand::magicData[itemID - 12288].cost;
 		else if (itemID < 17000)
 			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 		else
-			cost = 100;
+			cost = ItemRand::gambitData[itemID - 24576].cost;
 		if (cost >= 40000)
 			data.erase(data.begin() + i);
 	}

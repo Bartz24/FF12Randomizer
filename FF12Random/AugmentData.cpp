@@ -15,7 +15,7 @@ AugmentData::AugmentData(char data[8])
 	int index = 0;
 	for (int i = 0; i < 8; i++)
 	{
-		if (i == 0x04 || i >= 0x05)
+		if (i == 0x04 || i == 0x05)
 			continue;
 		this->unknown[index] = data[i];
 		index++;

@@ -54,9 +54,6 @@
     <ClInclude Include="LootData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LootRand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EquipData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -129,6 +126,9 @@
     <ClInclude Include="RewardData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GambitData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -168,9 +168,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LootData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LootRand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EquipData.cpp">
@@ -243,6 +240,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RewardData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GambitData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

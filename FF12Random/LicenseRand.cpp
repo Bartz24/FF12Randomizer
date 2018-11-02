@@ -40,14 +40,31 @@ void LicenseRand::load()
 	}
 }
 
-void LicenseRand::process()
+string LicenseRand::process(string preset)
 {
-	cout << "License Data Randomization Options:" << endl;
-	cout << "\t a: Randomize augments" << endl;
-	cout << "\t c: Randomize LP Cost (0-255)" << endl;
-	cout << "\t e: Randomize weapons/armor/accessories" << endl;
-	cout << "\t m: Randomize magick/technicks" << endl;
-	string flags = Helpers::readFlags("acem");
+	string flags = preset;
+	string eFlags = "!", eFlagsOut = ".", mFlags = "!", mFlagsOut = ".";
+	if (preset == "!")
+	{
+		cout << "License Data Randomization Options:" << endl;
+		cout << "\t a: Randomize augments" << endl;
+		cout << "\t c: Randomize LP Cost (0-255)" << endl;
+		cout << "\t e: Randomize weapons/armor/accessories" << endl;
+		cout << "\t m: Randomize magick/technicks" << endl;
+		flags = Helpers::readFlags("acem");
+	}
+	if (flags.find("e-") != string::npos)
+	{
+		string second = flags.substr(flags.find("e-") + 2, flags.length() - flags.find("e-") - 1);
+		eFlags = flags.substr(flags.find("e-") + 2, flags.length() - (second.length() - second.find("-")) - flags.find("e-") - 2);
+		flags = flags.substr(0, flags.find('e') + 1) + flags.substr(flags.find('e') + 3 + eFlags.length(), flags.length() - flags.find('e') - 2 - eFlags.length());
+	}
+	if (flags.find("m-") != string::npos)
+	{
+		string second = flags.substr(flags.find("m-") + 2, flags.length() - flags.find("m-") - 1);
+		mFlags = flags.substr(flags.find("m-") + 2, flags.length() - (second.length() - second.find("-")) - flags.find("m-") - 2);
+		flags = flags.substr(0, flags.find('m') + 1) + flags.substr(flags.find('m') + 3 + mFlags.length(), flags.length() - flags.find('m') - 2 - mFlags.length());
+	}
 	if (flags.find('a') != string::npos)
 	{
 		randAugments();
@@ -58,12 +75,15 @@ void LicenseRand::process()
 	}
 	if (flags.find('e') != string::npos)
 	{
-		randEquipment();
+		eFlagsOut = randEquipment(eFlags);
+		flags = flags.substr(0, flags.find('e')+1) + "-" + eFlagsOut + "-" + flags.substr(flags.find('e') + 1, flags.length() - flags.find('e'));
 	}
 	if (flags.find('m') != string::npos)
 	{
-		randAbilities();
+		mFlagsOut = randAbilities(mFlags);
+		flags = flags.substr(0, flags.find('m')+1) + "-" + mFlagsOut + "-" + flags.substr(flags.find('m') + 1, flags.length() - flags.find('m'));
 	}
+	return flags;
 }
 
 void LicenseRand::randCost()
@@ -120,12 +140,16 @@ void LicenseRand::randCost()
 //				Equip IDs:	 4097-4255, 4258-4259, 4264, 4266-4274, 4288-4483
 
 
-void LicenseRand::randEquipment()
+string LicenseRand::randEquipment(string preset)
 {
-	cout << "Equipment Randomization Options:" << endl;
-	cout << "\t a: Randomize all equipment together (Don't use this if you want to only randomize in the same equipment type)" << endl;
-	cout << "\t n: Randomize the number of equipment each license has (Don't use this if you want the same number on each)" << endl;
-	string flags = Helpers::readFlags("an");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Equipment Randomization Options:" << endl;
+		cout << "\t a: Randomize all equipment together (Don't use this if you want to only randomize in the same equipment type)" << endl;
+		cout << "\t n: Randomize the number of equipment each license has (Don't use this if you want the same number on each)" << endl;
+		flags = Helpers::readFlags("an");
+	}
 	if (flags.find('a') != string::npos)
 	{
 		if (flags.find('n') != string::npos)
@@ -500,6 +524,7 @@ void LicenseRand::randEquipment()
 			replaceAbilities(353, 354, equip);
 		}
 	}
+	return flags;
 }
 
 void LicenseRand::randAugments()
@@ -515,7 +540,7 @@ void LicenseRand::randAugments()
 	addRangeToVector(augments, 116, 127);
 	for (int i = 0; i < 361; i++)
 	{
-		if (i >= 300 && i <= 328 || i >= 219 && i <= 275)
+		if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
 		{
 			int index = rand() % augments.size();
 			licenseData[i].otherData[0] = augments[index];
@@ -546,12 +571,16 @@ void LicenseRand::addRangeToVector(vector<int>& data, int low, int high)
 
 
 
-void LicenseRand::randAbilities()
+string LicenseRand::randAbilities(string preset)
 {
-	cout << "Magick/Technick Randomization Options:" << endl;
-	cout << "\t a: Randomize all magick/technicks together (Don't use this if you want to only randomize in the magic type)" << endl;
-	cout << "\t n: Randomize the number of abilities each license has (Don't use this if you want the same number on each)" << endl;
-	string flags = Helpers::readFlags("an");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Magick/Technick Randomization Options:" << endl;
+		cout << "\t a: Randomize all magick/technicks together (Don't use this if you want to only randomize in the magic type)" << endl;
+		cout << "\t n: Randomize the number of abilities each license has (Don't use this if you want the same number on each)" << endl;
+		flags = Helpers::readFlags("an");
+	}
 	if (flags.find('a') != string::npos)
 	{
 		if (flags.find('n') != string::npos)
@@ -695,6 +724,7 @@ void LicenseRand::randAbilities()
 			replaceAbilities(276, 299, abilities);
 		}
 	}
+	return flags;
 }
 
 void LicenseRand::replaceAbilitiesChance(int start, int end, std::vector<unsigned short> &abilities)

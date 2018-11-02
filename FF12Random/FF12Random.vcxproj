@@ -164,6 +164,7 @@
     <ClInclude Include="EquipData.h" />
     <ClInclude Include="EquipRand.h" />
     <ClInclude Include="FileSizeTableFix.h" />
+    <ClInclude Include="GambitData.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemFlagValue.h" />
     <ClInclude Include="ItemRand.h" />
@@ -174,7 +175,6 @@
     <ClInclude Include="LicenseRand.h" />
     <ClInclude Include="LicenseRename.h" />
     <ClInclude Include="LootData.h" />
-    <ClInclude Include="LootRand.h" />
     <ClInclude Include="MagicData.h" />
     <ClInclude Include="MagicRand.h" />
     <ClInclude Include="MapData.h" />
@@ -204,6 +204,7 @@
     <ClCompile Include="EquipData.cpp" />
     <ClCompile Include="EquipRand.cpp" />
     <ClCompile Include="FileSizeTableFix.cpp" />
+    <ClCompile Include="GambitData.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemFlagValue.cpp" />
     <ClCompile Include="ItemRand.cpp" />
@@ -215,7 +216,6 @@
     <ClCompile Include="LicenseRand.cpp" />
     <ClCompile Include="LicenseRename.cpp" />
     <ClCompile Include="LootData.cpp" />
-    <ClCompile Include="LootRand.cpp" />
     <ClCompile Include="MagicData.cpp" />
     <ClCompile Include="MagicRand.cpp" />
     <ClCompile Include="MapData.cpp" />

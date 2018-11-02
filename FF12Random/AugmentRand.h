@@ -12,7 +12,7 @@ public:
 	~AugmentRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randValue();
 	void addRangeToVector(vector<int>& data, int low, int high);
 };

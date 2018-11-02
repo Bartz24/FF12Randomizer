@@ -74,15 +74,20 @@ void AugmentRand::save()
 	delete[] buffer;
 }
 
-void AugmentRand::process()
+string AugmentRand::process(string preset)
 {
-	cout << "Augment Data Randomization Options (NOTE: AFFECTS SPECIAL ENEMY ATTACKS):" << endl;
-	cout << "\t v: Randomize augment values for lores, channelling etc" << endl;
-	string flags = Helpers::readFlags("v");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Augment Data Randomization Options (NOTE: AFFECTS SPECIAL ENEMY ATTACKS):" << endl;
+		cout << "\t v: Randomize augment values for lores, channelling etc" << endl;
+		flags = Helpers::readFlags("v");
+	}
 	if (flags.find('v') != string::npos)
 	{
 		randValue();
 	}
+	return flags;
 }
 
 void AugmentRand::randValue()

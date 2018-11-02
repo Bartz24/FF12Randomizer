@@ -1,5 +1,7 @@
 #pragma once
 #include "ItemData.h"
+#include "LootData.h"
+#include "GambitData.h"
 
 class ItemRand
 {
@@ -8,11 +10,15 @@ private:
 
 public:
 	static ItemData itemData[63];
+	static LootData lootData[266];
+	static GambitData gambitData[256];
 	ItemRand();
 	~ItemRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randCost();
+	void randCostLoot();
+	void randCostGambit();
 };
 

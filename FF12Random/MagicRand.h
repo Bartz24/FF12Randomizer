@@ -15,7 +15,7 @@ public:
 	~MagicRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randCost();
 	void randMPCost();
 	void randCT();

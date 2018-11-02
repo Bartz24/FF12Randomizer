@@ -16,7 +16,7 @@ public:
 	~CharRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void initialEquip();
 	void randStats();
 	void increaseStat(unsigned short &num, int &statPointsLeft);

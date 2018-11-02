@@ -1,10 +1,14 @@
-﻿  FF12Random.cpp
-s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.h(41): warning C4369: 'FileSizeTableOffset::menu04':  enumerator value '4294967295' cannot be represented as 'int', value is '-1'
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(30): warning C4244: 'initializing': conversion from 'time_t' to 'long', possible loss of data
-  ShopRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(86): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(82): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(218): warning C4244: '+=': conversion from 'double' to 'unsigned long', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(243): warning C4018: '>=': signed/unsigned mismatch
+﻿  CharRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(47): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(179): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(193): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(207): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(221): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(238): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(248): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(258): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(268): warning C4018: '<': signed/unsigned mismatch
+  LicenseRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(790): warning C4101: 'byte': unreferenced local variable
   Generating Code...
   FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12Random.exe

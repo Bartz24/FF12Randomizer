@@ -164,15 +164,19 @@ void MagicRand::save()
 	delete[] buffer3;
 }
 
-void MagicRand::process()
+string MagicRand::process(string preset)
 {
-	cout << "Magic Data Randomization Options:" << endl;
-	cout << "\t a: Randomize AoE range (80%-no range, 20% 2-20, where 10 is normal for AoE abilities)" << endl;
-	cout << "\t c: Randomize gil cost (20-62000, more common around 9000 G)" << endl;
-	cout << "\t m: Randomize MP cost (1-99, only affects abilites that had a MP cost)" << endl;
-	cout << "\t s: Randomize status effects on enemy attacks" << endl;
-	cout << "\t t: Randomize charge time (only affects abilities that had a charge time)" << endl;
-	string flags = Helpers::readFlags("acmst");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Magic Data Randomization Options:" << endl;
+		cout << "\t a: Randomize AoE range (80%-no range, 20% 2-20, where 10 is normal for AoE abilities)" << endl;
+		cout << "\t c: Randomize gil cost (20-62000, more common around 9000 G)" << endl;
+		cout << "\t m: Randomize MP cost (1-99, only affects abilites that had a MP cost)" << endl;
+		cout << "\t s: Randomize status effects on enemy attacks" << endl;
+		cout << "\t t: Randomize charge time (only affects abilities that had a charge time)" << endl;
+		flags = Helpers::readFlags("acmst");
+	}
 	if (flags.find('a') != string::npos)
 	{
 		randAoE();
@@ -193,6 +197,7 @@ void MagicRand::process()
 	{
 		randCT();
 	}
+	return flags;
 }
 
 void MagicRand::randCost()

@@ -16,7 +16,7 @@ public:
 	~EquipRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randCost();
 	void randElements();
 	void randStatusEffects();

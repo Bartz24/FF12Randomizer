@@ -2,6 +2,8 @@
 #include "ItemRand.h"
 
 ItemData ItemRand::itemData[63] = {};
+LootData ItemRand::lootData[266] = {};
+GambitData ItemRand::gambitData[256] = {};
 
 ItemRand::ItemRand()
 {
@@ -33,6 +35,43 @@ void ItemRand::load()
 		}
 
 		delete[] buffer;
+
+		char * buffer2;
+		size = 266 * 10; //Num loots * data size
+		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
+		file.seekg(int(LootData::getDataIndex()));
+		buffer2 = new char[size];
+		file.read(buffer2, size);
+		file.close();
+
+		for (int i = 0; i < 266; i++)
+		{
+			lootData[i] = LootData{ buffer2[i * 10], buffer2[i * 10 + 1], buffer2[i * 10 + 2], buffer2[i * 10 + 3],
+				buffer2[i * 10 + 4], buffer2[i * 10 + 5], buffer2[i * 10 + 6],	buffer2[i * 10 + 7],
+				buffer2[i * 10 + 8],	buffer2[i * 10 + 9] };
+		}
+
+		delete[] buffer2;
+
+		char * buffer3;
+		size = 256 * 32; //Num gambits * data size
+		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
+		file.seekg(int(GambitData::getDataIndex()));
+		buffer3 = new char[size];
+		file.read(buffer3, size);
+		file.close();
+
+		for (int i = 0; i < 256; i++)
+		{
+			char data[32];
+			for (int i2 = 0; i2 < 32; i2++)
+			{
+				data[i2] = buffer3[i * 32 + i2];
+			}
+			gambitData[i] = GambitData{ data };
+		}
+
+		delete[] buffer3;
 	}
 }
 
@@ -71,17 +110,86 @@ void ItemRand::save()
 
 
 	delete[] buffer;
+
+	char * buffer2;
+	size = 266 * 10; //Num loots * data size
+	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
+	file.seekp(int(LootData::getDataIndex()));
+	buffer2 = new char[size];
+
+	for (int i = 0; i < 266; i++)
+	{
+		LootData d = lootData[i];
+		buffer2[i * 10] = U{ d.cost }.c[0];
+		buffer2[i * 10 + 1] = U{ d.cost }.c[1];
+		buffer2[i * 10 + 2] = U{ d.itemID }.c[0];
+		buffer2[i * 10 + 3] = U{ d.itemID }.c[1];
+		buffer2[i * 10 + 4] = d.icon;
+		buffer2[i * 10 + 5] = d.unknown1;
+		buffer2[i * 10 + 6] = d.unknown2;
+		buffer2[i * 10 + 7] = d.unknown3;
+		buffer2[i * 10 + 8] = U{ d.order }.c[0];
+		buffer2[i * 10 + 9] = U{ d.order }.c[1];
+	}
+
+	file.write(buffer2, size);
+	file.close();
+
+
+	delete[] buffer2;
+
+	char * buffer3;
+	size = 256 * 32; //Num gambits * data size
+	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
+	file.seekp(int(GambitData::getDataIndex()));
+	buffer3 = new char[size];
+
+	for (int i = 0; i < 256; i++)
+	{
+		GambitData d = gambitData[i];
+		int index = 0;
+		for (int i2 = 0; i2 < 32; i2++)
+		{
+			if (i2 == 0x06 || i2 == 0x07)
+				continue;
+			buffer3[i * 32 + i2] = d.unknown[index];
+			index++;
+		}
+		buffer3[i * 32 + 0x06] = U{ d.cost }.c[0];
+		buffer3[i * 32 + 0x07] = U{ d.cost }.c[1];
+	}
+
+	file.write(buffer3, size);
+	file.close();
+
+
+	delete[] buffer3;
 }
 
-void ItemRand::process()
+string ItemRand::process(string preset)
 {
-	cout << "Item Data Randomization Options:" << endl;
-	cout << "\t c: Randomize gil cost (10-6000, more common around 2000 G)" << endl;
-	string flags = Helpers::readFlags("c");
-	if (flags.find('c') != string::npos)
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Item Data Randomization Options:" << endl;
+		cout << "\t g: Randomize gil cost of gambits (20-64000, more common around 100 G)" << endl;
+		cout << "\t i: Randomize gil cost of items (10-64000, more common around 2500 G)" << endl;
+		cout << "\t l: Randomize gil cost of loot (2-60000, more common around 500 G)" << endl;
+		flags = Helpers::readFlags("gil");
+	}
+	if (flags.find('g') != string::npos)
+	{
+		randCostGambit();
+	}
+	if (flags.find('i') != string::npos)
 	{
 		randCost();
 	}
+	if (flags.find('l') != string::npos)
+	{
+		randCostLoot();
+	}
+	return flags;
 }
 
 void ItemRand::randCost()
@@ -89,6 +197,23 @@ void ItemRand::randCost()
 	for (int i = 0; i < 63; i++)
 	{
 		float ran = float(rand() % 10000) / 100.f;
-		itemData[i].cost = unsigned short(8250.f / (1.f + exp(0.04f*ran - 1.f)) - 39.f * ran + 10);
+		itemData[i].cost = unsigned short(87500.f / (1.f + exp(0.09f*ran - 1.f)) - 19);
+	}
+}
+
+void ItemRand::randCostLoot()
+{
+	for (int i = 0; i < 266; i++)
+	{
+		lootData[i].cost = unsigned short(220000.f / (1.f + exp(0.1f*float(rand() % 10000) / 100.f + 1.f)) + 2.f);
+	}
+}
+
+void ItemRand::randCostGambit()
+{
+	for (int i = 0; i < 256; i++)
+	{
+		float ran = float(rand() % 10000) / 100.f;
+		gambitData[i].cost = unsigned short(87500.f / (1.f + exp(0.16f*ran - 1.f)) + 20);
 	}
 }

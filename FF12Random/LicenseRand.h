@@ -16,10 +16,10 @@ public:
 	~LicenseRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randCost();
-	void randAbilities();
-	void randEquipment();
+	string randAbilities(string preset);
+	string randEquipment(string preset);
 	void randAugments();
 	void addRangeToVector(vector<int>& data, int low, int high);
 	void replaceAbilitiesChance(int start, int end, std::vector<unsigned short> &abilities);

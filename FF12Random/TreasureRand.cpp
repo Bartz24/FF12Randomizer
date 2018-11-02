@@ -157,15 +157,20 @@ void TreasureRand::save()
 	}
 }
 
-void TreasureRand::process()
+string TreasureRand::process(string preset)
 {
-	cout << "Treasure Data Randomization Options:" << endl;
-	cout << "\t t: Randomize all the treasures (spawn chance, gil, and items. Items of higher value can be found with the diamond armlet effect.)" << endl;
-	string flags = Helpers::readFlags("t");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Treasure Data Randomization Options:" << endl;
+		cout << "\t t: Randomize all the treasures (spawn chance, gil, and items. Items of higher value can be found with the diamond armlet effect.)" << endl;
+		flags = Helpers::readFlags("t");
+	}
 	if (flags.find('t') != string::npos)
 	{
 		randTreasures();
 	}
+	return flags;
 }
 
 //Usable Items:		0-28, 42-63
@@ -224,14 +229,14 @@ int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, int 
 			cost = EquipRand::equipData[itemID - 4096].cost;
 		else if (itemID < 9000)
 		{
-			cost = LootRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in Treasures
+			cost = ItemRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in Treasures
 		}
 		else if (itemID < 13000)
 			cost = MagicRand::magicData[itemID - 12288].cost;
 		else if (itemID < 17000)
 			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
 		else
-			cost = 100;
+			cost = ItemRand::gambitData[itemID - 24576].cost;
 
 	} while (cost < minCost || cost > maxCost || rand() % 255 < int(sqrt(cost)));
 	return itemID;

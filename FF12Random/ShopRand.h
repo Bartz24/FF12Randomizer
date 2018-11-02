@@ -5,7 +5,6 @@
 #include "ItemRand.h"
 #include "EquipRand.h"
 #include "MagicRand.h"
-#include "LootRand.h"
 
 class ShopRand
 {
@@ -19,7 +18,7 @@ public:
 	~ShopRand();
 	void load();
 	void save();
-	void process();
+	string process(string preset);
 	void randShops();
 	void addRangeToVector(vector<int> &data, int low, int high);
 	void replaceBazaarRecipes();

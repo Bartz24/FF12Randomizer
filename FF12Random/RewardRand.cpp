@@ -80,15 +80,20 @@ void RewardRand::save()
 	delete[] buffer;
 }
 
-void RewardRand::process()
+string RewardRand::process(string preset)
 {
-	cout << "Reward Data Randomization Options:" << endl;
-	cout << "\t r: Randomize Rewards for hunts and story/side events" << endl;
-	string flags = Helpers::readFlags("r");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Reward Data Randomization Options:" << endl;
+		cout << "\t r: Randomize Rewards for hunts and story/side events" << endl;
+		flags = Helpers::readFlags("r");
+	}
 	if (flags.find('r') != string::npos)
 	{
 		randValue();
 	}
+	return flags;
 }
 
 void RewardRand::randValue()

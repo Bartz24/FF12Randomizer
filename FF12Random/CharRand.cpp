@@ -103,12 +103,16 @@ void CharRand::save()
 	delete[] buffer;
 }
 
-void CharRand::process()
+string CharRand::process(string preset)
 {
-	cout << "Char Data Options:" << endl;
-	cout << "\t i: Update initial equipment/items/gambits/abilities" << endl;
-	cout << "\t s: Randomize character stats" << endl;
-	string flags = Helpers::readFlags("is");
+	string flags = preset;
+	if (preset == "!")
+	{
+		cout << "Char Data Options:" << endl;
+		cout << "\t i: Update initial equipment/items/gambits/abilities" << endl;
+		cout << "\t s: Randomize character stats" << endl;
+		flags = Helpers::readFlags("is");
+	}
 	if (flags.find('i') != string::npos)
 	{
 		initialEquip();
@@ -117,6 +121,7 @@ void CharRand::process()
 	{
 		randStats();
 	}
+	return flags;
 }
 
 void CharRand::initialEquip()
@@ -168,7 +173,7 @@ void CharRand::initialEquip()
 				charData[i].weapon = weapons[rand() % weapons.size()];
 			else
 				charData[i].weapon = 0xFFFF;
-		}
+		}		
 		else
 		{
 			for (int slot = 0; slot < accessory.size(); slot++)
@@ -222,6 +227,49 @@ void CharRand::initialEquip()
 					|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
 					|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
 					|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4))
+				{
+					offHand.erase(offHand.begin() + slot);
+					slot--;
+				}
+			}
+		}
+		if (i == 0)
+		{
+			for (int slot = 0; slot < accessory.size(); slot++)
+			{
+				AttributeData data = EquipRand::attributeData[EquipRand::equipData[accessory[slot] - 4096].attribute / 24 - 3];
+				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status4::XZone), 4))
+				{
+					accessory.erase(accessory.begin() + slot);
+					slot--;
+				}
+			}
+			for (int slot = 0; slot < head.size(); slot++)
+			{
+				AttributeData data = EquipRand::attributeData[EquipRand::equipData[head[slot] - 4096].attribute / 24 - 3];
+				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status4::XZone), 4))
+				{
+					head.erase(head.begin() + slot);
+					slot--;
+				}
+			}
+			for (int slot = 0; slot < body.size(); slot++)
+			{
+				AttributeData data = EquipRand::attributeData[EquipRand::equipData[body[slot] - 4096].attribute / 24 - 3];
+				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+				if (status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status4::XZone), 4))
+				{
+					body.erase(body.begin() + slot);
+					slot--;
+				}
+			}
+			for (int slot = 0; slot < offHand.size(); slot++)
+			{
+				AttributeData data = EquipRand::attributeData[EquipRand::equipData[offHand[slot] - 4096].attribute / 24 - 3];
+				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+				if (status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status4::XZone), 4))
 				{
 					offHand.erase(offHand.begin() + slot);
 					slot--;

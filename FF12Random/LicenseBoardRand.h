@@ -14,7 +14,7 @@ public:
 	LicenseBoardRand();
 	~LicenseBoardRand();
 	void load();
-	void process();
+	string process(string preset);
 	void save();
 	vector<unsigned short> getLicenses(LicenseBoardData board);
 	void setRandLicenses(vector<unsigned short> &data, string flags);
