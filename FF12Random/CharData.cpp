@@ -16,7 +16,7 @@ CharData::CharData(char data[128])
 	for (int i = 0; i < 128; i++)
 	{
 		if (i >= 0x0A && i <= 0x13 || i == 0x16 || i == 0x17 || i == 0x19 || i == 0x1A || i == 0x1B || i == 0x1D || i == 0x1E || i == 0x1F
-			|| i == 0x21 || i == 0x22 || i == 0x24 || i == 0x25 || i == 0x27 || i == 0x28 || i >= 0x34 && i <= 0x3D || i >= 0x58 && i <= 0x6B)
+			|| i == 0x21 || i == 0x22 || i == 0x24 || i == 0x25 || i == 0x27 || i == 0x28 || i >= 0x34 && i <= 0x3D || i >= 0x58 && i <= 0x6B || i >= 0x4C && i <= 0x4F)
 			continue;
 		this->unknown[index] = data[i];
 		index++;
@@ -51,6 +51,10 @@ CharData::CharData(char data[128])
 		this->items[i] = *reinterpret_cast<unsigned short*>(item);
 		this->itemCount[i] = data[0x34 + i];
 	}
+	this->immune1 = data[0x4C];
+	this->immune2 = data[0x4D];
+	this->immune3 = data[0x4E];
+	this->immune4 = data[0x4F];
 }
 
 CharData::CharData()

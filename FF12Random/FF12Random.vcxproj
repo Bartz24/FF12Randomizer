@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ActionData.h" />
+    <ClInclude Include="ActionRename.h" />
     <ClInclude Include="AttributeData.h" />
     <ClInclude Include="AugmentData.h" />
     <ClInclude Include="AugmentRand.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="CharData.h" />
     <ClInclude Include="CharRand.h" />
     <ClInclude Include="CharValue.h" />
+    <ClInclude Include="DocumentationGen.h" />
     <ClInclude Include="ElementalValue.h" />
     <ClInclude Include="EquipData.h" />
     <ClInclude Include="EquipRand.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="MagicData.h" />
     <ClInclude Include="MagicRand.h" />
     <ClInclude Include="MapData.h" />
+    <ClInclude Include="RandSpellData.h" />
     <ClInclude Include="RenameMain.h" />
     <ClInclude Include="RewardData.h" />
     <ClInclude Include="RewardRand.h" />
@@ -191,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionData.cpp" />
+    <ClCompile Include="ActionRename.cpp" />
     <ClCompile Include="AttributeData.cpp" />
     <ClCompile Include="AugmentData.cpp" />
     <ClCompile Include="AugmentRand.cpp" />
@@ -200,6 +204,7 @@
     <ClCompile Include="CharData.cpp" />
     <ClCompile Include="CharRand.cpp" />
     <ClCompile Include="CharValue.cpp" />
+    <ClCompile Include="DocumentationGen.cpp" />
     <ClCompile Include="ElementalValue.cpp" />
     <ClCompile Include="EquipData.cpp" />
     <ClCompile Include="EquipRand.cpp" />
@@ -219,6 +224,7 @@
     <ClCompile Include="MagicData.cpp" />
     <ClCompile Include="MagicRand.cpp" />
     <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="RandSpellData.cpp" />
     <ClCompile Include="RenameMain.cpp" />
     <ClCompile Include="RewardData.cpp" />
     <ClCompile Include="RewardRand.cpp" />

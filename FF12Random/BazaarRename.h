@@ -17,10 +17,9 @@ using namespace std;
 class BazaarRename
 {
 private:
-	map<int, string> names;
-	string data[128] = {};
 	string bpFileName;
 public:
+	string data[128] = {};
 	BazaarRename();
 	~BazaarRename();
 	string getNameFromID(int id);

@@ -198,10 +198,10 @@ string ShopRand::process(string preset)
 }
 
 //Usable Items:		0-28, 42-63
-//Loot:				8192, 8224-8437 8448-8461 8466-8471
+//Loot:				8192, 8224-8437 8448-8461 8468-8471
 //Magic:			12288-12368
 //Technicks:		16384-16407
-//Gambits:			24576-24830
+//Gambits:			24576-24831
 //Equipment:		4097-4255, 4258-4259, 4264, 4266-4274, 4288-4515
 
 string ShopRand::randShops(string preset)
@@ -212,7 +212,8 @@ string ShopRand::randShops(string preset)
 		cout << "Shop Special Data Randomization Options:" << endl;
 		cout << "\t e: No dark energy in shops" << endl;
 		cout << "\t m: No meme bow (seitengrat) in shops" << endl;
-		flags = Helpers::readFlags("em");
+		cout << "\t w: No wyrmhero blade in shops" << endl;
+		flags = Helpers::readFlags("emw");
 	}
 	vector<int> data = vector<int>();
 	for (int i = 0; i < 5; i++)
@@ -233,7 +234,12 @@ string ShopRand::randShops(string preset)
 		addRangeToVector(data, 4097, 4255);
 		addRangeToVector(data, 4258, 4259);
 		addRangeToVector(data, 4264, 4264);
-		addRangeToVector(data, 4266, 4273);
+		addRangeToVector(data, 4266, 4268);
+		if (flags.find('w') == string::npos)
+		{
+			addRangeToVector(data, 4269, 4269);
+		}
+		addRangeToVector(data, 4270, 4273);
 		if (flags.find('m') == string::npos)
 		{
 			addRangeToVector(data, 4274, 4274);
@@ -274,7 +280,7 @@ string ShopRand::randShops(string preset)
 			if (attempts >= 100)
 			{
 				do {
-					itemID = rand() % (24830 - 24576 + 1) + 24576;
+					itemID = rand() % (24831 - 24576 + 1) + 24576;
 				} while (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end());
 				gil = 0;
 				cost = 0;

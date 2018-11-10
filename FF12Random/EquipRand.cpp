@@ -82,7 +82,7 @@ void EquipRand::save()
 		int index = 0;
 		for (int i2 = 0; i2 < 52; i2++)
 		{
-			if (i2 >= 0x11 && i2 <= 0x13 || i2 == 0x1A || i2 >= 0x1E && i2 <= 0x23 || i2 == 0x07 || i2 >= 0x27 && i2 <= 0x2B)
+			if (i2 >= 0x11 && i2 <= 0x13 || i2 >= 0x18 && i2 <= 0x1A || i2 >= 0x1E && i2 <= 0x23 || i2 == 0x07 || i2 >= 0x27 && i2 <= 0x2B)
 				continue;
 			buffer[i * 52 + i2] = d.unknown[index];
 			index++;
@@ -90,6 +90,8 @@ void EquipRand::save()
 		buffer[i * 52 + 0x11] = d.equipRequirements;
 		buffer[i * 52 + 0x12] = U{ d.cost }.c[0];
 		buffer[i * 52 + 0x13] = U{ d.cost }.c[1];
+		buffer[i * 52 + 0x18] = d.def;
+		buffer[i * 52 + 0x19] = d.mRes;
 		buffer[i * 52 + 0x1A] = d.power;
 		buffer[i * 52 + 0x1E] = d.element;
 		buffer[i * 52 + 0x1F] = d.hitChance;
@@ -162,25 +164,31 @@ string EquipRand::process(string preset)
 		cout << "\t a: Randomize armor/accessory effects" << endl;
 		cout << "\t c: Randomize gil cost (200-64000, more common around 4000 G)" << endl;
 		cout << "\t e: Randomize equipment elements" << endl;
-		cout << "\t s: Randomize equipment status effects" << endl;
+		cout << "\t f: Randomize equipment status effects" << endl;
+		cout << "\t s: Randomize gil costs in a smart way. Costs are based on how powerful they are. (Applies to c flag)" << endl;
 		cout << "\t t: Randomize weapon charge time" << endl;
-		flags = Helpers::readFlags("acestu");
+		flags = Helpers::readFlags("acefst");
 	}
 	if (flags.find('a') != string::npos)
 	{
 		randArmorEffects();
 	}
-	if (flags.find('c') != string::npos)
-	{
-		randCost();
-	}
 	if (flags.find('e') != string::npos)
 	{
 		randElements();
 	}
-	if (flags.find('s') != string::npos)
+	if (flags.find('f') != string::npos)
 	{
 		randStatusEffects();
+	}
+	if (flags.find('c') != string::npos)
+	{
+		if (flags.find('s') != string::npos)
+		{
+			randCostSmart();
+		}
+		else
+			randCost();
 	}
 	if (flags.find('t') != string::npos)
 	{
@@ -195,6 +203,50 @@ void EquipRand::randCost()
 	{
 		if (equipData[i].cost > 0)
 			equipData[i].cost = unsigned short(350000.f / (1.f + exp(0.06f*float(rand() % 10000) / 100.f + 1.5f)));
+	}
+}
+
+void EquipRand::randCostSmart()
+{
+	for (int i = 0; i < 557; i++)
+	{
+		float baseCost = 5;
+		if (i >= 388 && i < 420)
+		{
+			baseCost *= 20.f * pow(1.9f, equipData[i].power + 1);
+		}
+		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::Accessory))
+		{
+			baseCost *= 50;
+		}
+		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::BodyArmor) || ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::HeadArmor))
+		{
+			baseCost *= 2.2f*pow((equipData[i].def + equipData[i].mRes), 1.96f);
+		}
+		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::OffHand))
+		{
+			baseCost *= 3.6f*pow((equipData[i].def + equipData[i].mRes), 1.7f);
+		}
+		else
+		{
+			baseCost *= 0.5f * pow(equipData[i].power, 1.98f);
+		}
+		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
+		if (status.getNumStatuses() > 0)
+		{
+			baseCost *= pow(1.08f, status.getNumStatuses());
+		}
+		ElementalValue elem{ equipData[i].element };
+		if (elem.elements.size() > 0)
+		{
+			baseCost *= pow(1.03f, elem.elements.size());
+		}
+
+
+		float ran = float(rand() % 24000) / 24000.f + .60f;
+		baseCost *= ran;
+		baseCost = max(10.f, min(baseCost, 65535.f));
+		equipData[i].cost = unsigned short(baseCost);
 	}
 }
 
@@ -247,10 +299,18 @@ void EquipRand::randStatusEffects()
 {
 	for (int i = 0; i < 557; i++)
 	{
+		StatusValue orig{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
+		equipData[i].status1 = equipData[i].status2 = equipData[i].status3 = equipData[i].status4 = 0;
+		while (StatusValue{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 }.getNumStatuses() < orig.getNumStatuses())
+			addStatus(equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4);
 		setStatus(equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4, 30);
 		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
 		if (status.status1.size() + status.status2.size() + status.status3.size() + status.status4.size() > 0)
+		{
 			equipData[i].hitChance = rand() % 96 + 5;
+			if (status.hasStatus(int(Status1::Death), 1))
+				equipData[i].hitChance = (equipData[i].hitChance / 10) + 1;
+		}
 		else
 			equipData[i].hitChance = 0;
 	}
@@ -332,11 +392,21 @@ void EquipRand::randChargeTime()
 
 void EquipRand::setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance)
 {
-	StatusValue status = StatusValue(0, 0, 0, 0);
+	StatusValue status = StatusValue(num1, num2, num3, num4);
 	while (rand() % 100 < chance)
 	{
 		status.addRandomStatus();
 	}
+	num1 = status.getNumValue(1);
+	num2 = status.getNumValue(2);
+	num3 = status.getNumValue(3);
+	num4 = status.getNumValue(4);
+}
+
+void EquipRand::addStatus(unsigned char & num1, unsigned char & num2, unsigned char & num3, unsigned char & num4)
+{
+	StatusValue status = StatusValue(num1, num2, num3, num4);
+	status.addRandomStatus();
 	num1 = status.getNumValue(1);
 	num2 = status.getNumValue(2);
 	num3 = status.getNumValue(3);

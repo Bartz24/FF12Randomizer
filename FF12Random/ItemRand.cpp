@@ -157,6 +157,8 @@ void ItemRand::save()
 		}
 		buffer3[i * 32 + 0x06] = U{ d.cost }.c[0];
 		buffer3[i * 32 + 0x07] = U{ d.cost }.c[1];
+		buffer3[i * 32 + 0x14] = U{ d.name }.c[0];
+		buffer3[i * 32 + 0x15] = U{ d.name }.c[1];
 	}
 
 	file.write(buffer3, size);
@@ -175,7 +177,8 @@ string ItemRand::process(string preset)
 		cout << "\t g: Randomize gil cost of gambits (20-64000, more common around 100 G)" << endl;
 		cout << "\t i: Randomize gil cost of items (10-64000, more common around 2500 G)" << endl;
 		cout << "\t l: Randomize gil cost of loot (2-60000, more common around 500 G)" << endl;
-		flags = Helpers::readFlags("gil");
+		cout << "\t s: Randomize gil costs in a smart way. Costs are based on how powerful they are. (Applies to i flag)" << endl;
+		flags = Helpers::readFlags("gils");
 	}
 	if (flags.find('g') != string::npos)
 	{
@@ -183,7 +186,12 @@ string ItemRand::process(string preset)
 	}
 	if (flags.find('i') != string::npos)
 	{
-		randCost();
+		if (flags.find('s') != string::npos)
+		{
+			randCostSmart();
+		}
+		else
+			randCost();
 	}
 	if (flags.find('l') != string::npos)
 	{
@@ -198,6 +206,32 @@ void ItemRand::randCost()
 	{
 		float ran = float(rand() % 10000) / 100.f;
 		itemData[i].cost = unsigned short(87500.f / (1.f + exp(0.09f*ran - 1.f)) - 19);
+	}
+}
+
+void ItemRand::randCostSmart()
+{
+	for (int i = 0; i < 63; i++)
+	{
+		float baseCost = 5;
+		if (MagicRand::actionData[i + 82].power > 0)
+			baseCost = pow(MagicRand::actionData[i + 82].power / 16.f, 1.6f);
+		if (MagicRand::actionData[i + 82].powerMult > 0)
+			baseCost *= MagicRand::actionData[i + 82].powerMult;
+		if (MagicRand::actionData[i + 82].aoeRange > 0)
+			baseCost *= pow(1.22f, MagicRand::actionData[i + 82].aoeRange + 1);
+		if (MagicRand::actionData[i + 82].accuracy > 0)
+			baseCost *= float(MagicRand::actionData[i + 82].accuracy) / 15.f;
+		StatusValue status = StatusValue{ MagicRand::actionData[i + 82].status1, MagicRand::actionData[i + 82].status2, MagicRand::actionData[i + 82].status3, MagicRand::actionData[i + 82].status4 };
+		if (status.getNumStatuses() > 0)
+			baseCost *= status.getNumStatuses() + 1;
+		if (MagicRand::actionData[i + 82].mType == 0xB000)
+			baseCost *= 60;
+
+		float ran = float(rand() % 24000) / 24000.f + .60f;
+		baseCost *= ran;
+		baseCost = max(10.f, min(baseCost, 65535.f));
+		itemData[i].cost = unsigned short(baseCost);
 	}
 }
 

@@ -47,7 +47,7 @@ string LicenseRand::process(string preset)
 	if (preset == "!")
 	{
 		cout << "License Data Randomization Options:" << endl;
-		cout << "\t a: Randomize augments" << endl;
+		cout << "\t a: Randomize augments (DOES NOT CHANGE AUGMENT VALUES. What this does is include brand new augments to be thrown into the mix)" << endl;
 		cout << "\t c: Randomize LP Cost (0-255)" << endl;
 		cout << "\t e: Randomize weapons/armor/accessories" << endl;
 		cout << "\t m: Randomize magick/technicks" << endl;

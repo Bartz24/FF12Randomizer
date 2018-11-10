@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "RenameMain.h"
 
-string RenameMain::abilityNames[545] = {};
 string RenameMain::lootNames[280] = {};
 string RenameMain::equipNames[420] = {};
+string RenameMain::abilityNames[545] = {};
+string RenameMain::gambitNames[284] = {};
 
 RenameMain::RenameMain()
 {
@@ -26,18 +27,7 @@ void RenameMain::load()
 	system(("FF12TextPatcher.exe " + s).c_str());
 
 	string line;
-	ifstream myfile("abilityNames.txt");
-	if (myfile.is_open())
-	{
-		for (int i = 0; i < 545; i++)
-		{
-			getline(myfile, line);
-			abilityNames[i] = line;
-		}
-		myfile.close();
-	}
-
-	myfile = ifstream("lootNames.txt");
+	ifstream myfile("lootNames.txt");
 	if (myfile.is_open())
 	{
 		for (int i = 0; i < 280; i++)
@@ -59,6 +49,18 @@ void RenameMain::load()
 		myfile.close();
 	}
 
+	myfile = ifstream("gambitNames.txt");
+	if (myfile.is_open())
+	{
+		for (int i = 0; i < 284; i++)
+		{
+			getline(myfile, line);
+			gambitNames[i] = line;
+		}
+		myfile.close();
+	}
+
+	actRename.load();
 	lRename.load();
 	bRename.load();
 	aRename.load();
@@ -66,6 +68,7 @@ void RenameMain::load()
 
 void RenameMain::save()
 {
+	actRename.save();
 	lRename.save();
 	bRename.save();
 	aRename.save();
@@ -84,12 +87,18 @@ void RenameMain::save()
 	remove("augmentNames.txt");
 
 	remove("abilityNames.txt");
+	remove("abilityDescriptions.txt");
+	remove("abilityDescriptions2.txt");
 	remove("equipmentNames.txt");
 	remove("lootNames.txt");
+	remove("gambitNames.txt");
 }
 
 void RenameMain::process()
 {
+	actRename.process();
+	for (int i = 0; i < 545; i++)
+		abilityNames[i] = actRename.data[i];
 	lRename.process();
 	bRename.process();
 	aRename.process();
@@ -114,5 +123,16 @@ string BazaarRename::getNameFromID(int id)
 		return RenameMain::abilityNames[id - 12288];
 	else if (id < 17000)
 		return RenameMain::abilityNames[id - 16384 + 158];
+	else if (id < 17000)
+		return RenameMain::abilityNames[id - 16384 + 158];
+	else if (id < 25000)
+	{
+		string name = RenameMain::gambitNames[ItemRand::gambitData[id - 24576].name - 12288];
+		if (name.find("{B2}") != string::npos)
+			name = name.replace(name.find("{B2}"), 4, "<");
+		if (name.find("{C4}") != string::npos)
+			name = name.replace(name.find("{C4}"), 4, ">=");
+		return name;
+	}
 	return "";
 }

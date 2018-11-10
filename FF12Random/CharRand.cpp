@@ -59,7 +59,7 @@ void CharRand::save()
 		for (int i2 = 0; i2 < 128; i2++)
 		{
 			if (i2 >= 0x0A && i2 <= 0x13 || i2 == 0x16 || i2 == 0x17 || i2 == 0x19 || i2 == 0x1A || i2 == 0x1B || i2 == 0x1D || i2 == 0x1E || i2 == 0x1F
-				|| i2 == 0x21 || i2 == 0x22 || i2 == 0x24 || i2 == 0x25 || i2 == 0x27 || i2 == 0x28 || i2 >= 0x34 && i2 <= 0x3D || i2 >= 0x58 && i2 <= 0x6B)
+				|| i2 == 0x21 || i2 == 0x22 || i2 == 0x24 || i2 == 0x25 || i2 == 0x27 || i2 == 0x28 || i2 >= 0x34 && i2 <= 0x3D || i2 >= 0x58 && i2 <= 0x6B || i2 >= 0x48 && i2 <= 0x4B)
 				continue;
 			buffer[i * 128 + i2] = d.unknown[index];
 			index++;
@@ -94,6 +94,10 @@ void CharRand::save()
 			buffer[i * 128 + 0x59 + item * 2] = U{ d.items[item] }.c[1];
 			buffer[i * 128 + 0x34 + item] = d.itemCount[item];
 		}
+		buffer[i * 128 + 0x4C] = d.immune1;
+		buffer[i * 128 + 0x4D] = d.immune2;
+		buffer[i * 128 + 0x4E] = d.immune3;
+		buffer[i * 128 + 0x4F] = d.immune4;
 	}
 
 	file.write(buffer, size);
@@ -176,6 +180,7 @@ void CharRand::initialEquip()
 		}		
 		else
 		{
+			charData[i].immune4 = 0x80;
 			for (int slot = 0; slot < accessory.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[accessory[slot] - 4096].attribute / 24 - 3];

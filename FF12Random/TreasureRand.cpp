@@ -64,9 +64,12 @@ void TreasureRand::load()
 			string offset = linePart2.substr(0, linePart2.find(','));
 			trim(offset);
 			mapData[index].offset = stoi(offset);
-			string count = linePart2.substr(linePart2.find(',') + 1, linePart2.length() - (linePart2.find(',') + 1));
+			string linePart3 = linePart2.substr(linePart2.find(',') + 1, linePart2.length() - (linePart2.find(',') + 1));
+			string count = linePart3.substr(0, linePart3.find(','));
 			trim(count);
 			mapData[index].count = stoi(count);
+			string name = linePart3.substr(linePart3.find(',') + 1, linePart3.length() - (linePart3.find(',') + 1));
+			mapData[index].mapName = name;
 			index++;
 		}
 		myfile.close();
@@ -174,10 +177,10 @@ string TreasureRand::process(string preset)
 }
 
 //Usable Items:		0-28, 42-63
-//Loot:				8192, 8224-8437 8448-8461 8466-8471
+//Loot:				8192, 8224-8437 8448-8461 8468-8471
 //Magic:			12288-12368
 //Technicks:		16384-16407
-//Gambits:			24576-24830
+//Gambits:			24576-24831
 //Equipment:		4097-4255, 4258-4259, 4264, 4266-4274, 4288-4483
 
 void TreasureRand::randTreasures()
@@ -191,7 +194,7 @@ void TreasureRand::randTreasures()
 	addRangeToVector(data, 8468, 8471);
 	addRangeToVector(data, 12288, 12368);
 	addRangeToVector(data, 16384, 16407);
-	addRangeToVector(data, 24576, 24830);
+	addRangeToVector(data, 24576, 24831);
 	addRangeToVector(data, 4097, 4255);
 	addRangeToVector(data, 4258, 4259);
 	addRangeToVector(data, 4264, 4264);
@@ -207,7 +210,7 @@ void TreasureRand::randTreasures()
 			mapData[i].treasure[t].common2 = getItem(data, 500, 15000, gilB);
 			mapData[i].treasure[t].gil1 = (gilA + gilB) / 2 / 100;
 			mapData[i].treasure[t].rare1 = getItem(data, 10000, 32000, gilA);
-			mapData[i].treasure[t].rare2 = getItem(data, 30000, 60000, gilB);
+			mapData[i].treasure[t].rare2 = getItem(data, 30000, 70000, gilB);
 			mapData[i].treasure[t].gil2 = (gilA * 9 + gilB) / 10 / 10;
 			mapData[i].treasure[t].spawnChance = (4000 - (mapData[i].treasure[t].gil1 + mapData[i].treasure[t].gil2)) * 100 / 4000;
 			mapData[i].treasure[t].gilChance = rand() % 90 + 5;
@@ -238,7 +241,7 @@ int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, int 
 		else
 			cost = ItemRand::gambitData[itemID - 24576].cost;
 
-	} while (cost < minCost || cost > maxCost || rand() % 255 < int(sqrt(cost)));
+	} while (cost < minCost || cost > maxCost || rand() % 256 < int(sqrt(cost)));
 	return itemID;
 }
 

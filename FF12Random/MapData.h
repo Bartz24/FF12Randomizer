@@ -5,7 +5,7 @@
 class MapData
 {
 public:
-	string fileName;
+	string fileName, mapName;
 	int offset;
 	int count;
 	vector<TreasureData> treasure = vector<TreasureData>();

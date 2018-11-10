@@ -129,6 +129,15 @@
     <ClInclude Include="GambitData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DocumentationGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandSpellData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionRename.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -243,6 +252,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GambitData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentationGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RandSpellData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionRename.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,6 +13,8 @@ public:
 	unsigned char unknown[41];
 	unsigned char equipRequirements; // 11
 	unsigned short cost; // 12-13
+	unsigned char def; // 18
+	unsigned char mRes; // 19
 	unsigned char power; // 1A
 	unsigned char element; // 1E
 	unsigned char hitChance; // 1F

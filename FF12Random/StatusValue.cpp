@@ -115,7 +115,7 @@ void StatusValue::addRandomStatus()
 	{
 		status = int(pow(2, rand() % 8));
 		chance = rand() % 100;
-		group = chance < 38 ? 1 : chance < 76 ? 2 : chance < 90 ? 3 : 4;
+		group = chance < 28 ? 1 : chance < 56 ? 2 : chance < 78 ? 3 : 4;
 	} while (hasStatus(status, group));
 
 	if (group == 4 && status == 0x20)

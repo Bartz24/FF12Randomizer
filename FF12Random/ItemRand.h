@@ -2,6 +2,7 @@
 #include "ItemData.h"
 #include "LootData.h"
 #include "GambitData.h"
+#include "MagicRand.h"
 
 class ItemRand
 {
@@ -18,6 +19,7 @@ public:
 	void save();
 	string process(string preset);
 	void randCost();
+	void randCostSmart();
 	void randCostLoot();
 	void randCostGambit();
 };

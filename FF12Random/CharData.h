@@ -30,6 +30,10 @@ public:
 	unsigned char spdModifier; // 28
 	unsigned short items[10]; // 58-6B
 	unsigned char itemCount[10]; // 34-3D
+	unsigned char immune1; // 4C
+	unsigned char immune2; // 4D
+	unsigned char immune3; // 4E
+	unsigned char immune4; // 4F
 	CharData();
 	CharData(char data[128]);
 	~CharData();

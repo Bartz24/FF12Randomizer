@@ -38,7 +38,11 @@ void FileSizeTableFix::load()
 void FileSizeTableFix::save()
 {
 	string bpFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\battle_pack.bin";
+	string lhAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\listhelp_action.bin";
+	string hAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\help_action.bin";
 	overwriteSize(FileSizeTableOffset::battle_pack, getFileSize(bpFileName));
+	overwriteSize(FileSizeTableOffset::listhelp_action, getFileSize(lhAFileName));
+	overwriteSize(FileSizeTableOffset::help_action, getFileSize(hAFileName));
 }
 
 void FileSizeTableFix::process()

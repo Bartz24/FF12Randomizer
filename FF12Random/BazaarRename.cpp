@@ -50,27 +50,6 @@ BazaarRename::~BazaarRename()
 
 void BazaarRename::load()
 {
-	bpFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\battle_pack.bin";
-
-	string line;
-	ifstream myfile("data\\equipAbilityNames.txt");
-	if (myfile.is_open())
-	{
-		while (getline(myfile, line))
-		{
-			string id = line.substr(0, line.find(','));
-			trim(id);
-			int numID = stoi(id);
-			string name = line.substr(line.find(',') + 1, line.length());
-			name.erase(
-				remove(name.begin(), name.end(), '\"'),
-				name.end()
-			);
-			trim(name);
-			names.insert(pair <int, string>(numID, name));
-		}
-		myfile.close();
-	}
 }
 
 void BazaarRename::save()
