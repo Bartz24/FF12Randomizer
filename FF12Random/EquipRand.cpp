@@ -213,28 +213,28 @@ void EquipRand::randCostSmart()
 		float baseCost = 5;
 		if (i >= 388 && i < 420)
 		{
-			baseCost *= 20.f * pow(1.9f, equipData[i].power + 1);
+			baseCost *= 55.f * pow(1.9f, equipData[i].power + 1);
 		}
 		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::Accessory))
 		{
-			baseCost *= 50;
+			baseCost *= 500;
 		}
 		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::BodyArmor) || ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::HeadArmor))
 		{
-			baseCost *= 2.2f*pow((equipData[i].def + equipData[i].mRes), 1.96f);
+			baseCost *= 3.2f*pow((equipData[i].def + equipData[i].mRes), 1.96f);
 		}
 		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::OffHand))
 		{
-			baseCost *= 3.6f*pow((equipData[i].def + equipData[i].mRes), 1.7f);
+			baseCost *= 4.6f*pow((equipData[i].def + equipData[i].mRes), 1.7f);
 		}
 		else
 		{
-			baseCost *= 0.5f * pow(equipData[i].power, 1.98f);
+			baseCost *= 0.9f * pow(equipData[i].power, 1.98f);
 		}
 		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
 		if (status.getNumStatuses() > 0)
 		{
-			baseCost *= pow(1.08f, status.getNumStatuses());
+			baseCost *= pow(1.11f, status.getNumStatuses());
 		}
 		ElementalValue elem{ equipData[i].element };
 		if (elem.elements.size() > 0)
@@ -316,7 +316,10 @@ void EquipRand::randStatusEffects()
 	}
 	for (int i = 0; i < 173; i++)
 	{
+		attributeData[i].autoStatus1 = attributeData[i].autoStatus2 = attributeData[i].autoStatus3 = attributeData[i].autoStatus4 = 0;
 		setStatus(attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4, 30);
+
+		attributeData[i].immuneStatus1 = attributeData[i].immuneStatus2 = attributeData[i].immuneStatus3 = attributeData[i].immuneStatus4 = 0;
 		setStatus(attributeData[i].immuneStatus1, attributeData[i].immuneStatus2, attributeData[i].immuneStatus3, attributeData[i].immuneStatus4, 30);
 		StatusValue autoStatus{ attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4 };
 		if (autoStatus.hasStatus(int(Status1::Death), 1))

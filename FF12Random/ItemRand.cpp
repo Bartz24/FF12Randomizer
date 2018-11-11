@@ -150,7 +150,7 @@ void ItemRand::save()
 		int index = 0;
 		for (int i2 = 0; i2 < 32; i2++)
 		{
-			if (i2 == 0x06 || i2 == 0x07)
+			if (i2 == 0x06 || i2 == 0x07 || i2 == 0x14 || i2 == 0x15)
 				continue;
 			buffer3[i * 32 + i2] = d.unknown[index];
 			index++;
@@ -226,7 +226,8 @@ void ItemRand::randCostSmart()
 		if (status.getNumStatuses() > 0)
 			baseCost *= status.getNumStatuses() + 1;
 		if (MagicRand::actionData[i + 82].mType == 0xB000)
-			baseCost *= 60;
+			baseCost *= 80;
+		baseCost = pow(baseCost / 2.5f, 1.42f);
 
 		float ran = float(rand() % 24000) / 24000.f + .60f;
 		baseCost *= ran;

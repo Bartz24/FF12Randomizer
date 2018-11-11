@@ -276,9 +276,9 @@ void MagicRand::randCostSmart()
 {
 	for (int i = 0; i < 81; i++)
 	{
-		float baseCost = pow(float(actionData[i].cost), 1.6f) + 100.f;
+		float baseCost = pow(float(actionData[i].cost), 1.6f) + 80.f;
 		if (actionData[i].power > 0)
-			baseCost *= pow(actionData[i].power / 13.f, 1.6f);
+			baseCost *= pow(actionData[i].power / 13.f, 1.94f);
 		if (actionData[i].powerMult > 0)
 			baseCost *= actionData[i].powerMult;
 		if (actionData[i].aoeRange > 0)
@@ -287,7 +287,7 @@ void MagicRand::randCostSmart()
 			baseCost *= float(actionData[i].accuracy) / 20.f;
 		StatusValue status = StatusValue{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
 		if (status.getNumStatuses() > 0)
-			baseCost *= status.getNumStatuses() + 3;
+			baseCost *= pow(1.55f, status.getNumStatuses() + 3);
 
 		float ran = float(rand() % 24000) / 24000.f + .60f;
 		baseCost *= ran;

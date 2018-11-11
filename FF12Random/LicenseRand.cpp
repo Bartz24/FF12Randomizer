@@ -48,10 +48,11 @@ string LicenseRand::process(string preset)
 	{
 		cout << "License Data Randomization Options:" << endl;
 		cout << "\t a: Randomize augments (DOES NOT CHANGE AUGMENT VALUES. What this does is include brand new augments to be thrown into the mix)" << endl;
+		cout << "\t b: Add the new annoying augments (Applies to a)" << endl;
 		cout << "\t c: Randomize LP Cost (0-255)" << endl;
 		cout << "\t e: Randomize weapons/armor/accessories" << endl;
 		cout << "\t m: Randomize magick/technicks" << endl;
-		flags = Helpers::readFlags("acem");
+		flags = Helpers::readFlags("abcem");
 	}
 	if (flags.find("e-") != string::npos)
 	{
@@ -67,7 +68,7 @@ string LicenseRand::process(string preset)
 	}
 	if (flags.find('a') != string::npos)
 	{
-		randAugments();
+		randAugments(flags.find('b') != string::npos);
 	}
 	if (flags.find('c') != string::npos)
 	{
@@ -527,17 +528,30 @@ string LicenseRand::randEquipment(string preset)
 	return flags;
 }
 
-void LicenseRand::randAugments()
+void LicenseRand::randAugments(bool includeBad)
 {
 	vector<int> augments = vector<int>();
-	addRangeToVector(augments, 0, 32);
+	addRangeToVector(augments, 0, 11);
+	addRangeToVector(augments, 13, 14);
+	addRangeToVector(augments, 16, 28);
+	addRangeToVector(augments, 30, 31);
 	addRangeToVector(augments, 35, 37);
-	addRangeToVector(augments, 39, 40);
-	addRangeToVector(augments, 42, 51);
+	augments.push_back(40);
+	addRangeToVector(augments, 42, 49);
+	augments.push_back(51);
 	addRangeToVector(augments, 53, 54);
 	augments.push_back(58);
 	addRangeToVector(augments, 60, 103);
 	addRangeToVector(augments, 116, 127);
+	if (includeBad)
+	{
+		augments.push_back(12);
+		augments.push_back(15);
+		augments.push_back(29);
+		augments.push_back(32);
+		augments.push_back(39);
+		augments.push_back(50);
+	}
 	for (int i = 0; i < 361; i++)
 	{
 		if (i >= 300 && i <= 328 || i >= 219 && i <= 265)

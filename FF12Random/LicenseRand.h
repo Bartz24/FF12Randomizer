@@ -20,7 +20,7 @@ public:
 	void randCost();
 	string randAbilities(string preset);
 	string randEquipment(string preset);
-	void randAugments();
+	void randAugments(bool includeBad);
 	void addRangeToVector(vector<int>& data, int low, int high);
 	void replaceAbilitiesChance(int start, int end, std::vector<unsigned short> &abilities);
 	void replaceAbilities(int start, int end, std::vector<unsigned short> &abilities);
