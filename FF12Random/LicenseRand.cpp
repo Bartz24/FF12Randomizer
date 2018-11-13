@@ -534,7 +534,7 @@ void LicenseRand::randAugments(bool includeBad)
 	addRangeToVector(augments, 0, 11);
 	addRangeToVector(augments, 13, 14);
 	addRangeToVector(augments, 16, 28);
-	addRangeToVector(augments, 30, 31);
+	augments.push_back(30);
 	addRangeToVector(augments, 35, 37);
 	augments.push_back(40);
 	addRangeToVector(augments, 42, 49);
@@ -548,6 +548,7 @@ void LicenseRand::randAugments(bool includeBad)
 		augments.push_back(12);
 		augments.push_back(15);
 		augments.push_back(29);
+		augments.push_back(31);
 		augments.push_back(32);
 		augments.push_back(39);
 		augments.push_back(50);
