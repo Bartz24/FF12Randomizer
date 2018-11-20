@@ -200,6 +200,16 @@ string ShopRand::process(string preset)
 string ShopRand::randShops(string preset)
 {
 	string flags = preset;
+	if (flags.find('n') != string::npos)
+	{
+		for (int i = 0; i < 267; i++)
+		{
+			shopData[i].itemCount = 0;
+		}
+
+		return flags;
+	}
+
 	vector<int> data = vector<int>();
 	for (int i = 0; i < 5; i++)
 	{
