@@ -336,6 +336,11 @@ void EquipRand::randStatusEffects()
 			if (immuneStatus.hasStatus(int(autoStatus.status4[i]), 4))
 				immuneStatus.status4.erase(find(immuneStatus.status4.begin(), immuneStatus.status4.end(), autoStatus.status4[i]));
 		}
+		if (autoStatus.hasStatus(int(Status2::Reverse), 2))
+		{
+			if (rand() % 512 > 0)
+				autoStatus.status2.erase(find(autoStatus.status2.begin(), autoStatus.status2.end(), Status2::Reverse));
+		}
 		attributeData[i].autoStatus1 = autoStatus.getNumValue(1);
 		attributeData[i].autoStatus2 = autoStatus.getNumValue(2);
 		attributeData[i].autoStatus3 = autoStatus.getNumValue(3);

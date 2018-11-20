@@ -110,4 +110,9 @@ void ActionRename::process()
 			}
 		}
 	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		data[i + 246] = MagicRand::trapNames[i];
+	}
 }

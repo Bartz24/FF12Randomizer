@@ -3,6 +3,7 @@
 #include "ActionData.h"
 #include "StatusValue.h"
 #include "RandSpellData.h"
+#include "TrapData.h"
 #include <vector>
 #include <sstream>
 #include <algorithm>
@@ -12,12 +13,14 @@ class MagicRand
 private:
 	string fileName;
 	vector<RandSpellData> spells = vector<RandSpellData>();
+	vector<TrapData> traps = vector<TrapData>();
 
 public:
 	static ActionData actionData[497];
 	static MagicData magicData[105];
 	static string spellNames[81];
 	static string spellDescs[81];
+	static string trapNames[16];
 	static bool didRandSpells;
 	MagicRand();
 	~MagicRand();
@@ -37,5 +40,6 @@ public:
 	void addRangeToVector(vector<int>& data, int low, int high);
 	vector<RandSpellData> getSpellsOfType(int type);
 	void randSpellsOfType(vector<int> idsReplace, int type);
+	void randTraps();
 };
 

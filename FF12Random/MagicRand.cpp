@@ -4,6 +4,7 @@
 MagicData MagicRand::magicData[105] = {};
 ActionData MagicRand::actionData[497] = {};
 string MagicRand::spellNames[81] = {};
+string MagicRand::trapNames[16] = {};
 string MagicRand::spellDescs[81] = {};
 bool MagicRand::didRandSpells = false;
 
@@ -110,6 +111,34 @@ void MagicRand::load()
 			rData.animation = stoi(data[18]);
 			rData.specialType = stoi(data[19]);
 			spells.push_back(rData);
+		}
+		myfile.close();
+	}
+
+	myfile = ifstream("data\\traps.csv");
+	if (myfile.is_open())
+	{
+		bool first = true;
+		while (getline(myfile, line))
+		{
+			if (first)
+			{
+				first = false;
+				continue;
+			}
+
+			vector<string> data = split(line, ',');
+			TrapData tData = TrapData();
+			tData.name = data[0];
+			tData.description = data[1];
+			tData.power = stoi(data[2]);
+			tData.aoe = stoi(data[3]);
+			tData.effect = stoi(data[4]);
+			tData.status1 = stoi(data[5]);
+			tData.status2 = stoi(data[6]);
+			tData.status3 = stoi(data[7]);
+			tData.status4 = stoi(data[8]);
+			traps.push_back(tData);
 		}
 		myfile.close();
 	}
@@ -249,6 +278,11 @@ string MagicRand::process(string preset)
 	if (flags.find('t') != string::npos)
 	{
 		randCT();
+	}
+	if (flags.find('r') != string::npos)
+	{
+		cout << "HERE" << endl;
+		randTraps();
 	}
 	return flags;
 }
@@ -575,5 +609,22 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
 			actionData[rep].animation = 179;
 		actionData[rep].specialType = newSpells[newID].specialType;
 
+	}
+}
+
+
+void MagicRand::randTraps()
+{
+	for (int i = 246; i < 262; i++)
+	{
+		int index = rand() % traps.size();
+		trapNames[i - 246] = traps[index].name;
+		actionData[i].power = traps[index].power;
+		actionData[i].aoeRange = traps[index].aoe;
+		actionData[i].type = traps[index].effect;
+		actionData[i].status1 = traps[index].status1;
+		actionData[i].status2 = traps[index].status2;
+		actionData[i].status3 = traps[index].status3;
+		actionData[i].status4 = traps[index].status4;
 	}
 }
