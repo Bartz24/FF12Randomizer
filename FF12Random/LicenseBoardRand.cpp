@@ -45,17 +45,6 @@ void LicenseBoardRand::load()
 string LicenseBoardRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "License Board Randomization Options:" << endl;
-		cout << "\t a: Require all accessory licenses (may not contain accessories) to appear" << endl;
-		cout << "\t b: Randomize layout of the board" << endl;
-		cout << "\t e: Require all esper licenses to appear" << endl;
-		cout << "\t g: Require all 10 gambit licenses to appear" << endl;
-		cout << "\t l: Randomize licenses used on the board" << endl;
-		cout << "\t s: Generate a board that generally goes from low LP around Essentials to high LP" << endl;
-		flags = Helpers::readFlags("abegls");
-	}
 	for (int i = 0; i < 12; i++)
 	{
 		vector<unsigned short> licensesToUse = getLicenses(boards[i]);

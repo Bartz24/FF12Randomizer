@@ -15,7 +15,7 @@ ActionData::ActionData(char data[60])
 	int index = 0;
 	for (int i = 0; i < 60; i++)
 	{
-		if (i == 0x06 || i == 0x08 || i == 0x09 || i == 0x0A || i == 0x0C || i >= 0x10 && i <= 0x14 || i >= 0x18 && i <= 0x1B || i == 0x24 || i == 0x25 || i == 0x2C || i == 0x2D)
+		if (i == 0x06 || i == 0x08 || i == 0x09 || i == 0x0A || i == 0x0C || i >= 0x10 && i <= 0x14 || i >= 0x18 && i <= 0x1B || i == 0x24 || i == 0x25 || i == 0x2C || i == 0x2D || i == 0x36)
 			continue;
 		this->unknown[index] = data[i];
 		index++;
@@ -38,6 +38,7 @@ ActionData::ActionData(char data[60])
 	this->animation = *reinterpret_cast<unsigned short*>(animation);
 	char type[] = { data[0x2C] , data[0x2D] };
 	this->mType = *reinterpret_cast<unsigned short*>(type);
+	this->specialType = data[0x36];
 }
 
 ActionData::ActionData()

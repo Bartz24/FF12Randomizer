@@ -13,9 +13,6 @@ public:
 	static string mainPS2DataFolder;
 	Helpers();
 	~Helpers();
-	static std::string loadFile();
 	static bool fileExists(std::string fileName);
-	static bool getYesNo(string question);
-	static string readFlags(string possibleFlags);
 };
 

@@ -27,5 +27,6 @@ public:
 	int element;
 	int mType2;
 	int animation;
+	int specialType;
 };
 

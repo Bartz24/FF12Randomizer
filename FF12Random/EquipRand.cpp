@@ -158,17 +158,6 @@ void EquipRand::save()
 string EquipRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Equip Data Randomization Options (NOTE: AFFECTS SPECIAL ENEMY ATTACKS):" << endl;
-		cout << "\t a: Randomize armor/accessory effects" << endl;
-		cout << "\t c: Randomize gil cost (200-64000, more common around 4000 G)" << endl;
-		cout << "\t e: Randomize equipment elements" << endl;
-		cout << "\t f: Randomize equipment status effects" << endl;
-		cout << "\t s: Randomize gil costs in a smart way. Costs are based on how powerful they are. (Applies to c flag)" << endl;
-		cout << "\t t: Randomize weapon charge time" << endl;
-		flags = Helpers::readFlags("acefst");
-	}
 	if (flags.find('a') != string::npos)
 	{
 		randArmorEffects();

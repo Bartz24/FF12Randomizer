@@ -172,13 +172,6 @@ string ShopRand::process(string preset)
 {
 	string flags = preset;
 	string aFlags = "!", aFlagsOut = ".";
-	if (preset == "!")
-	{
-		cout << "Shop Data Randomization Options:" << endl;
-		cout << "\t a: Randomize all the items in all the shops (No items worth more than 40000 G)" << endl;
-		cout << "\t b: Randomize all the bazaar recipes (Prioritize items worth more than 40000 G)" << endl;
-		flags = Helpers::readFlags("ab");
-	}
 	if (flags.find("a-") != string::npos)
 	{
 		string second = flags.substr(flags.find("a-") + 2, flags.length() - flags.find("a-") - 1);
@@ -207,14 +200,6 @@ string ShopRand::process(string preset)
 string ShopRand::randShops(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Shop Special Data Randomization Options:" << endl;
-		cout << "\t e: No dark energy in shops" << endl;
-		cout << "\t m: No meme bow (seitengrat) in shops" << endl;
-		cout << "\t w: No wyrmhero blade in shops" << endl;
-		flags = Helpers::readFlags("emw");
-	}
 	vector<int> data = vector<int>();
 	for (int i = 0; i < 5; i++)
 	{

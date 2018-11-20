@@ -171,15 +171,6 @@ void ItemRand::save()
 string ItemRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Item Data Randomization Options:" << endl;
-		cout << "\t g: Randomize gil cost of gambits (20-64000, more common around 100 G)" << endl;
-		cout << "\t i: Randomize gil cost of items (10-64000, more common around 2500 G)" << endl;
-		cout << "\t l: Randomize gil cost of loot (2-60000, more common around 500 G)" << endl;
-		cout << "\t s: Randomize gil costs in a smart way. Costs are based on how powerful they are. (Applies to i flag)" << endl;
-		flags = Helpers::readFlags("gils");
-	}
 	if (flags.find('g') != string::npos)
 	{
 		randCostGambit();
@@ -249,6 +240,6 @@ void ItemRand::randCostGambit()
 	for (int i = 0; i < 256; i++)
 	{
 		float ran = float(rand() % 10000) / 100.f;
-		gambitData[i].cost = unsigned short(87500.f / (1.f + exp(0.16f*ran - 1.f)) + 20);
+		gambitData[i].cost = unsigned short(87500.f / (1.f + exp(1.26f*ran - 1.f)) + 10 + ran);
 	}
 }

@@ -22,7 +22,8 @@ public:
 	void save();
 	string process(string preset);
 	void randTreasures();
-	int getItem(std::vector<int> &data, int minCost, int maxCost, int &cost);
+	int getItem(std::vector<int> &data, int minCost, int maxCost, bool remove);
+	int getCost(int itemID);
 	void addRangeToVector(vector<int> &data, int low, int high);
 };
 

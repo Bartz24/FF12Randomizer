@@ -163,12 +163,6 @@ void TreasureRand::save()
 string TreasureRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Treasure Data Randomization Options:" << endl;
-		cout << "\t t: Randomize all the treasures (spawn chance, gil, and items. Items of higher value can be found with the diamond armlet effect.)" << endl;
-		flags = Helpers::readFlags("t");
-	}
 	if (flags.find('t') != string::npos)
 	{
 		randTreasures();
@@ -185,32 +179,82 @@ string TreasureRand::process(string preset)
 
 void TreasureRand::randTreasures()
 {
+	bool filledTreasure = true;
 	vector<int> data = vector<int>();
-	addRangeToVector(data, 0, 28);
-	addRangeToVector(data, 42, 63);
-	addRangeToVector(data, 8192, 8192);
-	addRangeToVector(data, 8224, 8437);
-	addRangeToVector(data, 8448, 8461);
-	addRangeToVector(data, 8468, 8471);
-	addRangeToVector(data, 12288, 12368);
-	addRangeToVector(data, 16384, 16407);
-	addRangeToVector(data, 24576, 24831);
-	addRangeToVector(data, 4097, 4255);
-	addRangeToVector(data, 4258, 4259);
-	addRangeToVector(data, 4264, 4264);
-	addRangeToVector(data, 4266, 4274);
-	addRangeToVector(data, 4288, 4483);
 
 	for (int i = 0; i < 279; i++)
 	{
 		for (int t = 0; t < mapData[i].count; t++)
-		{			
-			int gilA, gilB;
-			mapData[i].treasure[t].common1 = getItem(data, 0, 12000, gilA);
-			mapData[i].treasure[t].common2 = getItem(data, 500, 15000, gilB);
+		{
+			mapData[i].treasure[t].common1 = 0xFFFF;
+			mapData[i].treasure[t].common2 = 0xFFFF;
+			mapData[i].treasure[t].rare1 = 0xFFFF;
+			mapData[i].treasure[t].rare2 = 0xFFFF;
+		}
+	}
+	bool emptied = false;
+	while (filledTreasure)
+	{
+		filledTreasure = false;
+		if (!emptied && data.size() == 0)
+		{
+			addRangeToVector(data, 0, 28);
+			addRangeToVector(data, 42, 63);
+			addRangeToVector(data, 8192, 8192);
+			addRangeToVector(data, 8224, 8437);
+			addRangeToVector(data, 8448, 8461);
+			addRangeToVector(data, 8468, 8471);
+			addRangeToVector(data, 12288, 12368);
+			addRangeToVector(data, 16384, 16407);
+			addRangeToVector(data, 24576, 24831);
+			addRangeToVector(data, 4097, 4255);
+			addRangeToVector(data, 4258, 4259);
+			addRangeToVector(data, 4264, 4264);
+			addRangeToVector(data, 4266, 4274);
+			addRangeToVector(data, 4288, 4483);
+			emptied = true;
+		}
+
+		for (int i = 0; i < 279; i++)
+		{
+			for (int t = 0; t < mapData[i].count; t++)
+			{
+				if (mapData[i].treasure[t].common1 == 0xFFFF)
+				{
+					if (rand() % 100 < 20 && data.size() > 0)
+						mapData[i].treasure[t].common1 = getItem(data, 0, 12000, !emptied);
+					filledTreasure = true;
+				}
+				if (mapData[i].treasure[t].common2 == 0xFFFF)
+				{
+					if (rand() % 100 < 20 && data.size() > 0)
+						mapData[i].treasure[t].common2 = getItem(data, 500, 15000, !emptied);
+					filledTreasure = true;
+				}
+				if (mapData[i].treasure[t].rare1 == 0xFFFF)
+				{
+					if (rand() % 100 < 20 && data.size() > 0)
+						mapData[i].treasure[t].rare1 = getItem(data, 10000, 32000, !emptied);
+					filledTreasure = true;
+				}
+				if (mapData[i].treasure[t].rare2 == 0xFFFF)
+				{
+					if (rand() % 100 < 20 && data.size() > 0)
+						mapData[i].treasure[t].rare2 = getItem(data, 30000, 700000, !emptied);
+					filledTreasure = true;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < 279; i++)
+	{
+		for (int t = 0; t < mapData[i].count; t++)
+		{
+			int gilA = getCost(mapData[i].treasure[t].common1), gilB = getCost(mapData[i].treasure[t].common2);
 			mapData[i].treasure[t].gil1 = (gilA + gilB) / 2 / 100;
-			mapData[i].treasure[t].rare1 = getItem(data, 10000, 32000, gilA);
-			mapData[i].treasure[t].rare2 = getItem(data, 30000, 70000, gilB);
+			gilA = getCost(mapData[i].treasure[t].rare1);
+			gilB = getCost(mapData[i].treasure[t].rare2);
 			mapData[i].treasure[t].gil2 = (gilA * 9 + gilB) / 10 / 10;
 			mapData[i].treasure[t].spawnChance = (4000 - (mapData[i].treasure[t].gil1 + mapData[i].treasure[t].gil2)) * 100 / 4000;
 			mapData[i].treasure[t].gilChance = rand() % 90 + 5;
@@ -219,30 +263,40 @@ void TreasureRand::randTreasures()
 	}
 }
 
-int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, int &cost)
+int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, bool remove)
 {
 	int itemID;
-	cost = 99999;
+	int cost = 99999;
+	int index;
+	int tries = 0;
 	do
 	{
-		itemID = data[rand() % data.size()];
-		if (itemID < 64)
-			cost = ItemRand::itemData[itemID].cost;
-		else if (itemID < 4600)
-			cost = EquipRand::equipData[itemID - 4096].cost;
-		else if (itemID < 9000)
-		{
-			cost = ItemRand::lootData[itemID - 8192].cost * 1000; //Make loot rarer in Treasures
-		}
-		else if (itemID < 13000)
-			cost = MagicRand::magicData[itemID - 12288].cost;
-		else if (itemID < 17000)
-			cost = MagicRand::magicData[itemID - 16384 + 81].cost;
-		else
-			cost = ItemRand::gambitData[itemID - 24576].cost;
-
-	} while (cost < minCost || cost > maxCost || rand() % 256 < int(sqrt(cost)));
+		index = rand() % data.size();
+		itemID = data[index];
+		cost = getCost(itemID);		
+		tries++;
+	} while (tries < 100 && (cost < minCost || cost > maxCost || rand() % 256 < int(sqrt(cost))));
+	if (remove)
+		data.erase(data.begin() + index);
 	return itemID;
+}
+
+int TreasureRand::getCost(int itemID)
+{
+	if (itemID < 64)
+		return ItemRand::itemData[itemID].cost;
+	else if (itemID < 4600)
+		return EquipRand::equipData[itemID - 4096].cost;
+	else if (itemID < 9000)
+	{
+		return ItemRand::lootData[itemID - 8192].cost;
+	}
+	else if (itemID < 13000)
+		return MagicRand::magicData[itemID - 12288].cost;
+	else if (itemID < 17000)
+		return MagicRand::magicData[itemID - 16384 + 81].cost;
+	else
+		return ItemRand::gambitData[itemID - 24576].cost;
 }
 
 void TreasureRand::addRangeToVector(vector<int>& data, int low, int high)

@@ -44,16 +44,6 @@ string LicenseRand::process(string preset)
 {
 	string flags = preset;
 	string eFlags = "!", eFlagsOut = ".", mFlags = "!", mFlagsOut = ".";
-	if (preset == "!")
-	{
-		cout << "License Data Randomization Options:" << endl;
-		cout << "\t a: Randomize augments (DOES NOT CHANGE AUGMENT VALUES. What this does is include brand new augments to be thrown into the mix)" << endl;
-		cout << "\t b: Add the new annoying augments (Applies to a)" << endl;
-		cout << "\t c: Randomize LP Cost (0-255)" << endl;
-		cout << "\t e: Randomize weapons/armor/accessories" << endl;
-		cout << "\t m: Randomize magick/technicks" << endl;
-		flags = Helpers::readFlags("abcem");
-	}
 	if (flags.find("e-") != string::npos)
 	{
 		string second = flags.substr(flags.find("e-") + 2, flags.length() - flags.find("e-") - 1);
@@ -70,10 +60,6 @@ string LicenseRand::process(string preset)
 	{
 		randAugments(flags.find('b') != string::npos);
 	}
-	if (flags.find('c') != string::npos)
-	{
-		randCost();
-	}
 	if (flags.find('e') != string::npos)
 	{
 		eFlagsOut = randEquipment(eFlags);
@@ -84,6 +70,13 @@ string LicenseRand::process(string preset)
 		mFlagsOut = randAbilities(mFlags);
 		flags = flags.substr(0, flags.find('m')+1) + "-" + mFlagsOut + "-" + flags.substr(flags.find('m') + 1, flags.length() - flags.find('m'));
 	}
+	if (flags.find('c') != string::npos)
+	{
+		if (flags.find('s') != string::npos)
+			randCostSmart();
+		else
+			randCost();
+	}
 	return flags;
 }
 
@@ -92,6 +85,181 @@ void LicenseRand::randCost()
 	for (int i = 0; i < 361; i++)
 	{
 		licenseData[i].lpCost = rand() % 256;
+	}
+}
+
+void LicenseRand::randCostSmart()
+{
+	for (int i = 0; i < 361; i++)
+	{
+		//Equip & Magic
+		if (i >= 32 && i <= 218 || i >= 276 && i <= 299 || i >= 329 && i <= 359)
+		{
+			int cost = 0;
+			for (int item = 0; item < 8; item++)
+			{
+				int itemID = licenseData[i].otherData[item];
+				if (itemID == 0xFFFF)
+					continue;
+				if (itemID < 64)
+					cost = ItemRand::itemData[itemID].cost;
+				else if (itemID < 4600)
+					cost = EquipRand::equipData[itemID - 4096].cost;
+				else if (itemID < 9000)
+					cost = ItemRand::lootData[itemID - 8192].cost;
+				else if (itemID < 13000)
+					cost = MagicRand::magicData[itemID - 12288].cost;
+				else if (itemID < 17000)
+					cost = MagicRand::magicData[itemID - 16384 + 81].cost;
+				else
+					cost = ItemRand::gambitData[itemID - 24576].cost;
+			}
+			float lpCost = sqrt(float(cost)) / 1.4f;
+			lpCost += rand() % 30 - 15;
+			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
+		}
+		else if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
+		{
+			int augmentID = licenseData[i].otherData[0];
+			float lpCost = augmentWorth(augmentID);
+			lpCost += rand() % 30 - 15;
+			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
+		}
+		else
+		{
+			if (rand() % 100 < 77)
+				licenseData[i].lpCost = rand() % 128;
+			else
+				licenseData[i].lpCost = rand() % 256;
+		}
+	}
+}
+
+int LicenseRand::augmentWorth(int index)
+{
+	AugmentData data = AugmentRand::augmentData[index];
+
+	switch (index)
+	{
+	case 12: //Gillionaire
+	case 15: //Item Reverse
+	case 29: //No EXP
+	case 31: //Ignore Reflect
+	case 32: //Gil Cost
+	case 39: //Magick Deprived
+	case 50: //Double Edged
+	case 116: //Remedy Lore 1
+		return 20;
+	case 3: //Tactician
+	case 4: //Alert
+	case 20: //Warmage
+	case 21: //Martyr
+	case 23: //Headsman
+	case 30: //Spellbound
+	case 37: //Ignore Traps
+	case 86: //Inquisitor
+	case 117: //Remedy Lore 2
+		return 30;
+	case 8: //Spellbreaker
+	case 9: //Brawler
+	case 10: //Adreneline
+	case 40: //Impenetrable Defense
+		return 65;
+	case 0: //No Knockback
+	case 5: //Last Stand
+	case 6: //Counter
+	case 11: //Focus
+	case 14: //Pharmacology
+	case 16: //Ignore Environment
+	case 58: //Return Damage
+	case 103: //Serenity
+	case 118: //Remedy Lore 3
+		return 70;
+	case 2: //Ignore Evasion
+	case 7: //Counter Plus
+	case 17: //Master Thief
+	case 18: //Piercing Magick
+	case 25: //Treasure Hunter
+	case 48: //Strong Defense
+	case 49: //Heavy Hitter
+		return 130;
+	case 13: //Trigger Happy
+	case 36: //Half MP Cost
+		return 190;
+	case 1: //Safety
+	case 27: //Double EXP
+	case 28: //Double LP
+	case 51: //Mana Spring
+	case 53: //Quick Hit
+	case 54: //Quick Cast
+		return 220;
+	case 19: //Magick Lore
+	case 22: //Magick Lore
+	case 24: //Magick Lore
+	case 26: //Magick Lore
+	case 35: //Battle Lore
+	case 42: //Battle Lore
+	case 43: //Battle Lore
+	case 44: //Battle Lore
+	case 45: //Battle Lore
+	case 46: //Battle Lore
+	case 47: //Battle Lore
+	case 60: //Battle Lore
+	case 61: //Battle Lore
+	case 62: //Battle Lore
+	case 63: //Battle Lore
+	case 64: //Battle Lore
+	case 65: //Battle Lore
+	case 66: //Battle Lore
+	case 67: //Battle Lore
+	case 68: //Battle Lore
+	case 69: //Magick Lore
+	case 70: //Magick Lore
+	case 71: //Magick Lore
+	case 72: //Magick Lore
+	case 73: //Magick Lore
+	case 87: //Magick Lore
+	case 97: //Magick Lore
+	case 98: //Magick Lore
+	case 99: //Magick Lore
+	case 100: //Magick Lore
+	case 101: //Magick Lore
+	case 102: //Magick Lore
+		return int(14.5f * pow(2.1f, data.value));
+	case 74: //HP Lore
+	case 75: //HP Lore
+	case 76: //HP Lore
+	case 77: //HP Lore
+	case 78: //HP Lore
+	case 79: //HP Lore
+	case 80: //HP Lore
+	case 81: //HP Lore
+	case 82: //HP Lore
+	case 83: //HP Lore
+	case 84: //HP Lore
+	case 85: //HP Lore
+		return int(sqrt(60.f*data.value));
+	case 88: //Shield Block
+	case 89: //Shield Block
+	case 90: //Shield Block
+	case 91: //Channeling
+	case 92: //Channeling
+	case 93: //Channeling
+	case 94: //Swiftness
+	case 95: //Swiftness
+	case 96: //Swiftness
+	case 119: //Potion Lore
+	case 120: //Potion Lore
+	case 121: //Potion Lore
+	case 122: //Ether Lore
+	case 123: //Ether Lore
+	case 124: //Ether Lore
+	case 125: //Phoenix Lore
+	case 126: //Phoenix Lore
+	case 127: //Phoenix Lore
+		return int(12.5f * pow(1.1f, data.value));
+	default:
+		return 50;
 	}
 }
 
@@ -144,13 +312,6 @@ void LicenseRand::randCost()
 string LicenseRand::randEquipment(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Equipment Randomization Options:" << endl;
-		cout << "\t a: Randomize all equipment together (Don't use this if you want to only randomize in the same equipment type)" << endl;
-		cout << "\t n: Randomize the number of equipment each license has (Don't use this if you want the same number on each)" << endl;
-		flags = Helpers::readFlags("an");
-	}
 	if (flags.find('a') != string::npos)
 	{
 		if (flags.find('n') != string::npos)
@@ -589,13 +750,6 @@ void LicenseRand::addRangeToVector(vector<int>& data, int low, int high)
 string LicenseRand::randAbilities(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Magick/Technick Randomization Options:" << endl;
-		cout << "\t a: Randomize all magick/technicks together (Don't use this if you want to only randomize in the magic type)" << endl;
-		cout << "\t n: Randomize the number of abilities each license has (Don't use this if you want the same number on each)" << endl;
-		flags = Helpers::readFlags("an");
-	}
 	if (flags.find('a') != string::npos)
 	{
 		if (flags.find('n') != string::npos)

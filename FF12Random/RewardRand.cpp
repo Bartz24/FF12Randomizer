@@ -83,12 +83,6 @@ void RewardRand::save()
 string RewardRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Reward Data Randomization Options:" << endl;
-		cout << "\t r: Randomize Rewards for hunts and story/side events" << endl;
-		flags = Helpers::readFlags("r");
-	}
 	if (flags.find('r') != string::npos)
 	{
 		randValue();

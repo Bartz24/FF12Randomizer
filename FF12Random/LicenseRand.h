@@ -4,6 +4,11 @@
 #include <algorithm>
 #include "Helpers.h"
 #include "LicenseData.h"
+#include "ItemRand.h"
+#include "EquipRand.h"
+#include "MagicRand.h"
+#include "AugmentRand.h"
+
 
 class LicenseRand
 {
@@ -18,6 +23,8 @@ public:
 	void save();
 	string process(string preset);
 	void randCost();
+	void randCostSmart();
+	int augmentWorth(int index);
 	string randAbilities(string preset);
 	string randEquipment(string preset);
 	void randAugments(bool includeBad);

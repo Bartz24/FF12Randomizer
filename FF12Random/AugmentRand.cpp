@@ -77,12 +77,6 @@ void AugmentRand::save()
 string AugmentRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Augment Data Randomization Options (NOTE: AFFECTS SPECIAL ENEMY ATTACKS):" << endl;
-		cout << "\t v: Randomize augment values for lores, channelling etc" << endl;
-		flags = Helpers::readFlags("v");
-	}
 	if (flags.find('v') != string::npos)
 	{
 		randValue();

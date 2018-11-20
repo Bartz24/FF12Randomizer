@@ -110,13 +110,6 @@ void CharRand::save()
 string CharRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Char Data Options:" << endl;
-		cout << "\t i: Update initial equipment/items/gambits/abilities" << endl;
-		cout << "\t s: Randomize character stats" << endl;
-		flags = Helpers::readFlags("is");
-	}
 	if (flags.find('i') != string::npos)
 	{
 		initialEquip();

@@ -27,6 +27,7 @@ public:
 	unsigned char status4; // 1B
 	unsigned short animation; //24-25
 	unsigned short mType; // 2C-2D
+	unsigned char specialType; // 36
 	ActionData();
 	ActionData(char data[60]);
 	~ActionData();

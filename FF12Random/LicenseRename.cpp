@@ -238,7 +238,7 @@ string LicenseRename::getGroup(int a)
 
 void LicenseRename::process()
 {
-	for (int i = 32; i < 361; i++)
+	for (int i = 32; i < 360; i++)
 	{
 		if (i >= 300 && i <= 328 || i >= 219 && i <= 275)
 		{
@@ -313,7 +313,7 @@ void LicenseRename::process()
 			licenseOrder.push_back(i);
 	}
 
-	for (int i = 0; i < 361; i++)
+	for (int i = 0; i < 360; i++)
 	{
 		map<string, int>::iterator it = nameCount.find(data[licenseOrder[i]]);
 		if (it != nameCount.end() && nameCount[data[licenseOrder[i]]] > 1)
@@ -333,7 +333,7 @@ void LicenseRename::process()
 			data[licenseOrder[i]] = data[licenseOrder[i]] + " " + suffix[licenseOrder[i]];
 		data[licenseOrder[i]] = data[licenseOrder[i]] + " (" + to_string(LicenseRand::licenseData[licenseOrder[i]].lpCost) + " LP)";
 	}
-	for (int i = 18; i < 361; i++)
+	for (int i = 18; i < 360; i++)
 	{
 		vector<string> boardsWithLicense = vector<string>();
 

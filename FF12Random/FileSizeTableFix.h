@@ -47,7 +47,7 @@ private:
 public:
 	FileSizeTableFix();
 	~FileSizeTableFix();
-	void load();
+	void load(string path);
 	void save();
 	void process();
 	void overwriteSize(FileSizeTableOffset position, unsigned long value);

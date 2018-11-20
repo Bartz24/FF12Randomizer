@@ -108,6 +108,7 @@ void MagicRand::load()
 			rData.element = stoi(data[16]);
 			rData.mType2 = stoi(data[17]);
 			rData.animation = stoi(data[18]);
+			rData.specialType = stoi(data[19]);
 			spells.push_back(rData);
 		}
 		myfile.close();
@@ -184,7 +185,7 @@ void MagicRand::save()
 		int index = 0;
 		for (int i2 = 0; i2 < 60; i2++)
 		{
-			if (i2 == 0x06 || i2 == 0x08 || i2 == 0x09 || i2 == 0x0A || i2 == 0x0C || i2 >= 0x10 && i2 <= 0x14 || i2 >= 0x18 && i2 <= 0x1B || i2 == 0x24 || i2 == 0x25 || i2 == 0x2C || i2 == 0x2D)
+			if (i2 == 0x06 || i2 == 0x08 || i2 == 0x09 || i2 == 0x0A || i2 == 0x0C || i2 >= 0x10 && i2 <= 0x14 || i2 >= 0x18 && i2 <= 0x1B || i2 == 0x24 || i2 == 0x25 || i2 == 0x2C || i2 == 0x2D || i2 == 0x36)
 				continue;
 			buffer3[i * 60 + i2] = d.unknown[index];
 			index++;
@@ -207,6 +208,7 @@ void MagicRand::save()
 		buffer3[i * 60 + 0x25] = U{ d.animation }.c[1];
 		buffer3[i * 60 + 0x2C] = U{ d.mType }.c[0];
 		buffer3[i * 60 + 0x2D] = U{ d.mType }.c[1];
+		buffer3[i * 60 + 0x36] = d.specialType;
 	}
 
 	file.write(buffer3, size);
@@ -219,18 +221,6 @@ void MagicRand::save()
 string MagicRand::process(string preset)
 {
 	string flags = preset;
-	if (preset == "!")
-	{
-		cout << "Magic Data Randomization Options:" << endl;
-		cout << "\t a: Randomize AoE range (80%-no range, 20% 2-20, where 10 is normal for AoE abilities)" << endl;
-		cout << "\t c: Randomize gil cost (20-62000, more common around 9000 G)" << endl;
-		cout << "\t e: Randomize status effects on enemy attacks" << endl;
-		cout << "\t m: Randomize MP cost (1-99, only affects abilites that had a MP cost)" << endl;
-		cout << "\t s: Randomize gil costs in a smart way. Costs are based on how powerful they are. (Applies to c flag)" << endl;
-		cout << "\t t: Randomize charge time (only affects abilities that had a charge time)" << endl;
-		cout << "\t u: Randomize usable magick (Changes what spells are in the game by randomizing with new spells)" << endl;
-		flags = Helpers::readFlags("acemstu");
-	}
 	if (flags.find('u') != string::npos)
 	{
 		randSpells();
@@ -583,6 +573,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
 			actionData[rep].animation = newSpells[newID].animation;
 		else
 			actionData[rep].animation = 179;
+		actionData[rep].specialType = newSpells[newID].specialType;
 
 	}
 }
