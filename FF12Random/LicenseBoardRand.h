@@ -23,6 +23,6 @@ public:
 	void assignLicenses(LicenseBoardData &board, vector<unsigned short> data, bool* layout);
 	void assignLoHiLicenses(LicenseBoardData &board, vector<unsigned short> data, bool* layout);
 	void sortLicenses(vector<unsigned short> &data);
-	bool pathToBelias(LicenseBoardData &board);
+	bool pathToLicense(LicenseBoardData &board, int id);
 };
 

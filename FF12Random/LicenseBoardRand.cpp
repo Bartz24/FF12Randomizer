@@ -69,7 +69,7 @@ string LicenseBoardRand::process(string preset)
 				assignLoHiLicenses(boards[i], licensesToUse, *layout);
 			else
 				assignLicenses(boards[i], licensesToUse, *layout);
-		} while (!pathToBelias(boards[i]));
+		} while (!pathToLicense(boards[i], 18) || !pathToLicense(boards[i], 360));
 	}
 	return flags;
 }
@@ -354,7 +354,7 @@ void LicenseBoardRand::sortLicenses(vector<unsigned short>& data)
 	}
 }
 
-bool LicenseBoardRand::pathToBelias(LicenseBoardData & board)
+bool LicenseBoardRand::pathToLicense(LicenseBoardData & board, int id)
 {
 	int pathBoard[24][24];
 	int xBelias, yBelias;
@@ -364,7 +364,7 @@ bool LicenseBoardRand::pathToBelias(LicenseBoardData & board)
 		for (int y = 0; y < 24; y++)
 		{
 			unsigned short type = board.board[y][x];
-			if (type == 0xFFFF || (type <= 0x001E && type != 0x0012) || type == 0x0168)
+			if (type == 0xFFFF || (type <= 0x001E && type != id) || (id != 0x0168 && type == 0x0168))
 				pathBoard[y][x] = -1;
 			else if (type == 0x001F)
 			{
@@ -373,7 +373,7 @@ bool LicenseBoardRand::pathToBelias(LicenseBoardData & board)
 			}
 			else
 				pathBoard[y][x] = 0;
-			if (type == 0x0012)
+			if (type == id)
 			{
 				xBelias = x;
 				yBelias = y;
