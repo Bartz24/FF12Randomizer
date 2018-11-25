@@ -534,14 +534,12 @@ void CharRand::swapCharas()
 
 		charData[CharacterID::baschGuest2] = charData[CharacterID::basch];
 	}
-	int gids[] = { int(CharacterID::reks),int(CharacterID::larsa), int(CharacterID::vossler1),int(CharacterID::reddas) };
+	int gids[] = { int(CharacterID::reks), int(CharacterID::vossler1), int(CharacterID::larsa), int(CharacterID::reddas) };
 	shuffle(begin(gids), end(gids), Helpers::rng);
 
 	vector<CharData> gdata = vector<CharData>();
 	for (int i = 6; i < 17; i++)
 	{
-		if (i >= 7 && i < 11 || i == 12 || i == 14 || i == 15)
-			continue;
 		gdata.push_back(charData[i]);
 	}
 	int index = 0;
@@ -549,14 +547,14 @@ void CharRand::swapCharas()
 	{
 		if (i >= 7 && i < 11 || i == 12 || i == 14 || i == 15)
 			continue;
-		charData[gids[index]] = gdata[index];
-		charData[gids[index]].gambits = 0x48;
+		charData[i] = gdata[gids[index]-6];
+		charData[i].gambits = 0x48;
 		index++;
 	}
-	if (gids[1] != CharacterID::larsa)
+	if (gids[2] != CharacterID::larsa)
 		charData[10] = charData[13];
 
-	if (gids[2] != CharacterID::vossler1)
+	if (gids[1] != CharacterID::vossler1)
 		charData[12] = charData[11];
 
 	charData[6].gambits = 0x00;
@@ -564,12 +562,12 @@ void CharRand::swapCharas()
 	names[6] = gids[0];
 
 	if (gids[1] != CharacterID::larsa)
-		names[7] = gids[1];
+		names[7] = gids[2];
 	else
 		names[7] = CharacterID::lamont;
 
-	names[8] = gids[1];
-	names[9] = gids[2];
+	names[8] = gids[2];
+	names[9] = gids[1];
 	names[10] = gids[3];
 }
 
