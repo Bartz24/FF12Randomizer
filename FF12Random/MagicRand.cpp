@@ -281,7 +281,6 @@ string MagicRand::process(string preset)
 	}
 	if (flags.find('r') != string::npos)
 	{
-		cout << "HERE" << endl;
 		randTraps();
 	}
 	return flags;
@@ -291,7 +290,7 @@ void MagicRand::randCost()
 {
 	for (int i = 0; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(350000.f / (1.f + exp(0.04f*float(rand() % 10000) / 100.f + 1.5f)) - 1400.f);
+		magicData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 9000, 4000));
 	}
 }
 
@@ -313,14 +312,14 @@ void MagicRand::randCostSmart()
 		if (status.getNumStatuses() > 0)
 			baseCost *= pow(1.55f, status.getNumStatuses() + 3);
 
-		float ran = float(rand() % 24000) / 24000.f + .60f;
+		float ran = float(Helpers::randInt(0, 24000)) / 24000.f + .60f;
 		baseCost *= ran;
 		baseCost = max(100.f, min(baseCost, 65535.f));
 		magicData[i].cost = unsigned short(baseCost);
 	}
 	for (int i = 81; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(rand() % 19000 + 200);
+		magicData[i].cost = unsigned short(Helpers::randInt(200, 20000));
 	}
 }
 
@@ -329,7 +328,7 @@ void MagicRand::randMPCost()
 	for (int i = 0; i < 497; i++)
 	{
 		if (actionData[i].cost > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].cost = rand() % 99 + 1;
+			actionData[i].cost = Helpers::randInt(1, 99);
 	}
 }
 
@@ -338,7 +337,7 @@ void MagicRand::randCT()
 	for (int i = 0; i < 497; i++)
 	{
 		if (actionData[i].ct > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].ct = unsigned char(45.f / (1.f + exp(0.02f*float(rand() % 10000) / 100.f - 0.5f)));
+			actionData[i].ct = unsigned char(Helpers::randIntNorm(2, 40, 20, 6));
 	}
 }
 
@@ -351,10 +350,10 @@ void MagicRand::randAoE()
 		if (didRandSpells && i < 81)
 		{
 			if (actionData[i].aoeRange == 255)
-				actionData[i].aoeRange = rand() % 100 < 80 ? 0 : (rand() % 19 + 2);
+				actionData[i].aoeRange = Helpers::randInt(0, 99) < 80 ? 0 : Helpers::randInt(1, 20);
 		}
 		else if (!(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].aoeRange = rand() % 100 < 80 ? 0 : (rand() % 19 + 2);
+			actionData[i].aoeRange = Helpers::randInt(0, 99) < 80 ? 0 : Helpers::randInt(1, 20);
 	}
 }
 
@@ -370,7 +369,7 @@ void MagicRand::randStatus()
 		StatusValue status{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
 		if (status.getNumStatuses() > 0)
 		{
-			actionData[i].hitChance = rand() % 96 + 5;
+			actionData[i].hitChance = Helpers::randInt(5, 90);
 			if (status.hasStatus(int(Status1::Death), 1))
 				actionData[i].hitChance = (actionData[i].hitChance / 10) + 1;
 		}
@@ -383,7 +382,7 @@ void MagicRand::randStatus()
 void MagicRand::setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance)
 {
 	StatusValue status = StatusValue(num1, num2, num3, num4);
-	while (rand() % 100 < chance)
+	while (Helpers::randInt(0, 99) < chance)
 	{
 		status.addRandomStatus();
 	}
@@ -574,7 +573,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
 		do
 		{
 			index = 0;
-			int chance = rand() % (weights[weights.size() - 1]);
+			int chance = Helpers::randInt(0, weights[weights.size() - 1]);
 			for (; chance > weights[index]; index++) {}
 		} while (find(newIDs.begin(), newIDs.end(), index) != newIDs.end());
 		newIDs.push_back(index);
@@ -593,7 +592,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
 		actionData[rep].accuracy = newSpells[newID].accuracy;
 		actionData[rep].aoeRange = newSpells[newID].aoe;
 		if (actionData[rep].aoeRange == 255)
-			actionData[rep].aoeRange = (rand() % 100 < 80) ? 0 : 10;
+			actionData[rep].aoeRange = (Helpers::randInt(0, 99) < 80) ? 0 : 10;
 		actionData[rep].hitChance = newSpells[newID].onHit;
 		actionData[rep].target = newSpells[newID].target;
 		actionData[rep].type = newSpells[newID].effect;
@@ -617,7 +616,7 @@ void MagicRand::randTraps()
 {
 	for (int i = 246; i < 262; i++)
 	{
-		int index = rand() % traps.size();
+		int index = Helpers::randInt(0, traps.size() - 1);
 		trapNames[i - 246] = traps[index].name;
 		actionData[i].power = traps[index].power;
 		actionData[i].aoeRange = traps[index].aoe;

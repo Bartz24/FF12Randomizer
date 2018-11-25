@@ -14,6 +14,7 @@
 #include "BazaarRename.h"
 #include "AugmentRename.h"
 #include "ActionRename.h"
+#include "CharRename.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ public:
 	BazaarRename bRename;
 	AugmentRename aRename;
 	ActionRename actRename;
+	CharRename cRename;
 	static string abilityNames[545];
 	static string lootNames[280];
 	static string equipNames[420];

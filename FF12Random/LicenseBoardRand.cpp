@@ -162,7 +162,7 @@ void LicenseBoardRand::setRandLicenses(vector<unsigned short> &data, string flag
 	}
 	while (newData.size() < data.size())
 	{		
-		int index = rand() % possible.size();
+		int index = Helpers::randInt(0, possible.size() - 1);
 		newData.push_back( possible[index]);
 		possible.erase(possible.begin() + index);
 	}
@@ -190,7 +190,7 @@ void LicenseBoardRand::setRandLayout(bool(&layout)[24][24], int size)
 			layout[y][x] = false;
 		}
 	}
-	int x = rand() % 8 + 8, y = rand() % 8 + 8;
+	int x = Helpers::randInt(8, 16), y = Helpers::randInt(8, 16);
 	layout[y][x] = true;
 
 	for (int xOff = -1; xOff <= 1; xOff++)
@@ -207,7 +207,7 @@ void LicenseBoardRand::setRandLayout(bool(&layout)[24][24], int size)
 
 for (int count = 1; count < size; count++)
 {
-	int index = rand() % possibleCells.size();
+	int index = Helpers::randInt(0, possibleCells.size() - 1);
 	x = possibleCells[index] % 24, y = possibleCells[index] / 24;
 	layout[y][x] = true;
 	possibleCells.erase(possibleCells.begin() + index);
@@ -224,7 +224,7 @@ for (int count = 1; count < size; count++)
 				continue;
 			if (find(possibleCells.begin(), possibleCells.end(), (y + yOff) * 24 + (x + xOff)) == possibleCells.end())
 			{
-				if (added == 0 || rand() % 20 < 100)
+				if (added == 0 || Helpers::randInt(0, 99) < 100)
 				{
 					possibleCells.push_back((y + yOff) * 24 + (x + xOff));
 					added++;
@@ -243,7 +243,7 @@ void LicenseBoardRand::assignLicenses(LicenseBoardData &board, vector<unsigned s
 		{
 			if (layout[y * 24 + x])
 			{
-				int index = rand() % data.size();
+				int index = Helpers::randInt(0, data.size() - 1);
 				board.board[y][x] = data[index];
 				data.erase(data.begin() + index);
 			}
@@ -266,8 +266,8 @@ void LicenseBoardRand::assignLoHiLicenses(LicenseBoardData &board, vector<unsign
 	int xEssentials, yEssentials;
 	do
 	{
-		xEssentials = rand() % 24;
-		yEssentials = rand() % 24;
+		xEssentials = Helpers::randInt(0, 23);
+		yEssentials = Helpers::randInt(0, 23);
 	} while (!layout[yEssentials * 24 + xEssentials]);
 	for (int x = 0; x < 24; x++)
 	{

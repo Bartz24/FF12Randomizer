@@ -61,6 +61,10 @@ void ActionRename::load()
 		}
 		myfile.close();
 	}
+	for (int i = 0; i < 81; i++)
+	{
+		desc[i] = ".IGNORE";
+	}
 }
 
 void ActionRename::save()
@@ -113,6 +117,9 @@ void ActionRename::process()
 
 	for (int i = 0; i < 16; i++)
 	{
-		data[i + 246] = MagicRand::trapNames[i];
+		if (MagicRand::trapNames[i] == "")
+			data[i + 246] = ".IGNORE";
+		else
+			data[i + 246] = MagicRand::trapNames[i];
 	}
 }

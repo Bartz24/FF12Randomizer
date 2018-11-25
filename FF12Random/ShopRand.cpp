@@ -246,14 +246,14 @@ string ShopRand::randShops(string preset)
 		unsigned long gil = 0;
 		for (int c = 0; c < shopData[i].itemCount; c++)
 		{
-			gil += sqrt(float(rand() % 40000))*float(rand() % 150)*(1.f-shopData[i].itemCount * 0.0035) + rand() % 500 - 250;
+			gil += sqrt(float(Helpers::randInt(0, 40000)))*float(Helpers::randInt(1, 150))*(1.f-shopData[i].itemCount * 0.0035) + Helpers::randInt(-250, 250);
 		}
 		for (int item = 0; item < shopData[i].itemCount; item++)
 		{
 			int itemID, cost = 99999, attempts = 0, itemIDindex;
 			do
 			{
-				itemIDindex = rand() % data.size();
+				itemIDindex = Helpers::randInt(0, data.size()-1);
 				itemID = data[itemIDindex];
 				if (itemID < 64)
 					cost = ItemRand::itemData[itemID].cost;
@@ -271,11 +271,11 @@ string ShopRand::randShops(string preset)
 					cost = ItemRand::gambitData[itemID - 24576].cost;
 				attempts++;
 
-			} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil || cost >= 40000 || rand() % 255 < int(sqrt(cost))));
+			} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil || cost >= 40000 || Helpers::randInt(0, 254) < int(sqrt(cost))));
 			if (attempts >= 100)
 			{
 				do {
-					itemID = rand() % (24831 - 24576 + 1) + 24576;
+					itemID = Helpers::randInt(24576, 24830);
 				} while (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end());
 				gil = 0;
 				cost = 0;
@@ -316,7 +316,7 @@ void ShopRand::replaceBazaarRecipes()
 	addRangeToVector(lootData, 8192, 8192);
 	addRangeToVector(lootData, 8224, 8437);
 	addRangeToVector(lootData, 8448, 8461);
-	addRangeToVector(lootData, 8466, 8471);
+	addRangeToVector(lootData, 8468, 8471);
 
 	for (int i = data.size() - 1; i >= 0; i--)
 	{
@@ -349,7 +349,7 @@ void ShopRand::replaceBazaarRecipes()
 		}
 		else
 		{
-			bazaarData[i].cost = unsigned int(300000 / (1.f + exp(0.05f*float(rand() % 10000) / 100.f - 2.f)));
+			bazaarData[i].cost = unsigned int(300000 / (1.f + exp(0.05f*float(Helpers::randInt(0, 10000)) / 100.f - 2.f)));
 		}
 	}
 
@@ -363,12 +363,12 @@ void ShopRand::replaceBazaarRecipes()
 				{
 					data.erase(data.begin() + setItem(data, bazaarData[i].result1, bazaarData[i].result1Amt));
 					setItem(lootData, bazaarData[i].loot1, bazaarData[i].loot1Amt, true);
-					int randNum = rand() % 100;
+					int randNum = Helpers::randInt(0, 99);
 					if (randNum < 75)
 						setItem(lootData, bazaarData[i].loot2, bazaarData[i].loot2Amt, true);
 					if (randNum < 50)
 						setItem(lootData, bazaarData[i].loot3, bazaarData[i].loot3Amt, true);
-					bazaarData[i].cost = unsigned int(3000000 / (1.f + exp(0.05f*float(rand() % 10000) / 100.f - 2.f)));
+					bazaarData[i].cost = unsigned int(3000000 / (1.f + exp(0.05f*float(Helpers::randInt(0, 10000)) / 100.f - 2.f)));
 				}
 				else if (bazaarData[i].result2 == 0x0000)
 					data.erase(data.begin() + setItem(data, bazaarData[i].result2, bazaarData[i].result2Amt));
@@ -392,7 +392,7 @@ void ShopRand::replaceBazaarRecipes()
 	addRangeToVector(data, 8192, 8192);
 	addRangeToVector(data, 8224, 8437);
 	addRangeToVector(data, 8448, 8461);
-	addRangeToVector(data, 8466, 8471);
+	addRangeToVector(data, 8468, 8471);
 	addRangeToVector(data, 12288, 12368);
 	addRangeToVector(data, 16384, 16407);
 	addRangeToVector(data, 4097, 4255);
@@ -424,18 +424,18 @@ void ShopRand::replaceBazaarRecipes()
 		if (bazaarData[i].bazaarType != 0x02 && bazaarData[i].result1 == 0 && bazaarData[i].result1Amt == 0)
 		{
 			data.erase(data.begin() + setItem(data, bazaarData[i].result1, bazaarData[i].result1Amt));
-			int randNum = rand() % 100;
+			int randNum = Helpers::randInt(0, 99);
 			if(randNum < 30)
 				data.erase(data.begin() + setItem(data, bazaarData[i].result2, bazaarData[i].result2Amt));
 			if (randNum < 10)
 				data.erase(data.begin() + setItem(data, bazaarData[i].result3, bazaarData[i].result3Amt));
 			setItem(lootData, bazaarData[i].loot1, bazaarData[i].loot1Amt, true);
-			randNum = rand() % 100;
+			randNum = Helpers::randInt(0, 99);
 			if (randNum < 75)
 				setItem(lootData, bazaarData[i].loot2, bazaarData[i].loot2Amt, true);
 			if (randNum < 50)
 				setItem(lootData, bazaarData[i].loot3, bazaarData[i].loot3Amt, true);
-			bazaarData[i].cost = unsigned int(100000 / (1.f + exp(0.05f*float(rand() % 10000) / 100.f - 2.f)));
+			bazaarData[i].cost = unsigned int(100000 / (1.f + exp(0.05f*float(Helpers::randInt(0, 10000)) / 100.f - 2.f)));
 			if (bazaarData[i].result1 > 9000 || bazaarData[i].result2 > 9000 || bazaarData[i].result3 > 9000)
 				bazaarData[i].bazaarType = 0x00;
 			else
@@ -446,15 +446,15 @@ void ShopRand::replaceBazaarRecipes()
 
 int ShopRand::setItem(vector<int> &dataVec, unsigned short & data, unsigned char & amt, bool loot)
 {
-	int index = rand() % dataVec.size();
+	int index = Helpers::randInt(0, dataVec.size() - 1);
 	data = dataVec[index];
 
 	if (loot)
-		amt = unsigned char(150 / (1.f + exp(0.05f*float(rand() % 10000) / 100.f + 1.f)) + 1.f);
+		amt = unsigned char(150 / (1.f + exp(0.05f*float(Helpers::randInt(0, 10000)) / 100.f + 1.f)) + 1.f);
 	else
 	{
 		if (data < 9000)
-			amt = unsigned char(30 / (1.f + exp(0.05f*float(rand() % 10000) / 100.f + 1.f)) + 1.f);
+			amt = unsigned char(30 / (1.f + exp(0.05f*float(Helpers::randInt(0, 10000)) / 100.f + 1.f)) + 1.f);
 		else
 			amt = 1;
 	}

@@ -195,8 +195,7 @@ void ItemRand::randCost()
 {
 	for (int i = 0; i < 63; i++)
 	{
-		float ran = float(rand() % 10000) / 100.f;
-		itemData[i].cost = unsigned short(87500.f / (1.f + exp(0.09f*ran - 1.f)) - 19);
+		itemData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 2500, 1000));
 	}
 }
 
@@ -220,7 +219,7 @@ void ItemRand::randCostSmart()
 			baseCost *= 80;
 		baseCost = pow(baseCost / 2.5f, 1.42f);
 
-		float ran = float(rand() % 24000) / 24000.f + .60f;
+		float ran = float(Helpers::randInt(0, 24000)) / 24000.f + .60f;
 		baseCost *= ran;
 		baseCost = max(10.f, min(baseCost, 65535.f));
 		itemData[i].cost = unsigned short(baseCost);
@@ -231,7 +230,8 @@ void ItemRand::randCostLoot()
 {
 	for (int i = 0; i < 266; i++)
 	{
-		lootData[i].cost = unsigned short(220000.f / (1.f + exp(0.1f*float(rand() % 10000) / 100.f + 1.f)) + 2.f);
+		
+		lootData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 500, 400));
 	}
 }
 
@@ -239,7 +239,6 @@ void ItemRand::randCostGambit()
 {
 	for (int i = 0; i < 256; i++)
 	{
-		float ran = float(rand() % 10000) / 100.f;
-		gambitData[i].cost = unsigned short(87500.f / (1.f + exp(1.26f*ran - 1.f)) + 10 + ran);
+		gambitData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 200, 150));
 	}
 }

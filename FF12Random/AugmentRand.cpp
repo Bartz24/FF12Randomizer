@@ -104,11 +104,11 @@ void AugmentRand::randValue()
 	for (int i = 0; i < 129; i++)
 	{
 		if (find(loreIds.begin(), loreIds.end(), i) != loreIds.end())
-			augmentData[i].value = rand() % 3 + 1;
+			augmentData[i].value = Helpers::randInt(1, 4);
 		else if (find(hpLores.begin(), hpLores.end(), i) != hpLores.end())
-			augmentData[i].value = unsigned short(4000.f / (1.f + exp(0.05f*float(rand() % 10000) / 100.f + 1.f)) + 1.f);
+			augmentData[i].value = unsigned short(Helpers::randIntNorm(20, 1500, 400, 120));
 		else if (find(percent.begin(), percent.end(), i) != percent.end())
-			augmentData[i].value = rand() % 28 + 3;
+			augmentData[i].value = Helpers::randInt(1, 30);
 	}
 }
 

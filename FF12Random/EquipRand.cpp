@@ -191,7 +191,7 @@ void EquipRand::randCost()
 	for (int i = 0; i < 557; i++)
 	{
 		if (equipData[i].cost > 0)
-			equipData[i].cost = unsigned short(350000.f / (1.f + exp(0.06f*float(rand() % 10000) / 100.f + 1.5f)));
+			equipData[i].cost = unsigned short(Helpers::randIntNorm(200, 65535, 4000, 1800));
 	}
 }
 
@@ -232,7 +232,7 @@ void EquipRand::randCostSmart()
 		}
 
 
-		float ran = float(rand() % 24000) / 24000.f + .60f;
+		float ran = float(Helpers::randInt(0, 24000)) / 24000.f + .60f;
 		baseCost *= ran;
 		baseCost = max(10.f, min(baseCost, 65535.f));
 		equipData[i].cost = unsigned short(baseCost);
@@ -296,7 +296,7 @@ void EquipRand::randStatusEffects()
 		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
 		if (status.status1.size() + status.status2.size() + status.status3.size() + status.status4.size() > 0)
 		{
-			equipData[i].hitChance = rand() % 96 + 5;
+			equipData[i].hitChance = Helpers::randInt(5, 90);
 			if (status.hasStatus(int(Status1::Death), 1))
 				equipData[i].hitChance = (equipData[i].hitChance / 10) + 1;
 		}
@@ -313,6 +313,8 @@ void EquipRand::randStatusEffects()
 		StatusValue autoStatus{ attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4 };
 		if (autoStatus.hasStatus(int(Status1::Death), 1))
 			autoStatus.status1.erase(find(autoStatus.status1.begin(), autoStatus.status1.end(), Status1::Death));
+		if (autoStatus.hasStatus(int(Status2::Reverse), 2))
+			autoStatus.status2.erase(find(autoStatus.status2.begin(), autoStatus.status2.end(), Status2::Reverse));
 		StatusValue immuneStatus{ attributeData[i].immuneStatus1, attributeData[i].immuneStatus2, attributeData[i].immuneStatus3, attributeData[i].immuneStatus4 };
 		if (immuneStatus.hasStatus(int(Status1::Death), 1))
 			immuneStatus.status1.erase(find(immuneStatus.status1.begin(), immuneStatus.status1.end(), Status1::Death));
@@ -335,11 +337,6 @@ void EquipRand::randStatusEffects()
 		{
 			if (immuneStatus.hasStatus(int(autoStatus.status4[i]), 4))
 				immuneStatus.status4.erase(find(immuneStatus.status4.begin(), immuneStatus.status4.end(), autoStatus.status4[i]));
-		}
-		if (autoStatus.hasStatus(int(Status2::Reverse), 2))
-		{
-			if (rand() % 512 > 0)
-				autoStatus.status2.erase(find(autoStatus.status2.begin(), autoStatus.status2.end(), Status2::Reverse));
 		}
 		attributeData[i].autoStatus1 = autoStatus.getNumValue(1);
 		attributeData[i].autoStatus2 = autoStatus.getNumValue(2);
@@ -370,8 +367,8 @@ void EquipRand::randArmorEffects()
 	{
 		if (equipData[i].itemFlag >= 0x40)
 		{
-			if (equipData[i].itemFlag >= 0x80 || rand() % 100 < 9)
-				equipData[i].power = effects[rand() % effects.size()];
+			if (equipData[i].itemFlag >= 0x80 || Helpers::randInt(0, 99) < 9)
+				equipData[i].power = effects[Helpers::randInt(0, effects.size() - 1)];
 			else
 				equipData[i].power = 0xFF;
 		}
@@ -383,14 +380,14 @@ void EquipRand::randChargeTime()
 	for (int i = 0; i < 557; i++)
 	{
 		if (equipData[i].ct > 0)
-			equipData[i].ct = unsigned char(90.f / (1.f + exp(0.02f*float(rand() % 10000) / 100.f - 0.5f)));
+			equipData[i].ct = unsigned char(Helpers::randIntNorm(2, 40, 20, 6));
 	}
 }
 
 void EquipRand::setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance)
 {
 	StatusValue status = StatusValue(num1, num2, num3, num4);
-	while (rand() % 100 < chance)
+	while (Helpers::randInt(0, 99) < chance)
 	{
 		status.addRandomStatus();
 	}
@@ -413,7 +410,7 @@ void EquipRand::addStatus(unsigned char & num1, unsigned char & num2, unsigned c
 void EquipRand::setElement(unsigned char &num, int chance)
 {
 	ElementalValue element = ElementalValue(0);
-	if (rand() % 100 < chance)
+	if (Helpers::randInt(0, 99) < chance)
 	{
 		element.addRandomElement();
 	}
@@ -423,7 +420,7 @@ void EquipRand::setElement(unsigned char &num, int chance)
 void EquipRand::setElementMultiple(unsigned char &num, int chance)
 {
 	ElementalValue element = ElementalValue(0);
-	while (rand() % 100 < chance)
+	while (Helpers::randInt(0, 99) < chance)
 	{
 		element.addRandomElement();
 	}

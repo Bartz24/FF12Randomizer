@@ -84,7 +84,7 @@ void LicenseRand::randCost()
 {
 	for (int i = 0; i < 361; i++)
 	{
-		licenseData[i].lpCost = rand() % 256;
+		licenseData[i].lpCost = Helpers::randInt(0, 255);
 	}
 }
 
@@ -115,22 +115,22 @@ void LicenseRand::randCostSmart()
 					cost = ItemRand::gambitData[itemID - 24576].cost;
 			}
 			float lpCost = sqrt(float(cost)) / 1.4f;
-			lpCost += rand() % 30 - 15;
+			lpCost += Helpers::randInt(-15, 15);
 			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
 		}
 		else if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
 		{
 			int augmentID = licenseData[i].otherData[0];
 			float lpCost = augmentWorth(augmentID);
-			lpCost += rand() % 30 - 15;
+			lpCost += Helpers::randInt(-15, 15);
 			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
 		}
 		else
 		{
-			if (rand() % 100 < 77)
-				licenseData[i].lpCost = rand() % 128;
+			if (Helpers::randInt(0, 99) < 77)
+				licenseData[i].lpCost = Helpers::randInt(0, 128);
 			else
-				licenseData[i].lpCost = rand() % 256;
+				licenseData[i].lpCost = Helpers::randInt(0, 255);
 		}
 	}
 }
@@ -718,7 +718,7 @@ void LicenseRand::randAugments(bool includeBad)
 	{
 		if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
 		{
-			int index = rand() % augments.size();
+			int index = Helpers::randInt(0, augments.size() - 1);
 			licenseData[i].otherData[0] = augments[index];
 			augments.erase(augments.begin() + index);
 		}
@@ -908,9 +908,9 @@ void LicenseRand::replaceAbilitiesChance(int start, int end, std::vector<unsigne
 			if (licenseData[i].otherData[slot] != 0xFFFF)
 				slots++;
 		}
-		if (slots == 0 || (slots < 4 && rand() % 100 < 20))
+		if (slots == 0 || (slots < 4 && Helpers::randInt(0, 99) < 20))
 		{
-			int index = rand() % abilities.size();
+			int index = Helpers::randInt(0, abilities.size() - 1);
 			licenseData[i].otherData[slots] = abilities[index];
 			abilities.erase(abilities.begin() + index);
 		}
@@ -929,7 +929,7 @@ void LicenseRand::replaceAbilities(int start, int end, std::vector<unsigned shor
 		}
 		for (int slot = 0; slot<slots; slot++)
 		{
-			int index = rand() % abilities.size();
+			int index = Helpers::randInt(0, abilities.size() - 1);
 			licenseData[i].otherData[slot] = abilities[index];
 			abilities.erase(abilities.begin() + index);
 		}

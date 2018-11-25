@@ -161,6 +161,7 @@
     <ClInclude Include="BazaarRename.h" />
     <ClInclude Include="CharData.h" />
     <ClInclude Include="CharRand.h" />
+    <ClInclude Include="CharRename.h" />
     <ClInclude Include="CharValue.h" />
     <ClInclude Include="DocumentationGen.h" />
     <ClInclude Include="ElementalValue.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="RewardRand.h" />
     <ClInclude Include="ShopData.h" />
     <ClInclude Include="ShopRand.h" />
+    <ClInclude Include="StartGambitData.h" />
     <ClInclude Include="StatusValue.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -205,6 +207,7 @@
     <ClCompile Include="BazaarRename.cpp" />
     <ClCompile Include="CharData.cpp" />
     <ClCompile Include="CharRand.cpp" />
+    <ClCompile Include="CharRename.cpp" />
     <ClCompile Include="CharValue.cpp" />
     <ClCompile Include="DocumentationGen.cpp" />
     <ClCompile Include="ElementalValue.cpp" />
@@ -232,6 +235,7 @@
     <ClCompile Include="RewardRand.cpp" />
     <ClCompile Include="ShopData.cpp" />
     <ClCompile Include="ShopRand.cpp" />
+    <ClCompile Include="StartGambitData.cpp" />
     <ClCompile Include="StatusValue.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

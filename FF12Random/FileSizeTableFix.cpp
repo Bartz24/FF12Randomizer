@@ -34,9 +34,11 @@ void FileSizeTableFix::save()
 	string bpFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\battle_pack.bin";
 	string lhAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\listhelp_action.bin";
 	string hAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\help_action.bin";
+	string mctFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\menu_command_template.bin";
 	overwriteSize(FileSizeTableOffset::battle_pack, getFileSize(bpFileName));
 	overwriteSize(FileSizeTableOffset::listhelp_action, getFileSize(lhAFileName));
 	overwriteSize(FileSizeTableOffset::help_action, getFileSize(hAFileName));
+	overwriteSize(FileSizeTableOffset::menu_command_template, getFileSize(mctFileName));
 }
 
 void FileSizeTableFix::process()
@@ -66,6 +68,8 @@ void FileSizeTableFix::overwriteSize(FileSizeTableOffset position, unsigned long
 	file.close();
 
 	delete[] buffer;
+
+	//std::experimental::filesystem::copy_file(folder + "\\FileSizeTable_US.fst", folder + "\\FileSizeTable_US_beforeRando.fst");
 }
 
 unsigned long FileSizeTableFix::getFileSize(string filePath)

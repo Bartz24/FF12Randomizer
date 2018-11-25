@@ -12,14 +12,9 @@ CharDataOffset CharData::getDataIndex()
 
 CharData::CharData(char data[128])
 {
-	int index = 0;
 	for (int i = 0; i < 128; i++)
 	{
-		if (i >= 0x0A && i <= 0x13 || i == 0x16 || i == 0x17 || i == 0x19 || i == 0x1A || i == 0x1B || i == 0x1D || i == 0x1E || i == 0x1F
-			|| i == 0x21 || i == 0x22 || i == 0x24 || i == 0x25 || i == 0x27 || i == 0x28 || i >= 0x34 && i <= 0x3D || i >= 0x58 && i <= 0x6B || i >= 0x4C && i <= 0x4F)
-			continue;
-		this->unknown[index] = data[i];
-		index++;
+		this->unknown[i] = data[i];
 	}
 	char weapon[] = { data[0x0A] , data[0x0B] };
 	this->weapon = *reinterpret_cast<unsigned short*>(weapon);
@@ -45,16 +40,22 @@ CharData::CharData(char data[128])
 	this->vitModifier = data[0x25];
 	this->spd = data[0x27];
 	this->spdModifier = data[0x28];
+	this->gambits = data[0x2C];
 	for (int i = 0; i < 10; i++)
 	{
 		char item[] = { data[0x58 + i * 2] , data[0x59 + i * 2] };
 		this->items[i] = *reinterpret_cast<unsigned short*>(item);
 		this->itemCount[i] = data[0x34 + i];
 	}
+	this->auto1 = data[0x48];
+	this->auto2 = data[0x49];
+	this->auto3 = data[0x4A];
+	this->auto4 = data[0x4B];
 	this->immune1 = data[0x4C];
 	this->immune2 = data[0x4D];
 	this->immune3 = data[0x4E];
 	this->immune4 = data[0x4F];
+	this->model = data[0x70];
 }
 
 CharData::CharData()

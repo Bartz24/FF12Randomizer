@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Helpers.h"
 
 using namespace std;
 enum class Element

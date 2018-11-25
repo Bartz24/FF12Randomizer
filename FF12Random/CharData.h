@@ -28,12 +28,18 @@ public:
 	unsigned char vitModifier; // 25
 	unsigned char spd; // 27
 	unsigned char spdModifier; // 28
+	unsigned char gambits; // 2C
 	unsigned short items[10]; // 58-6B
 	unsigned char itemCount[10]; // 34-3D
+	unsigned char auto1; // 48
+	unsigned char auto2; // 49
+	unsigned char auto3; // 4A
+	unsigned char auto4; // 4B
 	unsigned char immune1; // 4C
 	unsigned char immune2; // 4D
 	unsigned char immune3; // 4E
 	unsigned char immune4; // 4F
+	unsigned char model; // 70
 	CharData();
 	CharData(char data[128]);
 	~CharData();

@@ -1,7 +1,28 @@
 #include "stdafx.h"
 #include "CharRand.h"
 
+enum CharacterID
+{
+	vaan,
+	ashe,
+	fran,
+	balthier,
+	basch,
+	penelo,
+	reks,
+	amalia,
+	baschGuest1,
+	baschGuest2,
+	lamont,
+	vossler1,
+	vossler2,
+	larsa,
+	reddas = 16
+};
+
 CharData CharRand::charData[40] = {};
+StartGambitData CharRand::gambitData[7] = {};
+int CharRand::names[12] = {};
 
 CharRand::CharRand()
 {
@@ -36,6 +57,26 @@ void CharRand::load()
 		}
 
 		delete[] buffer;
+
+		char * buffer2;
+		size = 7 * 64; //Num gambits * data size
+		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
+		file.seekg(int(StartGambitData::getDataIndex()));
+		buffer2 = new char[size];
+		file.read(buffer2, size);
+		file.close();
+
+		for (int i = 0; i < 7; i++)
+		{
+			char data[64];
+			for (int i2 = 0; i2 < 64; i2++)
+			{
+				data[i2] = buffer2[i * 64 + i2];
+			}
+			gambitData[i] = StartGambitData{ data };
+		}
+
+		delete[] buffer2;
 	}
 }
 
@@ -58,11 +99,7 @@ void CharRand::save()
 		int index = 0;
 		for (int i2 = 0; i2 < 128; i2++)
 		{
-			if (i2 >= 0x0A && i2 <= 0x13 || i2 == 0x16 || i2 == 0x17 || i2 == 0x19 || i2 == 0x1A || i2 == 0x1B || i2 == 0x1D || i2 == 0x1E || i2 == 0x1F
-				|| i2 == 0x21 || i2 == 0x22 || i2 == 0x24 || i2 == 0x25 || i2 == 0x27 || i2 == 0x28 || i2 >= 0x34 && i2 <= 0x3D || i2 >= 0x58 && i2 <= 0x6B || i2 >= 0x48 && i2 <= 0x4B)
-				continue;
-			buffer[i * 128 + i2] = d.unknown[index];
-			index++;
+			buffer[i * 128 + i2] = d.unknown[i2];
 		}
 		buffer[i * 128 + 0x0A] = U{ d.weapon }.c[0];
 		buffer[i * 128 + 0x0B] = U{ d.weapon }.c[1];
@@ -88,28 +125,66 @@ void CharRand::save()
 		buffer[i * 128 + 0x25] = d.vitModifier;
 		buffer[i * 128 + 0x27] = d.spd;
 		buffer[i * 128 + 0x28] = d.spdModifier;
+		buffer[i * 128 + 0x2C] = d.gambits;
 		for (int item = 0; item < 10; item++)
 		{
 			buffer[i * 128 + 0x58 + item * 2] = U{ d.items[item] }.c[0];
 			buffer[i * 128 + 0x59 + item * 2] = U{ d.items[item] }.c[1];
 			buffer[i * 128 + 0x34 + item] = d.itemCount[item];
 		}
+		buffer[i * 128 + 0x48] = d.auto1;
+		buffer[i * 128 + 0x49] = d.auto2;
+		buffer[i * 128 + 0x4A] = d.auto3;
+		buffer[i * 128 + 0x4B] = d.auto4;
 		buffer[i * 128 + 0x4C] = d.immune1;
 		buffer[i * 128 + 0x4D] = d.immune2;
 		buffer[i * 128 + 0x4E] = d.immune3;
 		buffer[i * 128 + 0x4F] = d.immune4;
+		buffer[i * 128 + 0x70] = d.model;
 	}
-
 	file.write(buffer, size);
 	file.close();
 
 
 	delete[] buffer;
+
+
+	char * buffer2;
+	size = 7 * 64; //Num loots * data size
+	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
+	file.seekp(int(StartGambitData::getDataIndex()));
+	buffer2 = new char[size];
+
+	for (int i = 0; i < 7; i++)
+	{
+		StartGambitData d = gambitData[i];
+		int index = 0;
+		for (int i2 = 0; i2 < 64; i2++)
+		{
+			buffer2[i * 64 + i2] = d.unknown[i2];
+		}
+		for (int i2 = 0; i2 < 12; i2++)
+		{
+			buffer2[i * 64 + i2 * 2] = U{ d.gambits[i2] }.c[0];
+			buffer2[i * 64 + i2 * 2 + 1] = U{ d.gambits[i2] }.c[1];
+			buffer2[i * 64 + 0x20 + i2 * 2] = U{ d.actions[i2] }.c[0];
+			buffer2[i * 64 + 0x21 + i2 * 2] = U{ d.actions[i2] }.c[1];
+		}
+	}
+
+	file.write(buffer2, size);
+	file.close();
+
+	delete[] buffer2;
 }
 
 string CharRand::process(string preset)
 {
 	string flags = preset;
+	if (flags.find('c') != string::npos)
+	{
+		swapCharas();
+	}
 	if (flags.find('i') != string::npos)
 	{
 		initialEquip();
@@ -167,7 +242,7 @@ void CharRand::initialEquip()
 		if (i != 6)
 		{
 			if (weapons.size() > 0)
-				charData[i].weapon = weapons[rand() % weapons.size()];
+				charData[i].weapon = weapons[Helpers::randInt(0, weapons.size() - 1)];
 			else
 				charData[i].weapon = 0xFFFF;
 		}		
@@ -277,33 +352,33 @@ void CharRand::initialEquip()
 		if (charData[i].weapon != 0xFFFF && EquipRand::equipData[charData[i].weapon - 4096].equipRequirements >= 0x17)
 		{
 			if (EquipRand::equipData[charData[i].weapon - 4096].equipRequirements == 0x17)
-				charData[i].offHand = rand() % 8 + 4484;
+				charData[i].offHand = Helpers::randInt(4484, 4491);
 			else if (EquipRand::equipData[charData[i].weapon - 4096].equipRequirements == 0x18)
-				charData[i].offHand = rand() % 8 + 4492;
+				charData[i].offHand = Helpers::randInt(4492, 4499);
 			else if (EquipRand::equipData[charData[i].weapon - 4096].equipRequirements == 0x19)
-				charData[i].offHand = rand() % 8 + 4500;
+				charData[i].offHand = Helpers::randInt(4500, 4507);
 			else if (EquipRand::equipData[charData[i].weapon - 4096].equipRequirements == 0x1A)
-				charData[i].offHand = rand() % 8 + 4508;
+				charData[i].offHand = Helpers::randInt(4508, 4515);
 			else if (EquipRand::equipData[charData[i].weapon - 4096].equipRequirements == 0xFF)
 				charData[i].offHand = 0xFFFF;
 		}
 		else
 		{
 			if (offHand.size() > 0)
-				charData[i].offHand = offHand[rand() % offHand.size()];
+				charData[i].offHand = offHand[Helpers::randInt(0, offHand.size() - 1)];
 			else
 				charData[i].offHand = 0xFFFF;
 		}
 		if (head.size() > 0)
-			charData[i].head = head[rand() % head.size()];
+			charData[i].head = head[Helpers::randInt(0, head.size() - 1)];
 		else
 			charData[i].head = 0xFFFF;
 		if (body.size() > 0)
-			charData[i].body = body[rand() % body.size()];
+			charData[i].body = body[Helpers::randInt(0, body.size() - 1)];
 		else
 			charData[i].body = 0xFFFF;
 		if (accessory.size() > 0)
-			charData[i].accessory = accessory[rand() % accessory.size()];
+			charData[i].accessory = accessory[Helpers::randInt(0, accessory.size() - 1)];
 		else
 			charData[i].accessory = 0xFFFF;
 
@@ -317,17 +392,17 @@ void CharRand::initialEquip()
 		{
 			int type;
 			do {
-				type = rand() % 64;
+				type = Helpers::randInt(0, 63);
 			} while (type >= 29 && type <= 41);
 			charData[i].items[item] = type;
-			charData[i].itemCount[item] = unsigned char(log2(float(rand() % 100) + 10.f) * 3.f - 8.f);
+			charData[i].itemCount[item] = unsigned char(log2(float(Helpers::randInt(0,99)) + 10.f) * 3.f - 8.f);
 		}
 		for (int ability = 0; ability < 2; ability++)
 		{
 			if (abilities.size() == 0)
 				break;
 
-			int index = rand() % abilities.size();
+			int index = Helpers::randInt(0, abilities.size() - 1);
 
 			charData[i].items[ability + 2] = abilities[index];
 			abilities.erase(abilities.begin() + index);
@@ -337,7 +412,7 @@ void CharRand::initialEquip()
 		{
 			for (int gambit = 0; gambit < 6; gambit++)
 			{
-				charData[i].items[gambit + 4] = rand() % 255 + 24576;
+				charData[i].items[gambit + 4] = Helpers::randInt(24576, 24830);
 				charData[i].itemCount[gambit + 4] = 1;
 			}
 		}
@@ -347,10 +422,10 @@ void CharRand::initialEquip()
 			{
 				int type;
 				do {
-					type = rand() % 64;
+					type = Helpers::randInt(0, 63);
 				} while (type >= 29 && type <= 41);
 				charData[i].items[item + 4] = type;
-				charData[i].itemCount[item + 4] = unsigned char(log2(float(rand() % 100) + 10.f) * 3.f - 8.f);
+				charData[i].itemCount[item + 4] = unsigned char(log2(float(Helpers::randInt(0, 99)) + 10.f) * 3.f - 8.f);
 			}
 		}
 	}
@@ -403,26 +478,142 @@ void CharRand::randStats()
 			increaseStat(charData[i].spdModifier, totalStatPoints);
 		}
 
-		charData[i].hp = charData[i].hp * 3 + rand() % 4 - 2;
-		charData[i].hpModifier = charData[i].hpModifier * 8 + rand() % 10 - 4;
-		charData[i].mp = charData[i].mp + rand() % 2;
-		charData[i].mpModifier = charData[i].mpModifier * 8 + rand() % 10 - 4;
-		charData[i].str = charData[i].str + rand() % 2;
-		charData[i].strModifier = charData[i].strModifier * 4 + rand() % 6 - 2;
-		charData[i].mag = charData[i].mag + rand() % 2;
-		charData[i].magModifier = charData[i].magModifier * 4 + rand() % 6 - 2;
-		charData[i].vit = charData[i].vit + rand() % 2;
-		charData[i].vitModifier = charData[i].vitModifier * 4 + rand() % 4 - 1;
-		charData[i].spd = charData[i].spd + rand() % 2;
-		charData[i].spdModifier = charData[i].spdModifier + rand() % 2;
+		charData[i].hp = charData[i].hp * 3 + Helpers::randInt(-2, 2);
+		charData[i].hpModifier = charData[i].hpModifier * 8 + Helpers::randInt(-6, 6);
+		charData[i].mp = charData[i].mp + Helpers::randInt(-2, 2);
+		charData[i].mpModifier = charData[i].mpModifier * 8 + Helpers::randInt(-6, 6);
+		charData[i].str = charData[i].str + Helpers::randInt(-1, 1);
+		charData[i].strModifier = charData[i].strModifier * 4 + Helpers::randInt(-3, 3);
+		charData[i].mag = charData[i].mag + Helpers::randInt(-1, 1);
+		charData[i].magModifier = charData[i].magModifier * 4 + Helpers::randInt(-3, 3);
+		charData[i].vit = charData[i].vit + Helpers::randInt(-1, 1);
+		charData[i].vitModifier = charData[i].vitModifier * 4 + Helpers::randInt(-3, 3);
+		charData[i].spd = charData[i].spd + Helpers::randInt(-2, 2);
+		charData[i].spdModifier = charData[i].spdModifier + Helpers::randInt(-2, 2);
 	}
+}
+
+void CharRand::swapCharas()
+{
+	int ids[] = { 0,1,2,3,4,5 };
+	shuffle(begin(ids), end(ids), Helpers::rng);
+	vector<CharData> data = vector<CharData>();
+	for (int i = 0; i < 6; i++)
+		data.push_back(charData[i]);
+	for (int i = 0; i < 6; i++)
+	{	
+		charData[i] = data[ids[i]];
+		charData[i].items[8] = 0x60A5 + i;
+		charData[i].items[9] = 0x60E2 + i;
+		charData[i].gambits = 0x48;
+	}
+	charData[0].gambits = 0x00;
+	names[0] = ids[0];
+	names[1] = ids[3];
+	names[2] = ids[2];
+	names[3] = ids[4];
+	names[4] = ids[1];
+	names[5] = ids[5];
+
+	fixLicenses(ids);
+	fixGambits(ids);
+
+	if (ids[1] != 1)
+	{
+		charData[CharacterID::amalia] = charData[CharacterID::ashe];
+		charData[CharacterID::amalia].items[5] = 0x60AB;
+	}
+	if (ids[4] != 4)
+	{
+		charData[CharacterID::baschGuest1] = charData[CharacterID::basch];
+		charData[CharacterID::baschGuest1].weapon = 0xFFFF;
+		charData[CharacterID::baschGuest1].offHand = 0xFFFF;
+		charData[CharacterID::baschGuest1].head = 0xFFFF;
+		charData[CharacterID::baschGuest1].body = 0xFFFF;
+		charData[CharacterID::baschGuest1].accessory = 0xFFFF;
+
+		charData[CharacterID::baschGuest2] = charData[CharacterID::basch];
+	}
+	int gids[] = { int(CharacterID::reks),int(CharacterID::larsa), int(CharacterID::vossler1),int(CharacterID::reddas) };
+	shuffle(begin(gids), end(gids), Helpers::rng);
+
+	vector<CharData> gdata = vector<CharData>();
+	for (int i = 6; i < 17; i++)
+	{
+		if (i >= 7 && i < 11 || i == 12 || i == 14 || i == 15)
+			continue;
+		gdata.push_back(charData[i]);
+	}
+	int index = 0;
+	for (int i = 6; i < 17; i++)
+	{
+		if (i >= 7 && i < 11 || i == 12 || i == 14 || i == 15)
+			continue;
+		charData[gids[index]] = gdata[index];
+		charData[gids[index]].gambits = 0x48;
+		index++;
+	}
+	if (gids[1] != CharacterID::larsa)
+		charData[10] = charData[13];
+
+	if (gids[2] != CharacterID::vossler1)
+		charData[12] = charData[11];
+
+	charData[6].gambits = 0x00;
+
+	names[6] = gids[0];
+
+	if (gids[1] != CharacterID::larsa)
+		names[7] = gids[1];
+	else
+		names[7] = CharacterID::lamont;
+
+	names[8] = gids[1];
+	names[9] = gids[2];
+	names[10] = gids[3];
+}
+
+void CharRand::fixLicenses(int charIds[6])
+{
+	for (int i = 0; i < 361; i++)
+	{
+		if (i >= 32 && i <= 218 || i >= 276 && i <= 299 || i >= 329 && i <= 359)
+		{
+			int charas = LicenseRand::licenseData[i].startingCharacters;
+			bool hasLicenses[] = { (charas & 0x01) == 0x01, (charas & 0x02) == 0x02, (charas & 0x04) == 0x04,
+				(charas & 0x08) == 0x08, (charas & 0x10) == 0x10, (charas & 0x20) == 0x20 };
+
+			bool newLicenses[] = { hasLicenses[charIds[0]], hasLicenses[charIds[1]] , hasLicenses[charIds[2]] ,
+				hasLicenses[charIds[3]] , hasLicenses[charIds[4]] ,hasLicenses[charIds[5]] };
+			charas = 0;
+			for (int i = 0; i < 6; i++)
+				if (newLicenses[i])
+					charas += pow(2, i);
+			charas += 64;
+			LicenseRand::licenseData[i].startingCharacters = charas;
+		}
+	}
+}
+
+void CharRand::fixGambits(int charIds[6])
+{
+	StartGambitData start = gambitData[0];
+	StartGambitData other = gambitData[2];
+
+	gambitData[charIds[0]] = start;
+	gambitData[charIds[5]] = start;
+	gambitData[charIds[1]] = other;
+	gambitData[charIds[2]] = other;
+	gambitData[charIds[3]] = other;
+	gambitData[charIds[4]] = other;
+	gambitData[6] = other;
 }
 
 void CharRand::increaseStat(unsigned char & num, int &statPointsLeft)
 {
 	if (statPointsLeft <= 0)
 		return;
-	if (rand() % 100 < 40)
+	if (Helpers::randInt(0, 99) < 40)
 	{
 		num++;
 		statPointsLeft--;
@@ -433,7 +624,7 @@ void CharRand::increaseStat(unsigned short & num, int &statPointsLeft)
 {
 	if (statPointsLeft <= 0)
 		return;
-	if (rand() % 100 < 40)
+	if (Helpers::randInt(0, 99) < 40)
 	{
 		num++;
 		statPointsLeft--;

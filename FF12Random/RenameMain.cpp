@@ -64,6 +64,7 @@ void RenameMain::load()
 	lRename.load();
 	bRename.load();
 	aRename.load();
+	cRename.load();
 }
 
 void RenameMain::save()
@@ -72,6 +73,17 @@ void RenameMain::save()
 	lRename.save();
 	bRename.save();
 	aRename.save();
+	cRename.save();
+
+	ofstream myfile;
+	myfile.open("gambitNames.txt");
+	for (int i = 0; i < 284; i++)
+	{
+		myfile << gambitNames[i];
+		if (i < 283)
+			myfile << endl;
+	}
+	myfile.close();
 
 	HMODULE hModule = GetModuleHandleW(NULL);
 	WCHAR path[MAX_PATH];
@@ -82,16 +94,17 @@ void RenameMain::save()
 	string s = "\"" + Helpers::mainPS2DataFolder + "\"";
 	system(("FF12TextPatcher.exe " + s).c_str());
 
-	remove("licenseNames.txt");
-	remove("bazaarNames.txt");
-	remove("augmentNames.txt");
+	//remove("licenseNames.txt");
+	//remove("bazaarNames.txt");
+	//remove("augmentNames.txt");
 
-	remove("abilityNames.txt");
-	remove("abilityDescriptions.txt");
-	remove("abilityDescriptions2.txt");
-	remove("equipmentNames.txt");
-	remove("lootNames.txt");
-	remove("gambitNames.txt");
+	//remove("abilityNames.txt");
+	//remove("abilityDescriptions.txt");
+	//remove("abilityDescriptions2.txt");
+	//remove("equipmentNames.txt");
+	//remove("menuNames.txt");
+	//remove("lootNames.txt");
+	//remove("gambitNames.txt");
 }
 
 void RenameMain::process()
@@ -100,6 +113,7 @@ void RenameMain::process()
 	for (int i = 0; i < 545; i++)
 		abilityNames[i] = actRename.data[i];
 	lRename.process();
+	cRename.process();
 	bRename.process();
 	aRename.process();
 }
@@ -135,4 +149,13 @@ string BazaarRename::getNameFromID(int id)
 		return name;
 	}
 	return "";
+}
+
+void CharRename::fixGambitNames()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		RenameMain::gambitNames[i + 163] = "Ally: " + data[i + 71];
+		RenameMain::gambitNames[i + 224] = "Foe: targeting " + data[i + 71];
+	}
 }

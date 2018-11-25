@@ -70,7 +70,7 @@ void ElementalValue::addRandomElement()
 	Element ele;
 	do
 	{
-		ele = Element(int(pow(2, rand() % 8)));
+		ele = Element(int(pow(2, Helpers::randInt(0, 7))));
 	} while (hasElement(ele));
 	elements.push_back(ele);
 }
