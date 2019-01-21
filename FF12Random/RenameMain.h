@@ -15,6 +15,7 @@
 #include "AugmentRename.h"
 #include "ActionRename.h"
 #include "CharRename.h"
+#include "LicenseBoardRand.h"
 
 using namespace std;
 
@@ -30,10 +31,14 @@ public:
 	static string lootNames[280];
 	static string equipNames[420];
 	static string gambitNames[284];
+	static string helpMenu[200];
+	static string menuCmd[210];
+	static string menu00[122];
+	static string menuMsg[130];
 	RenameMain();
 	~RenameMain();
 	void load();
 	void save();
-	void process();
+	void process(string seed, string flags);
 };
 

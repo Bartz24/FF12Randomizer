@@ -86,6 +86,15 @@ void ActionRename::save()
 		if (i < 80)
 			myfile << endl;
 	}
+	if (MagicRand::didRandSpells)
+	{
+		myfile << endl;
+		for (int i = 0; i < 6; i++)
+		{
+			myfile << ".IGNORE" << endl;
+		}
+		myfile << "Due to conflicts, item descriptions were removed.";
+	}
 	myfile.close();
 
 	myfile.open("abilityDescriptions2.txt");
@@ -95,6 +104,14 @@ void ActionRename::save()
 		myfile << desc[i];
 		if (i < 80)
 			myfile << endl;
+	}
+	if (MagicRand::didRandSpells)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			myfile << ".IGNORE" << endl;
+		}
+		myfile << "Due to conflicts, item descriptions were removed.";
 	}
 	myfile.close();
 }
@@ -112,6 +129,11 @@ void ActionRename::process()
 				string replace = (MagicRand::actionData[i].aoeRange > 0 ? (MagicRand::actionData[i].target >= 140 ? "all foes in range" : "all allies in range") : (MagicRand::actionData[i].target >= 140 ? "one foe" : "one ally"));
 				desc[i] = desc[i].substr(0, desc[i].find("%t")) + replace + desc[i].substr(desc[i].find("%t") + 2, desc[i].length() - desc[i].find("%t") - 2);
 			}
+			while (desc[i].find("%c") != string::npos)
+			{
+				string replace = ",";
+				desc[i] = desc[i].substr(0, desc[i].find("%c")) + replace + desc[i].substr(desc[i].find("%c") + 2, desc[i].length() - desc[i].find("%c") - 2);
+			}
 		}
 	}
 
@@ -122,4 +144,9 @@ void ActionRename::process()
 		else
 			data[i + 246] = MagicRand::trapNames[i];
 	}
+
+	data[107] = "Meteorite A";
+	data[108] = "Meteorite B";
+	data[109] = "Meteorite C";
+	data[110] = "Meteorite D";
 }

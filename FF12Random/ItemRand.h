@@ -10,17 +10,17 @@ private:
 	string fileName;
 
 public:
-	static ItemData itemData[63];
+	static ItemData itemData[64];
 	static LootData lootData[266];
 	static GambitData gambitData[256];
 	ItemRand();
 	~ItemRand();
 	void load();
 	void save();
-	string process(string preset);
-	void randCost();
-	void randCostSmart();
-	void randCostLoot();
-	void randCostGambit();
+	void process(FlagGroup flags);
+	void randCost(int value);
+	void randCostSmart(int value);
+	void randCostLoot(int value);
+	void randCostGambit(int value);
 };
 

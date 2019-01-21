@@ -110,6 +110,8 @@ void MagicRand::load()
 			rData.mType2 = stoi(data[17]);
 			rData.animation = stoi(data[18]);
 			rData.specialType = stoi(data[19]);
+			rData.icon = stoi(data[20]);
+			rData.castAnimation = stoi(data[21]);
 			spells.push_back(rData);
 		}
 		myfile.close();
@@ -211,14 +213,12 @@ void MagicRand::save()
 	for (int i = 0; i < 497; i++)
 	{
 		ActionData d = actionData[i];
-		int index = 0;
 		for (int i2 = 0; i2 < 60; i2++)
 		{
-			if (i2 == 0x06 || i2 == 0x08 || i2 == 0x09 || i2 == 0x0A || i2 == 0x0C || i2 >= 0x10 && i2 <= 0x14 || i2 >= 0x18 && i2 <= 0x1B || i2 == 0x24 || i2 == 0x25 || i2 == 0x2C || i2 == 0x2D || i2 == 0x36)
-				continue;
-			buffer3[i * 60 + i2] = d.unknown[index];
-			index++;
+			buffer3[i * 60 + i2] = d.unknown[i2];
 		}
+		buffer3[i * 60 + 0x00] = U{ d.description }.c[0];
+		buffer3[i * 60 + 0x01] = U{ d.description }.c[1];
 		buffer3[i * 60 + 0x06] = d.aoeRange;
 		buffer3[i * 60 + 0x08] = d.type;
 		buffer3[i * 60 + 0x09] = d.ct;
@@ -233,11 +233,14 @@ void MagicRand::save()
 		buffer3[i * 60 + 0x19] = d.status2;
 		buffer3[i * 60 + 0x1A] = d.status3;
 		buffer3[i * 60 + 0x1B] = d.status4;
+		buffer3[i * 60 + 0x21] = d.castAnimation;
 		buffer3[i * 60 + 0x24] = U{ d.animation }.c[0];
 		buffer3[i * 60 + 0x25] = U{ d.animation }.c[1];
 		buffer3[i * 60 + 0x2C] = U{ d.mType }.c[0];
 		buffer3[i * 60 + 0x2D] = U{ d.mType }.c[1];
 		buffer3[i * 60 + 0x36] = d.specialType;
+		buffer3[i * 60 + 0x38] = d.gambitPage;
+		buffer3[i * 60 + 0x39] = d.gambitPageOrder;
 	}
 
 	file.write(buffer3, size);
@@ -247,55 +250,64 @@ void MagicRand::save()
 	delete[] buffer3;
 }
 
-string MagicRand::process(string preset)
+void MagicRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	if (flags.find('u') != string::npos)
+	if (flags.hasFlag("u"))
 	{
-		randSpells();
-	}
-	if (flags.find('a') != string::npos)
-	{
-		randAoE();
-	}
-	if (flags.find('e') != string::npos)
-	{
-		randStatus();
-	}
-	if (flags.find('c') != string::npos)
-	{
-		if (flags.find('s') != string::npos)
-		{
-			randCostSmart();
-		}
+		if (flags.getFlag("u").isSmart())
+			randSpells();
 		else
-			randCost();
+			randSpellsFull();
 	}
-	if (flags.find('m') != string::npos)
+	if (flags.hasFlag("a"))
 	{
-		randMPCost();
+		randAoE(flags.getFlag("a").getValue());
 	}
-	if (flags.find('t') != string::npos)
+	if (flags.hasFlag("s"))
 	{
-		randCT();
+		randStatus(flags.getFlag("s").getValue());
 	}
-	if (flags.find('r') != string::npos)
+	if (flags.hasFlag("e"))
+	{
+		randElements(flags.getFlag("e").getValue());
+	}
+	if (flags.hasFlag("c"))
+	{
+		if (flags.getFlag("c").isSmart())
+			randCostSmart(flags.getFlag("c").getValue());
+		else
+			randCost(flags.getFlag("c").getValue());
+	}
+	if (flags.hasFlag("m"))
+	{
+		if (flags.getFlag("m").isSmart())
+			randMPCostSmart(flags.getFlag("m").getValue());
+		else
+			randMPCost(flags.getFlag("m").getValue());
+	}
+	if (flags.hasFlag("t"))
+	{
+		if (flags.getFlag("t").isSmart())
+			randCTSmart(flags.getFlag("t").getValue());
+		else
+			randCT(flags.getFlag("t").getValue());
+	}
+	if (flags.hasFlag("r"))
 	{
 		randTraps();
 	}
-	return flags;
 }
 
-void MagicRand::randCost()
+void MagicRand::randCost(int value)
 {
 	for (int i = 0; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 9000, 4000));
+		magicData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 9000, 4000, value));
 	}
 }
 
 
-void MagicRand::randCostSmart()
+void MagicRand::randCostSmart(int value)
 {
 	for (int i = 0; i < 81; i++)
 	{
@@ -312,52 +324,78 @@ void MagicRand::randCostSmart()
 		if (status.getNumStatuses() > 0)
 			baseCost *= pow(1.55f, status.getNumStatuses() + 3);
 
-		float ran = float(Helpers::randInt(0, 24000)) / 24000.f + .60f;
-		baseCost *= ran;
 		baseCost = max(100.f, min(baseCost, 65535.f));
-		magicData[i].cost = unsigned short(baseCost);
+		magicData[i].cost = unsigned short(Helpers::randIntControl(2, 65535, baseCost, value));
 	}
 	for (int i = 81; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(Helpers::randInt(200, 20000));
+		magicData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 14000, 6000, value));
 	}
 }
 
-void MagicRand::randMPCost()
+void MagicRand::randMPCostSmart(int value)
 {
 	for (int i = 0; i < 497; i++)
 	{
 		if (actionData[i].cost > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].cost = Helpers::randInt(1, 99);
+			actionData[i].cost = Helpers::randInt(actionData[i].cost - value, actionData[i].cost + value, 1, 99);
 	}
 }
 
-void MagicRand::randCT()
+void MagicRand::randMPCost(int value)
+{
+	for (int i = 0; i < 497; i++)
+	{
+		if (actionData[i].cost > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
+			actionData[i].cost = Helpers::randNormControl(1, 99, 30, 10, value);
+	}
+}
+
+void MagicRand::randCT(int value)
 {
 	for (int i = 0; i < 497; i++)
 	{
 		if (actionData[i].ct > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].ct = unsigned char(Helpers::randIntNorm(2, 40, 20, 6));
+			actionData[i].ct = unsigned char(Helpers::randInt(20 - value, 20 + value, 1, 255));
 	}
 }
 
-void MagicRand::randAoE()
+void MagicRand::randCTSmart(int value)
 {
 	for (int i = 0; i < 497; i++)
 	{
-		if (i >= 82 && i < 145)
-			continue;
-		if (didRandSpells && i < 81)
-		{
-			if (actionData[i].aoeRange == 255)
-				actionData[i].aoeRange = Helpers::randInt(0, 99) < 80 ? 0 : Helpers::randInt(1, 20);
-		}
-		else if (!(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].aoeRange = Helpers::randInt(0, 99) < 80 ? 0 : Helpers::randInt(1, 20);
+		if (actionData[i].ct > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
+			actionData[i].ct = unsigned char(Helpers::randInt(actionData[i].ct - value, actionData[i].ct + value, 1, 255));
 	}
 }
 
-void MagicRand::randStatus()
+void MagicRand::randAoE(int value)
+{
+	for (int i = 0; i < 497; i++)
+	{
+		if (i >= 82 && i < 145 || i >= 262 && i <= 274 || i >= 208 && i <= 225)
+			continue;
+		if(actionData[i].aoeRange > 0 || Helpers::randInt(0, 99) < value && actionData[i].aoeRange == 0)
+		actionData[i].aoeRange = Helpers::randInt(1, 20);
+	}
+}
+
+void MagicRand::randElements(int value)
+{
+	for (int i = 278; i < 497; i++)
+	{
+		ElementalValue orig{ actionData[i].element };
+		actionData[i].element = 0;
+		ElementalValue newElem{ actionData[i].element };
+		while (newElem.elements.size() < orig.elements.size())
+			newElem.addRandomElement();
+		while (Helpers::randInt(0, 99) < value)
+			newElem.addRandomElement();
+		actionData[i].element = newElem.getNumValue();
+	}
+}
+
+void MagicRand::randStatus(int value)
 {
 	for (int i = 278; i < 497; i++)
 	{
@@ -365,7 +403,7 @@ void MagicRand::randStatus()
 		actionData[i].status1 = actionData[i].status2 = actionData[i].status3 = actionData[i].status4 = 0;
 		while (StatusValue{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 }.getNumStatuses() < orig.getNumStatuses())
 			addStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4);
-		setStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4, 15);
+		setStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4, value);
 		StatusValue status{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
 		if (status.getNumStatuses() > 0)
 		{
@@ -446,7 +484,7 @@ void MagicRand::randSpells()
 		whiteIDs.push_back(69);
 		whiteIDs.push_back(17);
 
-		randSpellsOfType(whiteIDs, 0);
+		randAllSpellsOfType(whiteIDs, 0);
 	}
 	{
 		vector<int> blackIDs;
@@ -476,7 +514,7 @@ void MagicRand::randSpells()
 		blackIDs.push_back(59);
 		blackIDs.push_back(63);
 
-		randSpellsOfType(blackIDs, 1);
+		randAllSpellsOfType(blackIDs, 1);
 	}
 	{
 		vector<int> timeIDs;
@@ -501,7 +539,7 @@ void MagicRand::randSpells()
 		timeIDs.push_back(79);
 		timeIDs.push_back(80);
 
-		randSpellsOfType(timeIDs, 2);
+		randAllSpellsOfType(timeIDs, 2);
 	}
 	{
 		vector<int> greenIDs;
@@ -512,7 +550,7 @@ void MagicRand::randSpells()
 		greenIDs.push_back(75);
 		greenIDs.push_back(74);
 
-		randSpellsOfType(greenIDs, 3);
+		randAllSpellsOfType(greenIDs, 3);
 	}
 	{
 		vector<int> arcaneIDs;
@@ -522,9 +560,25 @@ void MagicRand::randSpells()
 		arcaneIDs.push_back(68);
 		arcaneIDs.push_back(34);
 
-		randSpellsOfType(arcaneIDs, 4);
+		randAllSpellsOfType(arcaneIDs, 4);
 	}
 	didRandSpells = true;
+	for (int i = 82; i < 146; i++)
+	{
+		actionData[i].description = 0x0FFE;
+	}
+}
+
+void MagicRand::randSpellsFull()
+{
+	vector<int> ids;
+	addRangeToVector(ids, 0, 80);
+	randAllSpellsOfType(ids, -1, true);
+	didRandSpells = true;
+	for (int i = 82; i < 146; i++)
+	{
+		actionData[i].description = 0x0FFE;
+	}
 }
 
 vector<string> MagicRand::split(const std::string &s, char delim) {
@@ -543,27 +597,66 @@ void MagicRand::addRangeToVector(vector<int>& data, int low, int high)
 		data.push_back(i);
 }
 
-vector<RandSpellData> MagicRand::getSpellsOfType(int type)
+vector<int> MagicRand::getSpellsOfType(int type, bool good)
 {
-	vector<RandSpellData> tSpells;
+	vector<int> tSpells;
 	for (int i = 0; i < spells.size(); i++)
 	{
-		if (spells[i].magicType == type)
-			tSpells.push_back(spells[i]);
+		if ((type == -1 || spells[i].magicType == type) && (good ? spells[i].target <= 76 : spells[i].target > 76))
+			tSpells.push_back(i);
 	}
 	return tSpells;
 }
 
-void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
+void MagicRand::randAllSpellsOfType(vector<int> idsReplace, int type, bool shuffle)
 {
-	vector<RandSpellData> newSpells = getSpellsOfType(type);
+	vector<int> goodSpells = vector<int>();
+	vector<int> badSpells = vector<int>();
+
+	vector<int> orderIDs = vector<int>();
+	if (shuffle)
+		addRangeToVector(orderIDs, 0, idsReplace.size() - 1);
+
+	for (int i = 0; i < idsReplace.size(); i++)
+	{
+		if (actionData[idsReplace[i]].target <= 76)
+			goodSpells.push_back(idsReplace[i]);
+		else
+			badSpells.push_back(idsReplace[i]);
+	}
+
+	if (goodSpells.size() > 0)
+		randSpellsOfType(goodSpells, type, true, shuffle, orderIDs);
+	if (badSpells.size() > 0)
+		randSpellsOfType(badSpells, type, false, shuffle, orderIDs);
+
+	if (shuffle)
+	{
+		int order = 0;
+		for (int i = 0; i < spells.size(); i++)
+		{
+			int index = find(orderIDs.begin(), orderIDs.end(), i)-orderIDs.begin();
+			if (index + orderIDs.begin() != orderIDs.end())
+			{
+				magicData[index].order = order;
+				actionData[index].gambitPage = order / 17 + 1;
+				actionData[index].gambitPageOrder = order % 17;
+				order++;
+			}
+		}
+	}
+}
+
+void MagicRand::randSpellsOfType(vector<int> idsReplace, int type, bool good, bool shuffle, vector<int> &orderIDs)
+{
+	vector<int> newSpells = getSpellsOfType(type, good);
 	vector<int> weights = vector<int>();
 	for (int i = 0; i < newSpells.size(); i++)
 	{
 		if (i > 0)
-			weights.push_back(weights[i - 1] + newSpells[i].weight);
+			weights.push_back(weights[i - 1] + spells[newSpells[i]].weight);
 		else
-			weights.push_back(newSpells[i].weight);
+			weights.push_back(spells[newSpells[i]].weight);
 	}
 	
 	vector<int> newIDs = vector<int>();
@@ -578,36 +671,43 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type)
 		} while (find(newIDs.begin(), newIDs.end(), index) != newIDs.end());
 		newIDs.push_back(index);
 	}
+
+	if (shuffle)
+		random_shuffle(idsReplace.begin(), idsReplace.end());
 	sort(newIDs.begin(), newIDs.end());
 
 	for (int i = 0; i < idsReplace.size(); i++)
 	{
 		int rep = idsReplace[i];
 		int newID = newIDs[i];
-		spellNames[rep] = newSpells[newID].name;
-		spellDescs[rep] = newSpells[newID].description;
-		actionData[rep].power = newSpells[newID].power;
-		actionData[rep].ct = newSpells[newID].ct;
-		actionData[rep].cost = newSpells[newID].mp;
-		actionData[rep].accuracy = newSpells[newID].accuracy;
-		actionData[rep].aoeRange = newSpells[newID].aoe;
+		RandSpellData spell = spells[newSpells[newID]];
+		spellNames[rep] = spell.name;
+		spellDescs[rep] = spell.description;
+		actionData[rep].power = spell.power;
+		actionData[rep].ct = spell.ct;
+		actionData[rep].cost = spell.mp;
+		actionData[rep].accuracy = spell.accuracy;
+		actionData[rep].aoeRange = spell.aoe;
 		if (actionData[rep].aoeRange == 255)
 			actionData[rep].aoeRange = (Helpers::randInt(0, 99) < 80) ? 0 : 10;
-		actionData[rep].hitChance = newSpells[newID].onHit;
-		actionData[rep].target = newSpells[newID].target;
-		actionData[rep].type = newSpells[newID].effect;
-		actionData[rep].status1 = newSpells[newID].status1;
-		actionData[rep].status2 = newSpells[newID].status2;
-		actionData[rep].status3 = newSpells[newID].status3;
-		actionData[rep].status4 = newSpells[newID].status4;
-		actionData[rep].element = newSpells[newID].element;
-		actionData[rep].mType = newSpells[newID].mType2;
-		if (newSpells[newID].animation != 255)
-			actionData[rep].animation = newSpells[newID].animation;
-		else
-			actionData[rep].animation = 179;
-		actionData[rep].specialType = newSpells[newID].specialType;
+		actionData[rep].hitChance = spell.onHit;
+		actionData[rep].target = spell.target;
+		actionData[rep].type = spell.effect;
+		actionData[rep].status1 = spell.status1;
+		actionData[rep].status2 = spell.status2;
+		actionData[rep].status3 = spell.status3;
+		actionData[rep].status4 = spell.status4;
+		actionData[rep].element = spell.element;
+		actionData[rep].mType = spell.mType2;
+		actionData[rep].animation = spell.animation;
+		actionData[rep].specialType = spell.specialType;
+		magicData[rep].icon = spell.icon;
+		actionData[rep].castAnimation = spell.castAnimation;
 
+		if (shuffle)
+		{
+			orderIDs[rep] = newSpells[newIDs[i]];
+		}
 	}
 }
 

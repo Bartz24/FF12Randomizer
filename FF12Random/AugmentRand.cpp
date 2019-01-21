@@ -74,46 +74,116 @@ void AugmentRand::save()
 	delete[] buffer;
 }
 
-string AugmentRand::process(string preset)
+void AugmentRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	if (flags.find('v') != string::npos)
+	if (flags.hasFlag("h"))
 	{
-		randValue();
+		randHPLores(flags.getFlag("h").getValue());
 	}
-	return flags;
+	if (flags.hasFlag("b"))
+	{
+		randBattleLores(flags.getFlag("b").getValue());
+	}
+	if (flags.hasFlag("m"))
+	{
+		randMagickLores(flags.getFlag("m").getValue());
+	}
+	if (flags.hasFlag("c"))
+	{
+		randChannelling(flags.getFlag("c").getValue());
+	}
+	if (flags.hasFlag("s"))
+	{
+		randSwiftness(flags.getFlag("s").getValue());
+	}
+	if (flags.hasFlag("l"))
+	{
+		randShieldBlock(flags.getFlag("l").getValue());
+	}
+	if (flags.hasFlag("p"))
+	{
+		randPotionLores(flags.getFlag("p").getValue());
+	}
+	if (flags.hasFlag("e"))
+	{
+		randEtherLores(flags.getFlag("e").getValue());
+	}
+	if (flags.hasFlag("x"))
+	{
+		randPhoenixLores(flags.getFlag("x").getValue());
+	}
 }
 
-void AugmentRand::randValue()
+void AugmentRand::randHPLores(int value)
 {
-	vector<int> loreIds = vector<int>();
-	loreIds.push_back(19);
-	loreIds.push_back(22);
-	loreIds.push_back(24);
-	loreIds.push_back(26);
-	loreIds.push_back(35);
-	addRangeToVector(loreIds, 42, 47);
-	addRangeToVector(loreIds, 60, 73);
-	addRangeToVector(loreIds, 97, 102);
-	vector<int> hpLores = vector<int>();
-	addRangeToVector(hpLores, 74, 85);
-	vector<int> percent = vector<int>();
-	addRangeToVector(percent, 88, 96);
-	addRangeToVector(percent, 119, 127);
+	for (int i = 74; i <= 85; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(20, 2000, 160, 120, value));
+	}
+}
 
+void AugmentRand::randBattleLores(int value)
+{
 	for (int i = 0; i < 129; i++)
 	{
-		if (find(loreIds.begin(), loreIds.end(), i) != loreIds.end())
-			augmentData[i].value = Helpers::randInt(1, 4);
-		else if (find(hpLores.begin(), hpLores.end(), i) != hpLores.end())
-			augmentData[i].value = unsigned short(Helpers::randIntNorm(20, 1500, 400, 120));
-		else if (find(percent.begin(), percent.end(), i) != percent.end())
-			augmentData[i].value = Helpers::randInt(1, 30);
+		if (i == 35 || i >= 42 && i <= 47 || i >= 60 && i <= 68)
+			augmentData[i].value = unsigned short(Helpers::randNormControl(1, 8, 1, 1, value));
 	}
 }
 
-void AugmentRand::addRangeToVector(vector<int>& data, int low, int high)
+void AugmentRand::randMagickLores(int value)
 {
-	for (int i = low; i <= high; i++)
-		data.push_back(i);
+	for (int i = 0; i < 129; i++)
+	{
+		if (i == 19 || i == 22 || i == 24 || i == 26 || i >= 69 && i <= 73 || i == 87 || i >= 97 && i <= 102)
+			augmentData[i].value = unsigned short(Helpers::randNormControl(1, 8, 1, 1, value));
+	}
+}
+
+void AugmentRand::randChannelling(int value)
+{
+	for (int i = 91; i <= 93; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 10, 5, value));
+	}
+}
+
+void AugmentRand::randSwiftness(int value)
+{
+	for (int i = 94; i <= 96; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 10, 5, value));
+	}
+}
+
+void AugmentRand::randShieldBlock(int value)
+{
+	for (int i = 88; i <= 90; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 10, 5, value));
+	}
+}
+
+void AugmentRand::randPotionLores(int value)
+{
+	for (int i = 119; i <= 121; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 15, 5, value));
+	}
+}
+
+void AugmentRand::randEtherLores(int value)
+{
+	for (int i = 122; i <= 124; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 15, 5, value));
+	}
+}
+
+void AugmentRand::randPhoenixLores(int value)
+{
+	for (int i = 125; i <= 127; i++)
+	{
+		augmentData[i].value = unsigned short(Helpers::randNormControl(5, 30, 15, 5, value));
+	}
 }

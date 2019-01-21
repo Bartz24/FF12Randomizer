@@ -1,5 +1,6 @@
 #pragma once
 #include "RewardData.h"
+#include "FlagGroup.h"
 
 class RewardRand
 {
@@ -12,8 +13,8 @@ public:
 	~RewardRand();
 	void load();
 	void save();
-	string process(string preset);
-	void randValue();
+	void process(FlagGroup flags);
+	void randValue(FlagGroup flags);
 	void addRangeToVector(vector<int>& data, int low, int high);
 };
 

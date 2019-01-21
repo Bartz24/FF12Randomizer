@@ -80,17 +80,15 @@ void RewardRand::save()
 	delete[] buffer;
 }
 
-string RewardRand::process(string preset)
+void RewardRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	if (flags.find('r') != string::npos)
+	if (flags.hasFlag("r"))
 	{
-		randValue();
+		randValue(flags);
 	}
-	return flags;
 }
 
-void RewardRand::randValue()
+void RewardRand::randValue(FlagGroup flags)
 {
 	vector<int> data = vector<int>();
 	addRangeToVector(data, 0, 28);
@@ -110,39 +108,65 @@ void RewardRand::randValue()
 	for (int i = 0; i < 512; i++)
 	{
 		int randNum = Helpers::randInt(0, 99);
-		if (randNum < 80)
+		bool gilChance = true;
+		if (flags.hasFlag("g"))
 		{
-			rewardData[i].gil = unsigned int(Helpers::randIntNorm(100, 1000000, 1500, 8000) + Helpers::randInt(0, 500));
-		}
-		else
-			rewardData[i].gil = 0;
-		if (randNum > 15)
-		{
-			rewardData[i].item1 = data[Helpers::randInt(0, data.size()-1)];
-				if (rewardData[i].item1 < 9000 && rewardData[i].item1 > 8000)
-					rewardData[i].item1Amt = Helpers::randInt(1, 4);
-				else
-					rewardData[i].item1Amt = 1;
-		}
-		else
-		{
-			rewardData[i].item1 = 0xFFFF;
-			rewardData[i].item1Amt = 0xFF;
-		}
-		if (randNum > 85)
-		{
-			rewardData[i].item2 = data[Helpers::randInt(0, data.size() - 1)];
-			if (rewardData[i].item2 < 9000 && rewardData[i].item2 > 8000)
-				rewardData[i].item2Amt = Helpers::randInt(1, 4);
+			if (randNum < flags.getFlag("g").getValue())
+			{
+				if (flags.hasFlag("a"))
+					rewardData[i].gil = Helpers::randNormControl(1, 1000000, 10000, 8000, flags.getFlag("a").getValue());
+			}
 			else
-				rewardData[i].item2Amt = 1;
+			{
+				rewardData[i].gil = 0;
+				gilChance = false;
+			}
 		}
-		else
+		randNum = Helpers::randInt(0, 99);
+		if (flags.hasFlag("m"))
 		{
-			rewardData[i].item2 = 0xFFFF;
-			rewardData[i].item2Amt = 0xFF;
-		}
+			if (!gilChance || randNum < flags.getFlag("m").getValue())
+			{
+				rewardData[i].item1 = data[Helpers::randInt(0, data.size() - 1)];
+				rewardData[i].item1Amt = Helpers::randInt(1, 4);
 
+				if (randNum < flags.getFlag("m").getValue() * flags.getFlag("m").getValue() / 100)
+				{
+					rewardData[i].item2 = data[Helpers::randInt(0, data.size() - 1)];
+					rewardData[i].item2Amt = Helpers::randInt(1, 4);
+				}
+				else
+				{
+					if (flags.hasFlag("t") && Helpers::randInt(0, 99) < flags.getFlag("t").getValue())
+					{
+						rewardData[i].item2 = 8192;
+						rewardData[i].item2Amt = Helpers::randInt(1, 4);
+					}
+					else
+					{
+						rewardData[i].item2 = 0xFFFF;
+						rewardData[i].item2Amt = 0xFF;
+					}
+				}
+			}
+			else
+			{
+				if (flags.hasFlag("t") && Helpers::randInt(0, 99) < flags.getFlag("t").getValue())
+				{
+					rewardData[i].item1 = 8192;
+					rewardData[i].item1Amt = Helpers::randInt(1, 4);
+					rewardData[i].item2 = 0xFFFF;
+					rewardData[i].item2Amt = 0xFF;
+				}
+				else
+				{
+					rewardData[i].item1 = 0xFFFF;
+					rewardData[i].item1Amt = 0xFF;
+					rewardData[i].item2 = 0xFFFF;
+					rewardData[i].item2Amt = 0xFF;
+				}
+			}
+		}
 	}
 }
 

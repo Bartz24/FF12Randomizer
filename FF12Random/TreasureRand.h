@@ -20,10 +20,11 @@ public:
 	~TreasureRand();
 	void load();
 	void save();
-	string process(string preset);
-	void randTreasures();
-	int getItem(std::vector<int> &data, int minCost, int maxCost, bool remove);
+	void process(FlagGroup flags);
+	void randTreasures(FlagGroup flags);
+	int getItem(std::vector<int> &data, int center, int std, int value, bool remove);
 	int getCost(int itemID);
+	bool canAddItem(int actualCost, int center, int std, int value);
 	void addRangeToVector(vector<int> &data, int low, int high);
 };
 

@@ -3,7 +3,7 @@
 
 enum class AttributeDataOffset
 {
-	us = 0x00121D4
+	us = 0x001218C
 };
 
 class AttributeData

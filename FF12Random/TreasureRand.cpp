@@ -160,14 +160,12 @@ void TreasureRand::save()
 	}
 }
 
-string TreasureRand::process(string preset)
+void TreasureRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	if (flags.find('t') != string::npos)
+	if (flags.hasFlag("t"))
 	{
-		randTreasures();
+		randTreasures(flags);
 	}
-	return flags;
 }
 
 //Usable Items:		0-28, 42-63
@@ -177,7 +175,7 @@ string TreasureRand::process(string preset)
 //Gambits:			24576-24831
 //Equipment:		4097-4255, 4258-4259, 4264, 4266-4274, 4288-4483
 
-void TreasureRand::randTreasures()
+void TreasureRand::randTreasures(FlagGroup flags)
 {
 	bool filledTreasure = true;
 	vector<int> data = vector<int>();
@@ -200,10 +198,14 @@ void TreasureRand::randTreasures()
 	{
 		for (int t = 0; t < mapData[i].count; t++)
 		{
-			mapData[i].treasure[t].common1 = 0xFFFF;
-			mapData[i].treasure[t].common2 = 0xFFFF;
-			mapData[i].treasure[t].rare1 = 0xFFFF;
-			mapData[i].treasure[t].rare2 = 0xFFFF;
+			if (flags.hasFlag("c"))
+				mapData[i].treasure[t].common1 = 0xFFFF;
+			if (flags.hasFlag("o"))
+				mapData[i].treasure[t].common2 = 0xFFFF;
+			if (flags.hasFlag("r"))
+				mapData[i].treasure[t].rare1 = 0xFFFF;
+			if (flags.hasFlag("d"))
+				mapData[i].treasure[t].rare2 = 0xFFFF;
 		}
 	}
 	bool emptied = false;
@@ -236,25 +238,25 @@ void TreasureRand::randTreasures()
 				if (mapData[i].treasure[t].common1 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].common1 = getItem(data, 0, 12000, !emptied);
+						mapData[i].treasure[t].common1 = getItem(data, 2000, 1000, flags.getFlag("c").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].common2 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].common2 = getItem(data, 500, 15000, !emptied);
+						mapData[i].treasure[t].common2 = getItem(data, 12000, 4000, flags.getFlag("o").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].rare1 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].rare1 = getItem(data, 10000, 32000, !emptied);
+						mapData[i].treasure[t].rare1 = getItem(data, 30000, 8000, flags.getFlag("r").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].rare2 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].rare2 = getItem(data, 30000, 700000, !emptied);
+						mapData[i].treasure[t].rare2 = getItem(data, 50000, 10000, flags.getFlag("d").getValue(), !emptied);
 					filledTreasure = true;
 				}
 			}
@@ -265,19 +267,34 @@ void TreasureRand::randTreasures()
 	{
 		for (int t = 0; t < mapData[i].count; t++)
 		{
-			int gilA = getCost(mapData[i].treasure[t].common1), gilB = getCost(mapData[i].treasure[t].common2);
-			mapData[i].treasure[t].gil1 = (gilA + gilB) / 2 / 100;
-			gilA = getCost(mapData[i].treasure[t].rare1);
-			gilB = getCost(mapData[i].treasure[t].rare2);
-			mapData[i].treasure[t].gil2 = (gilA * 9 + gilB) / 10 / 10;
-			mapData[i].treasure[t].spawnChance = (4000 - (mapData[i].treasure[t].gil1 + mapData[i].treasure[t].gil2)) * 100 / 4000;
-			mapData[i].treasure[t].gilChance = Helpers::randInt(1, 95);
+			if (flags.hasFlag("a"))
+			{
+				if (flags.getFlag("a").isSmart())
+				{
+					int gilA = getCost(mapData[i].treasure[t].common1), gilB = getCost(mapData[i].treasure[t].common2);
+					int gil = (gilA + gilB) / 2;
+					mapData[i].treasure[t].gil1 = Helpers::randIntControl(0, 65535, gil, flags.getFlag("a").getValue());
+					gilA = getCost(mapData[i].treasure[t].rare1);
+					gilB = getCost(mapData[i].treasure[t].rare2);
+					gil = (gilA * 9 + gilB) / 10;
+					mapData[i].treasure[t].gil2 = Helpers::randIntControl(0, 65535, gil, flags.getFlag("a").getValue());
+				}
+				else
+				{
+					mapData[i].treasure[t].gil1 = Helpers::randNormControl(0, 65535, 3000, 1000, flags.getFlag("a").getValue());
+					mapData[i].treasure[t].gil2 = Helpers::randNormControl(0, 65535, 20000, 8000, flags.getFlag("a").getValue());
+				}
+			}
+			if (flags.hasFlag("s"))
+				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(0, 100, 70, 20, flags.getFlag("s").getValue());
+			if (flags.hasFlag("g"))
+				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(0, 100, 30, 20, flags.getFlag("g").getValue());
 			mapData[i].treasure[t].respawn = 0xFF;
 		}
 	}
 }
 
-int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, bool remove)
+int TreasureRand::getItem(std::vector<int> &data, int center, int std, int value, bool remove)
 {
 	int itemID;
 	int cost = 99999;
@@ -289,7 +306,7 @@ int TreasureRand::getItem(std::vector<int> &data, int minCost, int maxCost, bool
 		itemID = data[index];
 		cost = getCost(itemID);		
 		tries++;
-	} while (tries < 100 && (cost < minCost || cost > maxCost || Helpers::randInt(0,255) < int(sqrt(cost))));
+	} while (tries < 100 && !canAddItem(cost, center, std, value));
 	if (remove)
 		data.erase(data.begin() + index);
 	return itemID;
@@ -311,6 +328,16 @@ int TreasureRand::getCost(int itemID)
 		return MagicRand::magicData[itemID - 16384 + 81].cost;
 	else
 		return ItemRand::gambitData[itemID - 24576].cost;
+}
+
+bool TreasureRand::canAddItem(int actualCost, int center, int std, int value)
+{
+	float zScoreAbs = float(abs(actualCost - center)) / float(std);
+	int chance = int(exp(-zScoreAbs) * 10000.f); //chance in terms of % * 100
+
+	int actualChance = Helpers::randIntControl(0, 9999, chance, value);
+
+	return Helpers::randInt(0, 9999) < actualChance;
 }
 
 void TreasureRand::addRangeToVector(vector<int>& data, int low, int high)

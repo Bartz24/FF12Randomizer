@@ -10,7 +10,8 @@ class ActionData
 {
 public:
 	static ActionDataOffset getDataIndex();
-	unsigned char unknown[48];
+	unsigned char unknown[60];
+	unsigned short description; //00-01
 	unsigned char aoeRange; // 06
 	unsigned char type; // 08
 	unsigned char ct; // 09
@@ -25,9 +26,12 @@ public:
 	unsigned char status2; // 19
 	unsigned char status3; // 1A
 	unsigned char status4; // 1B
+	unsigned char castAnimation; // 21
 	unsigned short animation; //24-25
 	unsigned short mType; // 2C-2D
 	unsigned char specialType; // 36
+	unsigned char gambitPage; // 38
+	unsigned char gambitPageOrder; // 39
 	ActionData();
 	ActionData(char data[60]);
 	~ActionData();

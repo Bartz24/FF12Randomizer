@@ -18,10 +18,13 @@ public:
 	~ShopRand();
 	void load();
 	void save();
-	string process(string preset);
-	string randShops(string preset);
+	void process(FlagGroup flags);
+	void randShops(FlagGroup flags);
+	void addAllShopItems(vector<int> &data, FlagGroup flags);
+	void addShopItems(vector<int> &data, int low, int high, FlagGroup flags);
 	void addRangeToVector(vector<int> &data, int low, int high);
-	void replaceBazaarRecipes();
-	int setItem(vector<int> &dataVec, unsigned short &data, unsigned char &amt, bool loot = false);
+	void replaceBazaarRecipes(FlagGroup flags);
+	int setItem(vector<int> &dataVec, unsigned short &data, unsigned char &amt, bool loot, FlagGroup flags);
+	int getCostOfItem(int itemID);
 };
 

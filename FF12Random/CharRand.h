@@ -20,8 +20,11 @@ public:
 	~CharRand();
 	void load();
 	void save();
-	string process(string preset);
+	void process(FlagGroup flags);
+	void checkDangerousEquip(int itemID);
 	void initialEquip();
+	bool statusDangerous(StatusValue &status);
+	void soloChara();
 	void randStats();
 	void swapCharas();
 	void fixLicenses(int charIds[6]);

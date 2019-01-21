@@ -12,14 +12,12 @@ ActionDataOffset ActionData::getDataIndex()
 
 ActionData::ActionData(char data[60])
 {
-	int index = 0;
 	for (int i = 0; i < 60; i++)
 	{
-		if (i == 0x06 || i == 0x08 || i == 0x09 || i == 0x0A || i == 0x0C || i >= 0x10 && i <= 0x14 || i >= 0x18 && i <= 0x1B || i == 0x24 || i == 0x25 || i == 0x2C || i == 0x2D || i == 0x36)
-			continue;
-		this->unknown[index] = data[i];
-		index++;
+		this->unknown[i] = data[i];
 	}
+	char desc[] = { data[0x00] , data[0x01] };
+	this->description = *reinterpret_cast<unsigned short*>(desc);
 	this->aoeRange = data[0x06];
 	this->type = data[0x08];
 	this->ct = data[0x09];
@@ -34,11 +32,14 @@ ActionData::ActionData(char data[60])
 	this->status2 = data[0x19];
 	this->status3 = data[0x1A];
 	this->status4 = data[0x1B];
+	this->castAnimation = data[0x21];
 	char animation[] = { data[0x24] , data[0x25] };
 	this->animation = *reinterpret_cast<unsigned short*>(animation);
 	char type[] = { data[0x2C] , data[0x2D] };
 	this->mType = *reinterpret_cast<unsigned short*>(type);
 	this->specialType = data[0x36];
+	this->gambitPage = data[0x38];
+	this->gambitPageOrder = data[0x39];
 }
 
 ActionData::ActionData()

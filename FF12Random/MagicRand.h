@@ -1,7 +1,9 @@
 #pragma once
+#include "FlagGroup.h"
 #include "MagicData.h"
 #include "ActionData.h"
 #include "StatusValue.h"
+#include "ElementalValue.h"
 #include "RandSpellData.h"
 #include "TrapData.h"
 #include <vector>
@@ -26,20 +28,25 @@ public:
 	~MagicRand();
 	void load();
 	void save();
-	string process(string preset);
-	void randCost();
-	void randCostSmart();
-	void randMPCost();
-	void randCT();
-	void randAoE();
-	void randStatus();
+	void process(FlagGroup flags);
+	void randCost(int value);
+	void randCostSmart(int value);
+	void randMPCostSmart(int value);
+	void randMPCost(int value);
+	void randCT(int value);
+	void randCTSmart(int value);
+	void randAoE(int value);
+	void randElements(int value);
+	void randStatus(int value);
 	void setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance);
 	void addStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4);
 	void randSpells();
+	void randSpellsFull();
 	vector<string> split(const std::string &s, char delim);
 	void addRangeToVector(vector<int>& data, int low, int high);
-	vector<RandSpellData> getSpellsOfType(int type);
-	void randSpellsOfType(vector<int> idsReplace, int type);
+	vector<int> getSpellsOfType(int type, bool good);
+	void randAllSpellsOfType(vector<int> idsReplace, int type, bool shuffle = false);
+	void randSpellsOfType(vector<int> idsReplace, int type, bool good, bool shuffle, vector<int> &orderIDs);
 	void randTraps();
 };
 

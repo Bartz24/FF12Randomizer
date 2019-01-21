@@ -40,55 +40,133 @@ void LicenseRand::load()
 	}
 }
 
-string LicenseRand::process(string preset)
+void LicenseRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	string eFlags = "!", eFlagsOut = ".", mFlags = "!", mFlagsOut = ".";
-	if (flags.find("e-") != string::npos)
+	if (flags.hasFlag("a"))
 	{
-		string second = flags.substr(flags.find("e-") + 2, flags.length() - flags.find("e-") - 1);
-		eFlags = flags.substr(flags.find("e-") + 2, flags.length() - (second.length() - second.find("-")) - flags.find("e-") - 2);
-		flags = flags.substr(0, flags.find('e') + 1) + flags.substr(flags.find('e') + 3 + eFlags.length(), flags.length() - flags.find('e') - 2 - eFlags.length());
+		randAugments(flags.hasFlag("b"));
 	}
-	if (flags.find("m-") != string::npos)
+	if (flags.hasFlag("e"))
 	{
-		string second = flags.substr(flags.find("m-") + 2, flags.length() - flags.find("m-") - 1);
-		mFlags = flags.substr(flags.find("m-") + 2, flags.length() - (second.length() - second.find("-")) - flags.find("m-") - 2);
-		flags = flags.substr(0, flags.find('m') + 1) + flags.substr(flags.find('m') + 3 + mFlags.length(), flags.length() - flags.find('m') - 2 - mFlags.length());
+		randEquipment(flags.hasFlag("t"), flags.hasFlag("d"));
 	}
-	if (flags.find('a') != string::npos)
+
+	if (MagicRand::didRandSpells)
 	{
-		randAugments(flags.find('b') != string::npos);
+		updateMagickLicenses();
 	}
-	if (flags.find('e') != string::npos)
+
+	if (flags.hasFlag("i"))
 	{
-		eFlagsOut = randEquipment(eFlags);
-		flags = flags.substr(0, flags.find('e')+1) + "-" + eFlagsOut + "-" + flags.substr(flags.find('e') + 1, flags.length() - flags.find('e'));
+		randAbilities(flags.hasFlag("y"), flags.hasFlag("n"));
 	}
-	if (flags.find('m') != string::npos)
+	if (flags.hasFlag("l"))
 	{
-		mFlagsOut = randAbilities(mFlags);
-		flags = flags.substr(0, flags.find('m')+1) + "-" + mFlagsOut + "-" + flags.substr(flags.find('m') + 1, flags.length() - flags.find('m'));
-	}
-	if (flags.find('c') != string::npos)
-	{
-		if (flags.find('s') != string::npos)
-			randCostSmart();
+		if (flags.getFlag("l").isSmart())
+			randCostSmart(flags.getFlag("l").getValue());
 		else
-			randCost();
+			randCost(flags.getFlag("l").getValue());
 	}
-	return flags;
 }
 
-void LicenseRand::randCost()
+bool magicSort(int a, int b) { return (MagicRand::actionData[a].cost < MagicRand::actionData[b].cost ); }
+
+void LicenseRand::updateMagickLicenses()
+{
+	vector<vector<int>> abilities;
+
+	for (int i = 0; i < 5; i++)
+	{
+		vector<int> magic;
+		for (int m = 0; m <= 80; m++)
+		{
+			if (MagicRand::actionData[m].mType % 0x10 == i)
+				magic.push_back(m);
+		}
+		sort(magic.begin(), magic.end(), magicSort);
+
+		abilities.push_back(magic);
+	}
+
+	{//White
+		vector<int> licenses;
+		addRangeToVector(licenses, 182, 189);
+		licenses.push_back(355);
+		addRangeToVector(licenses, 208, 211);
+
+		updateLicenses(abilities, 0, licenses);
+	}
+
+	{//Black
+		vector<int> licenses;
+		addRangeToVector(licenses, 190, 197);
+		licenses.push_back(356);
+		licenses.push_back(358);
+		addRangeToVector(licenses, 215, 217);
+
+		updateLicenses(abilities, 1, licenses);
+	}
+
+	{//Time
+		vector<int> licenses;
+		addRangeToVector(licenses, 198, 204);
+		licenses.push_back(357);
+		licenses.push_back(359);
+		licenses.push_back(218);
+
+		updateLicenses(abilities, 2, licenses);
+	}
+
+	{//Green
+		vector<int> licenses;
+		addRangeToVector(licenses, 205, 207);
+
+		updateLicenses(abilities, 3, licenses);
+	}
+
+	{//Arcane
+		vector<int> licenses;
+		addRangeToVector(licenses, 212, 214);
+
+		updateLicenses(abilities, 4, licenses);
+	}
+}
+
+void LicenseRand::updateLicenses(std::vector<std::vector<int>> &abilities, int type, std::vector<int> &licenses)
+{
+	int numPer = abilities[type].size() / licenses.size();
+	int numExtra = abilities[type].size() % licenses.size();
+
+	int mIndex = 0;
+
+	for (int i = 0; i < licenses.size(); i++)
+	{
+		for (int a = 0; a < 4; a++)
+		{
+			licenseData[licenses[i]].otherData[a] = 0xFFFF;
+		}
+		for (int a = 0; a < numPer; a++)
+		{
+			licenseData[licenses[i]].otherData[a] = abilities[type][mIndex];
+			mIndex++;
+		}
+		if (i < numExtra)
+		{
+			licenseData[licenses[i]].otherData[numPer] = abilities[type][mIndex];
+			mIndex++;
+		}
+	}
+}
+
+void LicenseRand::randCost(int value)
 {
 	for (int i = 0; i < 361; i++)
 	{
-		licenseData[i].lpCost = Helpers::randInt(0, 255);
+		licenseData[i].lpCost = Helpers::randNormControl(0, 255, 60, 30, value);
 	}
 }
 
-void LicenseRand::randCostSmart()
+void LicenseRand::randCostSmart(int value)
 {
 	for (int i = 0; i < 361; i++)
 	{
@@ -115,22 +193,17 @@ void LicenseRand::randCostSmart()
 					cost = ItemRand::gambitData[itemID - 24576].cost;
 			}
 			float lpCost = sqrt(float(cost)) / 1.4f;
-			lpCost += Helpers::randInt(-15, 15);
-			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
+			licenseData[i].lpCost = Helpers::randIntControl(0, 255, lpCost, value);
 		}
 		else if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
 		{
 			int augmentID = licenseData[i].otherData[0];
 			float lpCost = augmentWorth(augmentID);
-			lpCost += Helpers::randInt(-15, 15);
-			licenseData[i].lpCost = unsigned char(max(0.f, min(lpCost, 255.f)));
+			licenseData[i].lpCost = Helpers::randIntControl(0, 255, lpCost, value);
 		}
 		else
 		{
-			if (Helpers::randInt(0, 99) < 77)
-				licenseData[i].lpCost = Helpers::randInt(0, 128);
-			else
-				licenseData[i].lpCost = Helpers::randInt(0, 255);
+			licenseData[i].lpCost = Helpers::randNormControl(0, 255, 60, 30, value);
 		}
 	}
 }
@@ -309,12 +382,11 @@ int LicenseRand::augmentWorth(int index)
 //				Equip IDs:	 4097-4255, 4258-4259, 4264, 4266-4274, 4288-4483
 
 
-string LicenseRand::randEquipment(string preset)
+void LicenseRand::randEquipment(bool together, bool changeNum)
 {
-	string flags = preset;
-	if (flags.find('a') != string::npos)
+	if (together)
 	{
-		if (flags.find('n') != string::npos)
+		if (changeNum)
 		{
 			vector<unsigned short> equip = vector<unsigned short>();
 			extractAbilities(equip, 32, 181, true);
@@ -336,7 +408,7 @@ string LicenseRand::randEquipment(string preset)
 	}
 	else
 	{
-		if (flags.find('n') != string::npos)
+		if (changeNum)
 		{
 			//Swords
 			vector<unsigned short> equip = vector<unsigned short>();
@@ -686,13 +758,13 @@ string LicenseRand::randEquipment(string preset)
 			replaceAbilities(353, 354, equip);
 		}
 	}
-	return flags;
 }
 
 void LicenseRand::randAugments(bool includeBad)
 {
 	vector<int> augments = vector<int>();
-	addRangeToVector(augments, 0, 11);
+	augments.push_back(0);
+	addRangeToVector(augments, 2, 11);
 	addRangeToVector(augments, 13, 14);
 	addRangeToVector(augments, 16, 28);
 	augments.push_back(30);
@@ -706,6 +778,7 @@ void LicenseRand::randAugments(bool includeBad)
 	addRangeToVector(augments, 116, 127);
 	if (includeBad)
 	{
+		augments.push_back(1);
 		augments.push_back(12);
 		augments.push_back(15);
 		augments.push_back(29);
@@ -731,28 +804,11 @@ void LicenseRand::addRangeToVector(vector<int>& data, int low, int high)
 		data.push_back(i);
 }
 
-//White		License IDs:	182-189, 355, 208-211
-//			Magic IDs:		0-17,51-56,69
-//Black		License IDs:	190-197, 356, 358, 215-217
-//			Magic IDs:		18-33,35,57,59-65
-//Time		License IDs:	198-204, 357, 359, 218
-//			Magic IDs:		36-50,67,71-72,79-80
-//Green		License IDs:	205-207
-//			Magic IDs:		58,66,70,73-75
-//Arcane	License IDs:	212-214
-//			Magic IDs:		76-78,68,34
-//Technick	License IDs:	276-299
-//			Magic IDs:		158-181
-//All		License IDs:	182-218, 276-299, 355-359
-
-
-
-string LicenseRand::randAbilities(string preset)
+void LicenseRand::randAbilities(bool together, bool changeNum)
 {
-	string flags = preset;
-	if (flags.find('a') != string::npos)
+	if (together)
 	{
-		if (flags.find('n') != string::npos)
+		if (changeNum)
 		{
 			vector<unsigned short> abilities = vector<unsigned short>();
 			extractAbilities(abilities, 182, 218, true);
@@ -778,7 +834,7 @@ string LicenseRand::randAbilities(string preset)
 	}
 	else
 	{
-		if (flags.find('n') != string::npos)
+		if (changeNum)
 		{
 			//White
 			vector<unsigned short> abilities = vector<unsigned short>();
@@ -893,7 +949,6 @@ string LicenseRand::randAbilities(string preset)
 			replaceAbilities(276, 299, abilities);
 		}
 	}
-	return flags;
 }
 
 void LicenseRand::replaceAbilitiesChance(int start, int end, std::vector<unsigned short> &abilities)

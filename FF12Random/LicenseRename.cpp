@@ -175,15 +175,15 @@ string LicenseRename::getGroup(int a)
 	//Magick/Technick
 	if (a < 4000)
 	{
-		if (a >= 0 && a <= 17 || a >= 51 && a <= 56 || a == 69)
+		if (MagicRand::actionData[a].mType % 0x10 == 0)
 			return "White Magick";
-		else if (a >= 18 && a <= 33 || a >= 59 && a <= 65 || a == 35 || a == 37)
+		else if (MagicRand::actionData[a].mType % 0x10 == 1)
 			return "Black Magick";
-		else if (a >= 36 && a <= 50 || a == 67 || a == 71 || a == 72 || a == 79 || a == 80)
+		else if (MagicRand::actionData[a].mType % 0x10 == 2)
 			return "Time Magick";
-		else if (a >= 73 && a <= 75 || a == 58 || a == 66 || a == 70)
+		else if (MagicRand::actionData[a].mType % 0x10 == 3)
 			return "Green Magick";
-		else if (a >= 76 && a <= 78 || a == 34 || a == 68)
+		else if (MagicRand::actionData[a].mType % 0x10 == 4)
 			return "Arcane Magick";
 		else if (a >= 158 && a <= 181)
 			return "Technicks";
@@ -333,35 +333,38 @@ void LicenseRename::process()
 			data[licenseOrder[i]] = data[licenseOrder[i]] + " " + suffix[licenseOrder[i]];
 		data[licenseOrder[i]] = data[licenseOrder[i]] + " (" + to_string(LicenseRand::licenseData[licenseOrder[i]].lpCost) + " LP)";
 	}
-	for (int i = 18; i < 360; i++)
+	if (!LicenseBoardRand::usingSingleBoard)
 	{
-		vector<string> boardsWithLicense = vector<string>();
-
-		string names[12] = { "Wh", "Uh" , "Ma" , "Re" , "Kn" ,"Mo", "Ti" , "Fo" , "Ar" , "Bl" , "Bu" , "Sh" };
-
-		for (int board = 0; board < 12; board++)
+		for (int i = 18; i < 360; i++)
 		{
-			for (int y = 0; y < 24; y++)
+			vector<string> boardsWithLicense = vector<string>();
+
+			string names[12] = { "Wh", "Uh" , "Ma" , "Re" , "Kn" ,"Mo", "Ti" , "Fo" , "Ar" , "Bl" , "Bu" , "Sh" };
+
+			for (int board = 0; board < 12; board++)
 			{
-				for (int x = 0; x < 24; x++)
+				for (int y = 0; y < 24; y++)
 				{
-					if (LicenseBoardRand::boards[board].board[y][x] == i)
-						boardsWithLicense.push_back(names[board]);
+					for (int x = 0; x < 24; x++)
+					{
+						if (LicenseBoardRand::boards[board].board[y][x] == i)
+							boardsWithLicense.push_back(names[board]);
+					}
 				}
 			}
-		}
-		data[i] = data[i] + " (";
-		if (boardsWithLicense.size() == 0)
-			data[i] = data[i] + "None";
-		else if (boardsWithLicense.size() == 12)
-			data[i] = data[i] + "All";
-		else
-		{
-			for (int name = 0; name < boardsWithLicense.size(); name++)
+			data[i] = data[i] + " (";
+			if (boardsWithLicense.size() == 0)
+				data[i] = data[i] + "None";
+			else if (boardsWithLicense.size() == 12)
+				data[i] = data[i] + "All";
+			else
 			{
-				data[i] = data[i] + boardsWithLicense[name];
+				for (int name = 0; name < boardsWithLicense.size(); name++)
+				{
+					data[i] = data[i] + boardsWithLicense[name];
+				}
 			}
+			data[i] = data[i] + ")";
 		}
-		data[i] = data[i] + ")";
 	}
 }

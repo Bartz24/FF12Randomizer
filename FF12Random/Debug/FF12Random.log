@@ -1,62 +1,9 @@
-﻿  BazaarRename.cpp
-  CharData.cpp
-  CharRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(47): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(184): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(198): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(212): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(226): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(243): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(253): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(263): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(273): warning C4018: '<': signed/unsigned mismatch
-  DocumentationGen.cpp
-s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(51): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(57): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(60): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(181): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(184): warning C4018: '<': signed/unsigned mismatch
-  EquipRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(71): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(67): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(224): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(228): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(232): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(242): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(270): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(279): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(286): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(327): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(332): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(337): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(342): warning C4018: '<': signed/unsigned mismatch
-  FF12Random.cpp
+﻿  FF12Random.cpp
 s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.h(41): warning C4369: 'FileSizeTableOffset::menu04':  enumerator value '4294967295' cannot be represented as 'int', value is '-1'
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(89): warning C4244: 'initializing': conversion from 'time_t' to 'long', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(130): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(149): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(302): warning C4018: '<': signed/unsigned mismatch
-  FileSizeTableFix.cpp
-s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.h(41): warning C4369: 'FileSizeTableOffset::menu04':  enumerator value '4294967295' cannot be represented as 'int', value is '-1'
-s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.cpp(58): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.cpp(80): warning C4244: 'initializing': conversion from 'std::streamoff' to 'unsigned long', possible loss of data
-  GambitData.cpp
-  ItemRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\itemrand.cpp(83): warning C4101: 'byte': unreferenced local variable
-  MagicRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(123): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(526): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(538): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(547): warning C4018: '<': signed/unsigned mismatch
-s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(560): warning C4018: '<': signed/unsigned mismatch
-  RenameMain.cpp
-  ShopRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(86): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(82): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(254): warning C4244: '+=': conversion from 'double' to 'unsigned long', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(279): warning C4018: '>=': signed/unsigned mismatch
-  TreasureRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\treasurerand.cpp(114): warning C4101: 'byte2': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\treasurerand.cpp(110): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(127): warning C4244: 'initializing': conversion from 'time_t' to 'size_t', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(134): warning C4101: 'e': unreferenced local variable
+  LicenseBoardRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(94): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(404): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
-  FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12Random.exe
+LINK : fatal error LNK1168: cannot open S:\DevStuff\C\FF12Randomizer\Debug\FF12RProcessor.exe for writing

@@ -2,6 +2,7 @@
 #include "LicenseBoardRand.h"
 
 LicenseBoardData LicenseBoardRand::boards[12] = {};
+bool LicenseBoardRand::usingSingleBoard = false;
 
 LicenseBoardRand::LicenseBoardRand()
 {
@@ -42,36 +43,58 @@ void LicenseBoardRand::load()
 	}
 }
 
-string LicenseBoardRand::process(string preset)
+void LicenseBoardRand::process(FlagGroup flags)
 {
-	string flags = preset;
 	for (int i = 0; i < 12; i++)
 	{
+		if (usingSingleBoard && i > 0)
+		{
+			boards[i] = boards[0];
+			continue;
+		}
+		if (flags.hasFlag("s"))
+		{
+			useSingleBoard();
+		}
 		vector<unsigned short> licensesToUse = getLicenses(boards[i]);
-		if (flags.find('l') != string::npos)
+		if (flags.hasFlag("l") && !usingSingleBoard)
 		{
 			setRandLicenses(licensesToUse, flags);
 		}
-		if (flags.find('s') != string::npos)
+		if (flags.hasFlag("h"))
 		{
 			sortLicenses(licensesToUse);
 		}
 		bool layout[24][24];
-		if (flags.find('b') != string::npos)
+		getLayout(layout, boards[i]);
+		if (flags.hasFlag("l") || flags.hasFlag("h") || flags.hasFlag("b"))
 		{
-			setRandLayout(layout, licensesToUse.size());
+			int numPathable = 0;
+			do
+			{
+				vector<int> shortcutLocs = vector<int>();
+				if (flags.hasFlag("b"))
+				{
+					if (flags.hasFlag("m"))
+					{
+						int shortcuts = 0;
+						for (int i = 0; i < licensesToUse.size(); i++)
+						{
+							if (licensesToUse[i] <= 0x001E || licensesToUse[i] == 0x0168)
+								shortcuts++;
+						}
+						setMazeLayout(layout, shortcutLocs, licensesToUse.size()-shortcuts, shortcuts);
+					}
+					else
+						setRandLayout(layout, licensesToUse.size());
+				}
+				if (flags.hasFlag("h"))
+					assignLoHiLicenses(boards[i], licensesToUse, *layout, shortcutLocs);
+				else
+					assignLicenses(boards[i], licensesToUse, *layout, shortcutLocs);
+			} while (!pathToLicense(boards[i], 18, numPathable) || !pathToLicense(boards[i], 360, numPathable) || numPathable < 20);
 		}
-		else
-			getLayout(layout, boards[i]);
-		do
-		{
-			if (flags.find('s') != string::npos)
-				assignLoHiLicenses(boards[i], licensesToUse, *layout);
-			else
-				assignLicenses(boards[i], licensesToUse, *layout);
-		} while (!pathToLicense(boards[i], 18) || !pathToLicense(boards[i], 360));
 	}
-	return flags;
 }
 
 void LicenseBoardRand::save()
@@ -109,6 +132,36 @@ void LicenseBoardRand::save()
 	}
 }
 
+void LicenseBoardRand::useSingleBoard()
+{
+	for (int i = 0; i < 12; i++)
+	{
+		char * buffer;
+		long size = 24 * 24 * 2 + 8; //Board X * Y * size of data + header size
+		ifstream file("data\\ps2Board.bin", ios::in | ios::binary | ios::ate);
+		file.seekg(0);
+		buffer = new char[size];
+		file.read(buffer, size);
+		file.close();
+
+		for (int i2 = 0; i2 < 8; i2++)
+			boards[i].header[i2] = buffer[i2];
+
+		for (int x = 0; x < 24; x++)
+		{
+			for (int y = 0; y < 24; y++)
+			{
+				char data[] = { buffer[y * 24 * 2 + x * 2 + 8] , buffer[y * 24 * 2 + x * 2 + 9] };
+				boards[i].board[y][x] = *reinterpret_cast<unsigned short*>(data);
+			}
+		}
+
+		delete[] buffer;
+	}
+
+	usingSingleBoard = true;
+}
+
 vector<unsigned short> LicenseBoardRand::getLicenses(LicenseBoardData board)
 {
 	vector<unsigned short> data = vector<unsigned short>();
@@ -125,27 +178,27 @@ vector<unsigned short> LicenseBoardRand::getLicenses(LicenseBoardData board)
 	return data;
 }
 
-void LicenseBoardRand::setRandLicenses(vector<unsigned short> &data, string flags)
+void LicenseBoardRand::setRandLicenses(vector<unsigned short> &data, FlagGroup flags)
 {
 	vector<unsigned short> newData = vector<unsigned short>();
 	newData.push_back( 31); //Essentials
 	newData.push_back( 360); //Second Board
 	newData.push_back( 18); //Belias
-	if (flags.find('g') != string::npos) //Gambits
+	if (flags.hasFlag("g")) //Gambits
 	{
 		for (int i = 266; i < 276; i++)
 		{
 			newData.push_back(i);
 		}
 	}
-	if (flags.find('e') != string::npos) //Espers
+	if (flags.hasFlag("e")) //Espers
 	{
 		for (int i = 19; i < 31; i++)
 		{
 			newData.push_back(i);
 		}
 	}
-	if (flags.find('a') != string::npos) //Accessories
+	if (flags.hasFlag("a")) //Accessories
 	{
 		for (int i = 161; i < 182; i++)
 		{
@@ -205,13 +258,104 @@ void LicenseBoardRand::setRandLayout(bool(&layout)[24][24], int size)
 		}
 	}
 
-for (int count = 1; count < size; count++)
+	for (int count = 1; count < size; count++)
+	{
+		int index = 0;
+		do
+		{
+			index = Helpers::randInt(0, possibleCells.size() - 1);
+			x = possibleCells[index] % 24, y = possibleCells[index] / 24;
+		} while (Helpers::randInt(0, 99) < 100 - 20 * surroundingSpots(layout, x, y));
+		layout[y][x] = true;
+		possibleCells.erase(possibleCells.begin() + index);
+		for (int xOff = -1; xOff <= 1; xOff++)
+		{
+			for (int yOff = -1; yOff <= 1; yOff++)
+			{
+				if (x + xOff < 0 || x + xOff >= 24 || y + yOff < 0 || y + yOff >= 24)
+					continue;
+				if ((abs(xOff) == 1 && yOff != 0) || (abs(yOff) == 1 && xOff != 0) || (xOff == 0 && yOff == 0))
+					continue;
+				if (layout[y + yOff][x + xOff])
+					continue;
+				if (find(possibleCells.begin(), possibleCells.end(), (y + yOff) * 24 + (x + xOff)) == possibleCells.end())
+					possibleCells.push_back((y + yOff) * 24 + (x + xOff));
+			}
+		}
+	}
+}
+
+void LicenseBoardRand::setMazeLayout(bool(&layout)[24][24], vector<int> &shortcutLocs, int size, int shortcutSpots)
 {
-	int index = Helpers::randInt(0, possibleCells.size() - 1);
-	x = possibleCells[index] % 24, y = possibleCells[index] / 24;
+	vector<unsigned short> possibleCells = vector<unsigned short>();
+	for (int x = 0; x < 24; x++)
+	{
+		for (int y = 0; y < 24; y++)
+		{
+			layout[y][x] = false;
+		}
+	}
+	int x = Helpers::randInt(8, 16), y = Helpers::randInt(8, 16);
 	layout[y][x] = true;
-	possibleCells.erase(possibleCells.begin() + index);
-	int added = 0;
+
+	for (int xOff = -1; xOff <= 1; xOff++)
+	{
+		for (int yOff = -1; yOff <= 1; yOff++)
+		{
+			if (x + xOff < 0 || x + xOff >= 24 || y + yOff < 0 || y + yOff >= 24)
+				continue;
+			if ((abs(xOff) == 1 && yOff != 0) || (abs(yOff) == 1 && xOff != 0) || (xOff == 0 && yOff == 0))
+				continue;
+			possibleCells.push_back((y + yOff) * 24 + (x + xOff));
+		}
+	}
+
+	for (int count = 1; count < size; count++)
+	{
+		int index = 0, tries = 0, spots;
+		while (true)
+		{
+			index = Helpers::randInt(0, possibleCells.size() - 1);
+			x = possibleCells[index] % 24, y = possibleCells[index] / 24;
+			spots = surroundingSpots(layout, x, y);
+			tries++;
+			if (spots == 1 || tries >= 100 && spots == 2 || tries >= 200 && spots >= 3)
+				break;
+		}
+		layout[y][x] = true;
+		possibleCells.erase(possibleCells.begin() + index);
+		for (int xOff = -1; xOff <= 1; xOff++)
+		{
+			for (int yOff = -1; yOff <= 1; yOff++)
+			{
+				if (x + xOff < 0 || x + xOff >= 24 || y + yOff < 0 || y + yOff >= 24)
+					continue;
+				if ((abs(xOff) == 1 && yOff != 0) || (abs(yOff) == 1 && xOff != 0) || (xOff == 0 && yOff == 0))
+					continue;
+				if (layout[y + yOff][x + xOff])
+					continue;
+				if (find(possibleCells.begin(), possibleCells.end(), (y + yOff) * 24 + (x + xOff)) == possibleCells.end())
+					possibleCells.push_back((y + yOff) * 24 + (x + xOff));
+			}
+		}
+	}
+
+	int spots;
+	while (shortcutLocs.size() < shortcutSpots)
+	{
+		x = Helpers::randInt(0, 23), y = Helpers::randInt(0, 23);
+		if (layout[y][x])
+			continue;
+		spots = surroundingSpots(layout, x, y);
+		if (spots > 1 && find(shortcutLocs.begin(), shortcutLocs.end(), (y) * 24 + (x)) == shortcutLocs.end())
+			shortcutLocs.push_back(y * 24 + x);
+	}
+}
+
+int LicenseBoardRand::surroundingSpots(bool(&layout)[24][24], int x, int y)
+{
+	int surroundingSpots = 0;
+
 	for (int xOff = -1; xOff <= 1; xOff++)
 	{
 		for (int yOff = -1; yOff <= 1; yOff++)
@@ -221,29 +365,27 @@ for (int count = 1; count < size; count++)
 			if ((abs(xOff) == 1 && yOff != 0) || (abs(yOff) == 1 && xOff != 0) || (xOff == 0 && yOff == 0))
 				continue;
 			if (layout[y + yOff][x + xOff])
-				continue;
-			if (find(possibleCells.begin(), possibleCells.end(), (y + yOff) * 24 + (x + xOff)) == possibleCells.end())
-			{
-				if (added == 0 || Helpers::randInt(0, 99) < 100)
-				{
-					possibleCells.push_back((y + yOff) * 24 + (x + xOff));
-					added++;
-				}
-			}
+				surroundingSpots++;
 		}
 	}
-}
+
+	return surroundingSpots;
 }
 
-void LicenseBoardRand::assignLicenses(LicenseBoardData &board, vector<unsigned short> data, bool * layout)
+void LicenseBoardRand::assignLicenses(LicenseBoardData &board, vector<unsigned short> data, bool * layout, vector<int> shortcuts)
 {
+
 	for (int x = 0; x < 24; x++)
 	{
 		for (int y = 0; y < 24; y++)
 		{
 			if (layout[y * 24 + x])
 			{
-				int index = Helpers::randInt(0, data.size() - 1);
+				int index;
+				do
+				{
+					index = Helpers::randInt(0, data.size() - 1);
+				} while (shortcuts.size() > 0 && (data[index] <= 0x001E || data[index] == 0x0168));
 				board.board[y][x] = data[index];
 				data.erase(data.begin() + index);
 			}
@@ -251,10 +393,29 @@ void LicenseBoardRand::assignLicenses(LicenseBoardData &board, vector<unsigned s
 				board.board[y][x] = 0xFFFF;
 		}
 	}
+	for (int i = 0; i < shortcuts.size(); i++)
+	{
+		int x = shortcuts[i] % 24, y = shortcuts[i] / 24;
+		int index = Helpers::randInt(0, data.size() - 1);
+		board.board[y][x] = data[index];
+		data.erase(data.begin() + index);
+	}
 }
 
-void LicenseBoardRand::assignLoHiLicenses(LicenseBoardData &board, vector<unsigned short> data, bool * layout)
+void LicenseBoardRand::assignLoHiLicenses(LicenseBoardData &board, vector<unsigned short> data, bool * layout, vector<int> shortcuts)
 {
+	vector<unsigned short> shortcutLicenses = vector<unsigned short>();
+	if (shortcuts.size() > 0)
+	{
+		for (int i = data.size() - 1; i >= 0; i--)
+		{
+			if (data[i] <= 0x001E || data[i] == 0x0168)
+			{
+				shortcutLicenses.push_back(data[i]);
+				data.erase(data.begin() + i);
+			}
+		}
+	}
 	for (int x = 0; x < 24; x++)
 	{
 		for (int y = 0; y < 24; y++)
@@ -332,6 +493,13 @@ void LicenseBoardRand::assignLoHiLicenses(LicenseBoardData &board, vector<unsign
 		}
 		distIndex++;
 	}
+	for (int i = 0; i < shortcuts.size(); i++)
+	{
+		int x = shortcuts[i] % 24, y = shortcuts[i] / 24;
+		int index = Helpers::randInt(0, shortcutLicenses.size() - 1);
+		board.board[y][x] = shortcutLicenses[index];
+		shortcutLicenses.erase(shortcutLicenses.begin() + index);
+	}
 }
 
 void LicenseBoardRand::sortLicenses(vector<unsigned short>& data)
@@ -354,10 +522,10 @@ void LicenseBoardRand::sortLicenses(vector<unsigned short>& data)
 	}
 }
 
-bool LicenseBoardRand::pathToLicense(LicenseBoardData & board, int id)
+bool LicenseBoardRand::pathToLicense(LicenseBoardData & board, int id, int &numPathable)
 {
 	int pathBoard[24][24];
-	int xBelias, yBelias;
+	int xBelias = -1, yBelias = -1;
 	vector<int> posToCheck = vector<int>();
 	for (int x = 0; x < 24; x++)
 	{
@@ -381,12 +549,17 @@ bool LicenseBoardRand::pathToLicense(LicenseBoardData & board, int id)
 		}
 	}
 
+	if (xBelias == -1 && yBelias == -1)
+		return true;
+	numPathable = 0;
+
 	while (posToCheck.size() > 0)
 	{
 		int x = posToCheck[posToCheck.size() - 1] % 24;
 		int y = posToCheck[posToCheck.size() - 1] / 24;
 
 		pathBoard[y][x] = 1;
+		numPathable++;
 		posToCheck.erase(posToCheck.end() - 1);
 
 		for (int xOff = -1; xOff <= 1; xOff++)
@@ -401,7 +574,7 @@ bool LicenseBoardRand::pathToLicense(LicenseBoardData & board, int id)
 					posToCheck.push_back((y + yOff) * 24 + x + xOff);
 			}
 		}
-	}
-
-	return pathBoard[yBelias][xBelias] == 1;
+	}	
+	bool valid = pathBoard[yBelias][xBelias] == 1;
+	return valid;
 }

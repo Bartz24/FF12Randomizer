@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ItemRand.h"
 
-ItemData ItemRand::itemData[63] = {};
+ItemData ItemRand::itemData[64] = {};
 LootData ItemRand::lootData[266] = {};
 GambitData ItemRand::gambitData[256] = {};
 
@@ -20,14 +20,14 @@ void ItemRand::load()
 	if (Helpers::fileExists(fileName))
 	{
 		char * buffer;
-		long size = 63 * 12; //Num items * data size
+		long size = 64 * 12; //Num items * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
 		file.seekg(int(ItemData::getDataIndex()));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
 
-		for (int i = 0; i < 63; i++)
+		for (int i = 0; i < 64; i++)
 		{
 			itemData[i] = ItemData{ buffer[i * 12], buffer[i * 12 + 1], buffer[i * 12 + 2], buffer[i * 12 + 3],
 				buffer[i * 12 + 4], buffer[i * 12 + 5], buffer[i * 12 + 6],	buffer[i * 12 + 7],
@@ -83,12 +83,12 @@ void ItemRand::save()
 	}byte;
 
 	char * buffer;
-	long size = 63 * 12; //Num items * data size
+	long size = 64 * 12; //Num items * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
 	file.seekp(int(ItemData::getDataIndex()));
 	buffer = new char[size];
 
-	for (int i = 0; i < 63; i++)
+	for (int i = 0; i < 64; i++)
 	{
 		ItemData d = itemData[i];
 		buffer[i * 12] = d.order;
@@ -98,7 +98,7 @@ void ItemRand::save()
 		buffer[i * 12 + 4] = d.icon;
 		buffer[i * 12 + 5] = d.unknown4;
 		buffer[i * 12 + 6] = d.unknown5;
-		buffer[i * 12 + 7] = d.unknown6;
+		buffer[i * 12 + 7] = d.desc;
 		buffer[i * 12 + 8] = d.unknown7;
 		buffer[i * 12 + 9] = d.unknown8;
 		buffer[i * 12 + 10] = U{ d.cost }.c[0];
@@ -168,40 +168,43 @@ void ItemRand::save()
 	delete[] buffer3;
 }
 
-string ItemRand::process(string preset)
+void ItemRand::process(FlagGroup flags)
 {
-	string flags = preset;
-	if (flags.find('g') != string::npos)
+	if (flags.hasFlag("g"))
 	{
-		randCostGambit();
+		randCostGambit(flags.getFlag("g").getValue());
 	}
-	if (flags.find('i') != string::npos)
+	if (flags.hasFlag("i"))
 	{
-		if (flags.find('s') != string::npos)
-		{
-			randCostSmart();
-		}
+		if (flags.getFlag("i").isSmart())
+			randCostSmart(flags.getFlag("i").getValue());
 		else
-			randCost();
+			randCost(flags.getFlag("i").getValue());
 	}
-	if (flags.find('l') != string::npos)
+	if (flags.hasFlag("l"))
 	{
-		randCostLoot();
+		randCostLoot(flags.getFlag("l").getValue());
 	}
-	return flags;
+	if (MagicRand::didRandSpells)
+	{
+		for (int i = 0; i < 64; i++)
+		{
+			itemData[i].desc = 0x5E;
+		}
+	}
 }
 
-void ItemRand::randCost()
+void ItemRand::randCost(int value)
 {
-	for (int i = 0; i < 63; i++)
+	for (int i = 0; i < 64; i++)
 	{
-		itemData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 2500, 1000));
+		itemData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 2500, 1000, value));
 	}
 }
 
-void ItemRand::randCostSmart()
+void ItemRand::randCostSmart(int value)
 {
-	for (int i = 0; i < 63; i++)
+	for (int i = 0; i < 64; i++)
 	{
 		float baseCost = 5;
 		if (MagicRand::actionData[i + 82].power > 0)
@@ -219,26 +222,24 @@ void ItemRand::randCostSmart()
 			baseCost *= 80;
 		baseCost = pow(baseCost / 2.5f, 1.42f);
 
-		float ran = float(Helpers::randInt(0, 24000)) / 24000.f + .60f;
-		baseCost *= ran;
 		baseCost = max(10.f, min(baseCost, 65535.f));
-		itemData[i].cost = unsigned short(baseCost);
+		itemData[i].cost = unsigned short(Helpers::randIntControl(2, 65535, baseCost, value));
 	}
 }
 
-void ItemRand::randCostLoot()
+void ItemRand::randCostLoot(int value)
 {
 	for (int i = 0; i < 266; i++)
 	{
 		
-		lootData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 500, 400));
+		lootData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 500, 400, value));
 	}
 }
 
-void ItemRand::randCostGambit()
+void ItemRand::randCostGambit(int value)
 {
 	for (int i = 0; i < 256; i++)
 	{
-		gambitData[i].cost = unsigned short(Helpers::randIntNorm(2, 65535, 200, 150));
+		gambitData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 100, 150, value));
 	}
 }

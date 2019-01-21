@@ -34,11 +34,19 @@ void FileSizeTableFix::save()
 	string bpFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\battle_pack.bin";
 	string lhAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\listhelp_action.bin";
 	string hAFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\help_action.bin";
+	string mcFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\menu_command.bin";
 	string mctFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\menu_command_template.bin";
+	string hmFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\help_menu.bin";
+	string m00FileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\menu00.bin";
+	string mmFileName = Helpers::mainPS2DataFolder + "\\image\\ff12\\test_battle\\" + Helpers::language + "\\binaryfile\\menu_message.bin";
 	overwriteSize(FileSizeTableOffset::battle_pack, getFileSize(bpFileName));
 	overwriteSize(FileSizeTableOffset::listhelp_action, getFileSize(lhAFileName));
 	overwriteSize(FileSizeTableOffset::help_action, getFileSize(hAFileName));
+	overwriteSize(FileSizeTableOffset::menu_command, getFileSize(mcFileName));
 	overwriteSize(FileSizeTableOffset::menu_command_template, getFileSize(mctFileName));
+	overwriteSize(FileSizeTableOffset::help_menu, getFileSize(hmFileName));
+	overwriteSize(FileSizeTableOffset::menu00, getFileSize(m00FileName));
+	overwriteSize(FileSizeTableOffset::menu_message, getFileSize(mmFileName));
 }
 
 void FileSizeTableFix::process()

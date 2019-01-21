@@ -153,7 +153,9 @@
   <ItemGroup>
     <ClInclude Include="ActionData.h" />
     <ClInclude Include="ActionRename.h" />
+    <ClInclude Include="ARDData.h" />
     <ClInclude Include="AttributeData.h" />
+    <ClInclude Include="AttributePoint.h" />
     <ClInclude Include="AugmentData.h" />
     <ClInclude Include="AugmentRand.h" />
     <ClInclude Include="AugmentRename.h" />
@@ -165,9 +167,12 @@
     <ClInclude Include="CharValue.h" />
     <ClInclude Include="DocumentationGen.h" />
     <ClInclude Include="ElementalValue.h" />
+    <ClInclude Include="EnemyRand.h" />
     <ClInclude Include="EquipData.h" />
     <ClInclude Include="EquipRand.h" />
     <ClInclude Include="FileSizeTableFix.h" />
+    <ClInclude Include="Flag.h" />
+    <ClInclude Include="FlagGroup.h" />
     <ClInclude Include="GambitData.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemFlagValue.h" />
@@ -199,7 +204,9 @@
   <ItemGroup>
     <ClCompile Include="ActionData.cpp" />
     <ClCompile Include="ActionRename.cpp" />
+    <ClCompile Include="ARDData.cpp" />
     <ClCompile Include="AttributeData.cpp" />
+    <ClCompile Include="AttributePoint.cpp" />
     <ClCompile Include="AugmentData.cpp" />
     <ClCompile Include="AugmentRand.cpp" />
     <ClCompile Include="AugmentRename.cpp" />
@@ -211,9 +218,12 @@
     <ClCompile Include="CharValue.cpp" />
     <ClCompile Include="DocumentationGen.cpp" />
     <ClCompile Include="ElementalValue.cpp" />
+    <ClCompile Include="EnemyRand.cpp" />
     <ClCompile Include="EquipData.cpp" />
     <ClCompile Include="EquipRand.cpp" />
     <ClCompile Include="FileSizeTableFix.cpp" />
+    <ClCompile Include="Flag.cpp" />
+    <ClCompile Include="FlagGroup.cpp" />
     <ClCompile Include="GambitData.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemFlagValue.cpp" />

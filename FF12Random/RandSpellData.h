@@ -28,5 +28,7 @@ public:
 	int mType2;
 	int animation;
 	int specialType;
+	int icon;
+	int castAnimation;
 };
 
