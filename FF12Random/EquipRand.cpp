@@ -418,7 +418,7 @@ void EquipRand::randWeaponPower(int value)
 		ItemFlagValue iFlag{ equipData[i].itemFlag };
 		if (!iFlag.hasItemFlag(ItemFlag::OffHand) && !iFlag.hasItemFlag(ItemFlag::Accessory) && !iFlag.hasItemFlag(ItemFlag::BodyArmor)
 			&& !iFlag.hasItemFlag(ItemFlag::HeadArmor))
-			equipData[i].power = Helpers::randNormControl(0, 255, 60, 40, value);
+			equipData[i].power = Helpers::randNormControl(10, 255, 60, 20, value);
 	}
 }
 
@@ -429,7 +429,7 @@ void EquipRand::randWeaponPowerSmart(int value)
 		ItemFlagValue iFlag{ equipData[i].itemFlag };
 		if (!iFlag.hasItemFlag(ItemFlag::OffHand) && !iFlag.hasItemFlag(ItemFlag::Accessory) && !iFlag.hasItemFlag(ItemFlag::BodyArmor)
 			&& !iFlag.hasItemFlag(ItemFlag::HeadArmor))
-			equipData[i].power = Helpers::randInt(equipData[i].power - value, equipData[i].power + value, 0, 255);
+			equipData[i].power = Helpers::randInt(equipData[i].power - value, equipData[i].power + value, 10, 255);
 	}
 }
 
@@ -468,9 +468,9 @@ void EquipRand::randShieldEva(int value)
 	for (int i = 200; i < 220; i++)
 	{
 		if (equipData[i].def > 0)
-			equipData[i].def = Helpers::randNormControl(0, 255, 14, 12, value);
+			equipData[i].def = Helpers::randNormControl(0, 99, 14, 12, value);
 		if (equipData[i].mRes > 0)
-			equipData[i].mRes = Helpers::randNormControl(0, 255, 14, 12, value);
+			equipData[i].mRes = Helpers::randNormControl(0, 99, 14, 12, value);
 	}
 }
 
@@ -479,9 +479,9 @@ void EquipRand::randShieldEvaSmart(int value)
 	for (int i = 200; i < 220; i++)
 	{
 		if (equipData[i].def > 0)
-			equipData[i].def = Helpers::randInt(equipData[i].def - value, equipData[i].def + value, 0, 255);
+			equipData[i].def = Helpers::randInt(equipData[i].def - value, equipData[i].def + value, 0, 99);
 		if (equipData[i].mRes > 0)
-			equipData[i].mRes = Helpers::randInt(equipData[i].mRes - value, equipData[i].mRes + value, 0, 255);
+			equipData[i].mRes = Helpers::randInt(equipData[i].mRes - value, equipData[i].mRes + value, 0, 99);
 	}
 }
 
@@ -489,7 +489,7 @@ void EquipRand::randAmmoPower(int value)
 {
 	for (int i = 388; i < 420; i++)
 	{
-		equipData[i].power = Helpers::randNormControl(0, 255, 60, 40, value);
+		equipData[i].power = Helpers::randNormControl(1, 99, 1, 3, value);
 	}
 }
 
@@ -497,7 +497,7 @@ void EquipRand::randAmmoPowerSmart(int value)
 {
 	for (int i = 388; i < 420; i++)
 	{
-		equipData[i].power = Helpers::randInt(equipData[i].power - value, equipData[i].power + value, 0, 255);
+		equipData[i].power = Helpers::randInt(equipData[i].power - value, equipData[i].power + value, 1, 99);
 	}
 }
 
