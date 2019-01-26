@@ -215,9 +215,9 @@ void ItemRand::randCostSmart(int value)
 			baseCost *= pow(1.22f, MagicRand::actionData[i + 82].aoeRange + 1);
 		if (MagicRand::actionData[i + 82].accuracy > 0)
 			baseCost *= float(MagicRand::actionData[i + 82].accuracy) / 15.f;
-		StatusValue status = StatusValue{ MagicRand::actionData[i + 82].status1, MagicRand::actionData[i + 82].status2, MagicRand::actionData[i + 82].status3, MagicRand::actionData[i + 82].status4 };
-		if (status.getNumStatuses() > 0)
-			baseCost *= status.getNumStatuses() + 1;
+		StatusValue status = StatusValue{ MagicRand::actionData[i + 82].status };
+		baseCost *= status.statuses.size() + 1;
+
 		if (MagicRand::actionData[i + 82].mType == 0xB000)
 			baseCost *= 80;
 		baseCost = pow(baseCost / 2.5f, 1.42f);

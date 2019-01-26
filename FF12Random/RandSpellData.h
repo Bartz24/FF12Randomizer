@@ -20,10 +20,7 @@ public:
 	int onHit;
 	int target;
 	int effect;
-	int status1;
-	int status2;
-	int status3;
-	int status4;
+	unsigned int status;
 	int element;
 	int mType2;
 	int animation;

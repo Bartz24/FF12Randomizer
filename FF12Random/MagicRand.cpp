@@ -102,10 +102,8 @@ void MagicRand::load()
 			rData.onHit = stoi(data[9]);
 			rData.target = stoi(data[10]);
 			rData.effect = stoi(data[11]);
-			rData.status1 = stoi(data[12]);
-			rData.status2 = stoi(data[13]);
-			rData.status3 = stoi(data[14]);
-			rData.status4 = stoi(data[15]);
+			char stat[] = { stoi(data[12]), stoi(data[13]), stoi(data[14]), stoi(data[15]) };
+			rData.status = *reinterpret_cast<unsigned int*>(stat);
 			rData.element = stoi(data[16]);
 			rData.mType2 = stoi(data[17]);
 			rData.animation = stoi(data[18]);
@@ -136,10 +134,8 @@ void MagicRand::load()
 			tData.power = stoi(data[2]);
 			tData.aoe = stoi(data[3]);
 			tData.effect = stoi(data[4]);
-			tData.status1 = stoi(data[5]);
-			tData.status2 = stoi(data[6]);
-			tData.status3 = stoi(data[7]);
-			tData.status4 = stoi(data[8]);
+			char stat[] = { stoi(data[5]), stoi(data[6]), stoi(data[7]), stoi(data[8]) };
+			tData.status = *reinterpret_cast<unsigned int*>(stat);
 			traps.push_back(tData);
 		}
 		myfile.close();
@@ -153,6 +149,10 @@ void MagicRand::save()
 		unsigned short s;
 		unsigned char c[2];
 	}byte;
+	union U2 {
+		unsigned int s;
+		unsigned char c[4];
+	}byte2;
 
 	char * buffer;
 	long size = 81 * 8; //Num magic * data size
@@ -229,10 +229,10 @@ void MagicRand::save()
 		buffer3[i * 60 + 0x12] = d.accuracy;
 		buffer3[i * 60 + 0x13] = d.element;
 		buffer3[i * 60 + 0x14] = d.hitChance;
-		buffer3[i * 60 + 0x18] = d.status1;
-		buffer3[i * 60 + 0x19] = d.status2;
-		buffer3[i * 60 + 0x1A] = d.status3;
-		buffer3[i * 60 + 0x1B] = d.status4;
+		buffer3[i * 60 + 0x18] = U2{ d.status }.c[0];
+		buffer3[i * 60 + 0x19] = U2{ d.status }.c[1];
+		buffer3[i * 60 + 0x1A] = U2{ d.status }.c[2];
+		buffer3[i * 60 + 0x1B] = U2{ d.status }.c[3];
 		buffer3[i * 60 + 0x21] = d.castAnimation;
 		buffer3[i * 60 + 0x24] = U{ d.animation }.c[0];
 		buffer3[i * 60 + 0x25] = U{ d.animation }.c[1];
@@ -320,9 +320,9 @@ void MagicRand::randCostSmart(int value)
 			baseCost *= pow(1.25f, actionData[i].aoeRange + 1);
 		if (actionData[i].accuracy > 0)
 			baseCost *= float(actionData[i].accuracy) / 20.f;
-		StatusValue status = StatusValue{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
-		if (status.getNumStatuses() > 0)
-			baseCost *= pow(1.55f, status.getNumStatuses() + 3);
+		StatusValue status = StatusValue{ actionData[i].status };
+		if (status.statuses.size() > 0)
+			baseCost *= pow(1.55f, status.statuses.size() + 3);
 
 		baseCost = max(100.f, min(baseCost, 65535.f));
 		magicData[i].cost = unsigned short(Helpers::randIntControl(2, 65535, baseCost, value));
@@ -399,17 +399,15 @@ void MagicRand::randStatus(int value)
 {
 	for (int i = 278; i < 497; i++)
 	{
-		StatusValue orig{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
-		actionData[i].status1 = actionData[i].status2 = actionData[i].status3 = actionData[i].status4 = 0;
-		while (StatusValue{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 }.getNumStatuses() < orig.getNumStatuses())
-			addStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4);
-		setStatus(actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4, value);
-		StatusValue status{ actionData[i].status1, actionData[i].status2, actionData[i].status3, actionData[i].status4 };
-		if (status.getNumStatuses() > 0)
+		StatusValue orig{ actionData[i].status };
+		actionData[i].status = 0;
+		while (StatusValue{ actionData[i].status }.statuses.size() < orig.statuses.size())
+			addStatus(actionData[i].status, { Status::Stone, Status::XZone });
+		setStatus(actionData[i].status, value, { Status::Stone, Status::XZone });
+		StatusValue status{ actionData[i].status };
+		if (status.statuses.size() > 0 && actionData[i].hitChance < 100)
 		{
-			actionData[i].hitChance = Helpers::randInt(5, 90);
-			if (status.hasStatus(int(Status1::Death), 1))
-				actionData[i].hitChance = (actionData[i].hitChance / 10) + 1;
+			actionData[i].hitChance = Helpers::randInt(5, 50);
 		}
 		else
 			actionData[i].hitChance = 0;
@@ -417,27 +415,21 @@ void MagicRand::randStatus(int value)
 }
 
 
-void MagicRand::setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance)
+void MagicRand::setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist)
 {
-	StatusValue status = StatusValue(num1, num2, num3, num4);
+	StatusValue status = StatusValue(num);
 	while (Helpers::randInt(0, 99) < chance)
 	{
-		status.addRandomStatus();
+		status.addRandomStatus(blacklist);
 	}
-	num1 = status.getNumValue(1);
-	num2 = status.getNumValue(2);
-	num3 = status.getNumValue(3);
-	num4 = status.getNumValue(4);
+	num = status.getNumValue();
 }
 
-void MagicRand::addStatus(unsigned char & num1, unsigned char & num2, unsigned char & num3, unsigned char & num4)
+void MagicRand::addStatus(unsigned int & num, initializer_list<Status> blacklist)
 {
-	StatusValue status = StatusValue(num1, num2, num3, num4);
-	status.addRandomStatus();
-	num1 = status.getNumValue(1);
-	num2 = status.getNumValue(2);
-	num3 = status.getNumValue(3);
-	num4 = status.getNumValue(4);
+	StatusValue status = StatusValue(num);
+	status.addRandomStatus(blacklist);
+	num = status.getNumValue();
 }
 
 //White		License IDs:	182-189, 355, 208-211
@@ -693,10 +685,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type, bool good, bo
 		actionData[rep].hitChance = spell.onHit;
 		actionData[rep].target = spell.target;
 		actionData[rep].type = spell.effect;
-		actionData[rep].status1 = spell.status1;
-		actionData[rep].status2 = spell.status2;
-		actionData[rep].status3 = spell.status3;
-		actionData[rep].status4 = spell.status4;
+		actionData[rep].status = spell.status;
 		actionData[rep].element = spell.element;
 		actionData[rep].mType = spell.mType2;
 		actionData[rep].animation = spell.animation;
@@ -721,9 +710,6 @@ void MagicRand::randTraps()
 		actionData[i].power = traps[index].power;
 		actionData[i].aoeRange = traps[index].aoe;
 		actionData[i].type = traps[index].effect;
-		actionData[i].status1 = traps[index].status1;
-		actionData[i].status2 = traps[index].status2;
-		actionData[i].status3 = traps[index].status3;
-		actionData[i].status4 = traps[index].status4;
+		actionData[i].status = traps[index].status;
 	}
 }

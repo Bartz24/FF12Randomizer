@@ -219,7 +219,7 @@ void CharRand::checkDangerousEquip(int itemID)
 			return;
 
 		AttributeData data = EquipRand::attributeData[EquipRand::equipData[itemID - 4096].attribute / 24];
-		StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+		StatusValue status{ data.autoStatus };
 		if (statusDangerous(status))
 			itemID == 0xFFFF;
 	}
@@ -280,7 +280,7 @@ void CharRand::initialEquip()
 			for (int slot = 0; slot < accessory.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[accessory[slot] - 4096].attribute / 24 - 3];
-				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 };
+				StatusValue status{ data.autoStatus };
 				if (statusDangerous(status))
 				{
 					accessory.erase(accessory.begin() + slot);
@@ -290,7 +290,7 @@ void CharRand::initialEquip()
 			for (int slot = 0; slot < head.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[head[slot] - 4096].attribute / 24 - 3];
-				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
+				StatusValue status{ data.autoStatus }; 
 				if (statusDangerous(status))
 				{
 					head.erase(head.begin() + slot);
@@ -300,7 +300,7 @@ void CharRand::initialEquip()
 			for (int slot = 0; slot < body.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[body[slot] - 4096].attribute / 24 - 3];
-				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
+				StatusValue status{ data.autoStatus }; 
 				if (statusDangerous(status))
 				{
 					body.erase(body.begin() + slot);
@@ -310,7 +310,7 @@ void CharRand::initialEquip()
 			for (int slot = 0; slot < offHand.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[offHand[slot] - 4096].attribute / 24 - 3];
-				StatusValue status{ data.autoStatus1, data.autoStatus2, data.autoStatus3, data.autoStatus4 }; 
+				StatusValue status{ data.autoStatus }; 
 				if (statusDangerous(status))
 				{
 					offHand.erase(offHand.begin() + slot);
@@ -405,11 +405,11 @@ void CharRand::initialEquip()
 
 bool CharRand::statusDangerous(StatusValue &status)
 {
-	return status.hasStatus(int(Status1::Petrify), 1) || status.hasStatus(int(Status1::Death), 1) || status.hasStatus(int(Status2::Sap), 2)
-		|| status.hasStatus(int(Status2::Disable), 2) || status.hasStatus(int(Status2::Immobilize), 2)
-		|| status.hasStatus(int(Status1::Sleep), 1) || status.hasStatus(int(Status1::Stop), 1)
-		|| status.hasStatus(int(Status1::Confuse), 1) || status.hasStatus(int(Status1::Doom), 1)
-		|| status.hasStatus(int(Status4::Berserk), 4) || status.hasStatus(int(Status4::XZone), 4);
+	return status.hasStatus(Status::Petrify) || status.hasStatus(Status::Death) || status.hasStatus(Status::Sap)
+		|| status.hasStatus(Status::Disable) || status.hasStatus(Status::Immobilize)
+		|| status.hasStatus(Status::Sleep) || status.hasStatus(Status::Stop)
+		|| status.hasStatus(Status::Confuse) || status.hasStatus(Status::Doom)
+		|| status.hasStatus(Status::Berserk) || status.hasStatus(Status::XZone);
 }
 
 void CharRand::soloChara()

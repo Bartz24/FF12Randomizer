@@ -22,10 +22,7 @@ public:
 	unsigned char accuracy; // 12
 	unsigned char element; // 13
 	unsigned char hitChance; // 14
-	unsigned char status1; // 18
-	unsigned char status2; // 19
-	unsigned char status3; // 1A
-	unsigned char status4; // 1B
+	unsigned int status; // 18-1B
 	unsigned char castAnimation; // 21
 	unsigned short animation; //24-25
 	unsigned short mType; // 2C-2D

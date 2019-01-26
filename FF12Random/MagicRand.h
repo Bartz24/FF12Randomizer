@@ -38,8 +38,8 @@ public:
 	void randAoE(int value);
 	void randElements(int value);
 	void randStatus(int value);
-	void setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance);
-	void addStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4);
+	void setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist);
+	void addStatus(unsigned int &num, initializer_list<Status> blacklist);
 	void randSpells();
 	void randSpellsFull();
 	vector<string> split(const std::string &s, char delim);

@@ -57,8 +57,8 @@ public:
 	void modifyValue(int value, unsigned short &dataVal, int minN, int maxN);
 	void modifyValue(int value, unsigned char &dataVal, int minN, int maxN);
 	void addRangeToVector(vector<int>& data, int low, int high);
-	void setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance);
-	void addStatus(unsigned char & num1, unsigned char & num2, unsigned char & num3, unsigned char & num4);
+	void setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist);
+	void addStatus(unsigned int & num, initializer_list<Status> blacklist);
 	void setElement(unsigned char &num);
 	void setElementSingle(unsigned char &num, int chance);
 	void setElementMultiple(unsigned char &num, int chance);

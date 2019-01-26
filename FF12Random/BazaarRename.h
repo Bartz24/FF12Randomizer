@@ -20,6 +20,7 @@ private:
 	string bpFileName;
 public:
 	string data[128] = {};
+	string menu00[122] = {};
 	BazaarRename();
 	~BazaarRename();
 	string getNameFromID(int id);

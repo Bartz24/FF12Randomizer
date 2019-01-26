@@ -67,7 +67,7 @@ void EquipRand::save()
 	}byte;
 	union U2 {
 		unsigned int i;
-		unsigned char c[2];
+		unsigned char c[4];
 	}byte2;
 
 	char * buffer;
@@ -95,10 +95,10 @@ void EquipRand::save()
 		buffer[i * 52 + 0x1A] = d.power;
 		buffer[i * 52 + 0x1E] = d.element;
 		buffer[i * 52 + 0x1F] = d.hitChance;
-		buffer[i * 52 + 0x20] = d.status1;
-		buffer[i * 52 + 0x21] = d.status2;
-		buffer[i * 52 + 0x22] = d.status3;
-		buffer[i * 52 + 0x23] = d.status4;
+		buffer[i * 52 + 0x20] = U2{ d.status }.c[0];
+		buffer[i * 52 + 0x21] = U2{ d.status }.c[1];
+		buffer[i * 52 + 0x22] = U2{ d.status }.c[2];
+		buffer[i * 52 + 0x23] = U2{ d.status }.c[3];
 		buffer[i * 52 + 0x27] = d.ct;
 		buffer[i * 52 + 0x28] = U2{ d.attribute }.c[0];
 		buffer[i * 52 + 0x29] = U2{ d.attribute }.c[1];
@@ -130,14 +130,14 @@ void EquipRand::save()
 		buffer2[i * 24 + 5] = d.mag;
 		buffer2[i * 24 + 6] = d.vit;
 		buffer2[i * 24 + 7] = d.spd;
-		buffer2[i * 24 + 8] = d.autoStatus1;
-		buffer2[i * 24 + 9] = d.autoStatus2;
-		buffer2[i * 24 + 10] = d.autoStatus3;
-		buffer2[i * 24 + 11] = d.autoStatus4;
-		buffer2[i * 24 + 12] = d.immuneStatus1;
-		buffer2[i * 24 + 13] = d.immuneStatus2;
-		buffer2[i * 24 + 14] = d.immuneStatus3;
-		buffer2[i * 24 + 15] = d.immuneStatus4;
+		buffer2[i * 24 + 8] = U2{ d.autoStatus }.c[0];
+		buffer2[i * 24 + 9] = U2{ d.autoStatus }.c[1];
+		buffer2[i * 24 + 10] = U2{ d.autoStatus }.c[2];
+		buffer2[i * 24 + 11] = U2{ d.autoStatus }.c[3];
+		buffer2[i * 24 + 12] = U2{ d.immuneStatus }.c[0];
+		buffer2[i * 24 + 13] = U2{ d.immuneStatus }.c[1];
+		buffer2[i * 24 + 14] = U2{ d.immuneStatus }.c[2];
+		buffer2[i * 24 + 15] = U2{ d.immuneStatus }.c[3];
 		buffer2[i * 24 + 16] = d.absorbElement;
 		buffer2[i * 24 + 17] = d.immuneElement;
 		buffer2[i * 24 + 18] = d.halfElement;
@@ -267,16 +267,11 @@ void EquipRand::randCostSmart(int value)
 		{
 			baseCost *= 0.9f * pow(equipData[i].power, 1.98f);
 		}
-		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
-		if (status.getNumStatuses() > 0)
-		{
-			baseCost *= pow(1.11f, status.getNumStatuses());
-		}
+		StatusValue status{ equipData[i].status };
+		baseCost *= pow(1.11f, status.statuses.size());
+
 		ElementalValue elem{ equipData[i].element };
-		if (elem.elements.size() > 0)
-		{
-			baseCost *= pow(1.03f, elem.elements.size());
-		}
+		baseCost *= pow(1.03f, elem.elements.size());
 
 
 		baseCost = max(10.f, min(baseCost, 65535.f));
@@ -340,64 +335,35 @@ void EquipRand::randStatusEffects(int value)
 {
 	for (int i = 0; i < 557; i++)
 	{
-		StatusValue orig{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
-		equipData[i].status1 = equipData[i].status2 = equipData[i].status3 = equipData[i].status4 = 0;
-		while (StatusValue{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 }.getNumStatuses() < orig.getNumStatuses())
-			addStatus(equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4);
-		setStatus(equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4, value);
-		StatusValue status{ equipData[i].status1, equipData[i].status2, equipData[i].status3, equipData[i].status4 };
-		if (status.status1.size() + status.status2.size() + status.status3.size() + status.status4.size() > 0)
+		StatusValue orig{ equipData[i].status };
+		equipData[i].status = 0;
+		while (StatusValue{ equipData[i].status }.statuses.size() < orig.statuses.size())
+			addStatus(equipData[i].status, { Status::Stone, Status::XZone });
+		setStatus(equipData[i].status, value, { Status::Stone, Status::XZone });
+		StatusValue status{ equipData[i].status };
+		if (status.statuses.size() > 0)
 		{
-			equipData[i].hitChance = Helpers::randInt(5, 90);
-			if (status.hasStatus(int(Status1::Death), 1))
-				equipData[i].hitChance = (equipData[i].hitChance / 10) + 1;
+			equipData[i].hitChance = Helpers::randInt(5, 50);
 		}
 		else
 			equipData[i].hitChance = 0;
 	}
 	for (int i = 1; i < 176; i++)
 	{
-		attributeData[i].autoStatus1 = attributeData[i].autoStatus2 = attributeData[i].autoStatus3 = attributeData[i].autoStatus4 = 0;
-		setStatus(attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4, value / 2 + 1);
+		attributeData[i].autoStatus = 0;
+		setStatus(attributeData[i].autoStatus, value / 2 + 1, { Status::Stone, Status::XZone, Status::Death, Status::Reverse });
 
-		attributeData[i].immuneStatus1 = attributeData[i].immuneStatus2 = attributeData[i].immuneStatus3 = attributeData[i].immuneStatus4 = 0;
-		setStatus(attributeData[i].immuneStatus1, attributeData[i].immuneStatus2, attributeData[i].immuneStatus3, attributeData[i].immuneStatus4, value / 2 + 1);
-		StatusValue autoStatus{ attributeData[i].autoStatus1, attributeData[i].autoStatus2, attributeData[i].autoStatus3, attributeData[i].autoStatus4 };
-		if (autoStatus.hasStatus(int(Status1::Death), 1))
-			autoStatus.status1.erase(find(autoStatus.status1.begin(), autoStatus.status1.end(), Status1::Death));
-		if (autoStatus.hasStatus(int(Status2::Reverse), 2))
-			autoStatus.status2.erase(find(autoStatus.status2.begin(), autoStatus.status2.end(), Status2::Reverse));
-		StatusValue immuneStatus{ attributeData[i].immuneStatus1, attributeData[i].immuneStatus2, attributeData[i].immuneStatus3, attributeData[i].immuneStatus4 };
-		if (immuneStatus.hasStatus(int(Status1::Death), 1))
-			immuneStatus.status1.erase(find(immuneStatus.status1.begin(), immuneStatus.status1.end(), Status1::Death));
-		for (int i = 0; i < autoStatus.status1.size(); i++)
+		attributeData[i].immuneStatus = 0;
+		setStatus(attributeData[i].immuneStatus, value / 2 + 1, { Status::Stone, Status::XZone, Status::Death });
+		StatusValue autoStatus{ attributeData[i].autoStatus };
+		StatusValue immuneStatus{ attributeData[i].immuneStatus };
+		for (int i = 0; i < autoStatus.statuses.size(); i++)
 		{
-			if (immuneStatus.hasStatus(int(autoStatus.status1[i]), 1))
-				immuneStatus.status1.erase(find(immuneStatus.status1.begin(), immuneStatus.status1.end(), autoStatus.status1[i]));
+			if (immuneStatus.hasStatus(autoStatus.statuses[i]))
+				immuneStatus.statuses.erase(find(immuneStatus.statuses.begin(), immuneStatus.statuses.end(), autoStatus.statuses[i]));
 		}
-		for (int i = 0; i < autoStatus.status2.size(); i++)
-		{
-			if (immuneStatus.hasStatus(int(autoStatus.status2[i]), 2))
-				immuneStatus.status2.erase(find(immuneStatus.status2.begin(), immuneStatus.status2.end(), autoStatus.status2[i]));
-		}
-		for (int i = 0; i < autoStatus.status3.size(); i++)
-		{
-			if (immuneStatus.hasStatus(int(autoStatus.status3[i]), 3))
-				immuneStatus.status3.erase(find(immuneStatus.status3.begin(), immuneStatus.status3.end(), autoStatus.status3[i]));
-		}
-		for (int i = 0; i < autoStatus.status4.size(); i++)
-		{
-			if (immuneStatus.hasStatus(int(autoStatus.status4[i]), 4))
-				immuneStatus.status4.erase(find(immuneStatus.status4.begin(), immuneStatus.status4.end(), autoStatus.status4[i]));
-		}
-		attributeData[i].autoStatus1 = autoStatus.getNumValue(1);
-		attributeData[i].autoStatus2 = autoStatus.getNumValue(2);
-		attributeData[i].autoStatus3 = autoStatus.getNumValue(3);
-		attributeData[i].autoStatus4 = autoStatus.getNumValue(4);
-		attributeData[i].immuneStatus1 = immuneStatus.getNumValue(1);
-		attributeData[i].immuneStatus2 = immuneStatus.getNumValue(2);
-		attributeData[i].immuneStatus3 = immuneStatus.getNumValue(3);
-		attributeData[i].immuneStatus4 = immuneStatus.getNumValue(4);
+		attributeData[i].autoStatus = autoStatus.getNumValue();
+		attributeData[i].immuneStatus = immuneStatus.getNumValue();
 	}
 }
 
@@ -647,27 +613,21 @@ void EquipRand::modifyValue(int value, unsigned char &dataVal, int minN, int max
 	}
 }
 
-void EquipRand::setStatus(unsigned char &num1, unsigned char &num2, unsigned char &num3, unsigned char &num4, int chance)
+void EquipRand::setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist)
 {
-	StatusValue status = StatusValue(num1, num2, num3, num4);
+	StatusValue status = StatusValue(num);
 	while (Helpers::randInt(0, 99) < chance)
 	{
-		status.addRandomStatus();
+		status.addRandomStatus(blacklist);
 	}
-	num1 = status.getNumValue(1);
-	num2 = status.getNumValue(2);
-	num3 = status.getNumValue(3);
-	num4 = status.getNumValue(4);
+	num = status.getNumValue();
 }
 
-void EquipRand::addStatus(unsigned char & num1, unsigned char & num2, unsigned char & num3, unsigned char & num4)
+void EquipRand::addStatus(unsigned int & num, initializer_list<Status> blacklist)
 {
-	StatusValue status = StatusValue(num1, num2, num3, num4);
-	status.addRandomStatus();
-	num1 = status.getNumValue(1);
-	num2 = status.getNumValue(2);
-	num3 = status.getNumValue(3);
-	num4 = status.getNumValue(4);
+	StatusValue status = StatusValue(num);
+	status.addRandomStatus(blacklist);
+	num = status.getNumValue();
 }
 
 void EquipRand::setElement(unsigned char &num)

@@ -332,7 +332,7 @@ void ShopRand::replaceBazaarRecipes(FlagGroup flags)
 		else
 		{
 			if (flags.hasFlag("z"))
-				bazaarData[i].cost = Helpers::randNormControl(100, 100000000, 100000, 500000, flags.getFlag("z").getValue());
+				bazaarData[i].cost = Helpers::randNormControl(100, 10000000, 100000, 500000, flags.getFlag("z").getValue());
 		}
 	}
 	
@@ -354,7 +354,7 @@ void ShopRand::replaceBazaarRecipes(FlagGroup flags)
 					if (randNum < 50)
 						setItem(lootData, bazaarData[i].loot3, bazaarData[i].loot3Amt, true, flags);
 					if (flags.hasFlag("z"))
-						bazaarData[i].cost = Helpers::randNormControl(100, 100000000, 100000, 500000, flags.getFlag("z").getValue());
+						bazaarData[i].cost = Helpers::randNormControl(100, 10000000, 100000, 500000, flags.getFlag("z").getValue());
 				}
 				else if (bazaarData[i].result2 == 0x0000)
 				{
@@ -367,10 +367,7 @@ void ShopRand::replaceBazaarRecipes(FlagGroup flags)
 					data.erase(data.begin() + setItem(data, bazaarData[i].result3, bazaarData[i].result3Amt, false, flags));
 				}
 
-				if (bazaarData[i].result1 > 9000 || bazaarData[i].result2 > 9000 || bazaarData[i].result3 > 9000)
-					bazaarData[i].bazaarType = 0x00;
-				else
-					bazaarData[i].bazaarType = 0x01;
+				bazaarData[i].bazaarType = 0x01;
 			}
 			if (data.size() == 0)
 				break;

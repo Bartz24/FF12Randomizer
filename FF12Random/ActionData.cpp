@@ -28,10 +28,8 @@ ActionData::ActionData(char data[60])
 	this->accuracy = data[0x12];
 	this->element = data[0x13];
 	this->hitChance = data[0x14];
-	this->status1 = data[0x18];
-	this->status2 = data[0x19];
-	this->status3 = data[0x1A];
-	this->status4 = data[0x1B];
+	char stat[] = { data[0x18] , data[0x19], data[0x1A], data[0x1B] };
+	this->status = *reinterpret_cast<unsigned int*>(stat);
 	this->castAnimation = data[0x21];
 	char animation[] = { data[0x24] , data[0x25] };
 	this->animation = *reinterpret_cast<unsigned short*>(animation);

@@ -7,7 +7,6 @@ string RenameMain::abilityNames[545] = {};
 string RenameMain::gambitNames[284] = {};
 string RenameMain::helpMenu[200] = {};
 string RenameMain::menuCmd[210] = {};
-string RenameMain::menu00[122] = {};
 string RenameMain::menuMsg[130] = {};
 
 RenameMain::RenameMain()
@@ -86,17 +85,6 @@ void RenameMain::load()
 		myfile.close();
 	}
 
-	myfile = ifstream("data\\menu00.txt");
-	if (myfile.is_open())
-	{
-		for (int i = 0; i < 122; i++)
-		{
-			getline(myfile, line);
-			menu00[i] = line;
-		}
-		myfile.close();
-	}
-
 	myfile = ifstream("data\\menu_message.txt");
 	if (myfile.is_open())
 	{
@@ -163,15 +151,6 @@ void RenameMain::save()
 	}
 	myfile.close();
 
-	myfile = ofstream();
-	myfile.open("menu00.txt");
-	for (int i = 0; i < 122; i++)
-	{
-		myfile << menu00[i];
-		if (i < 121)
-			myfile << endl;
-	}
-	myfile.close();
 
 	myfile = ofstream();
 	myfile.open("menu_message.txt");

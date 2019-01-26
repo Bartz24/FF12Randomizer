@@ -33,7 +33,6 @@ public:
 	static string gambitNames[284];
 	static string helpMenu[200];
 	static string menuCmd[210];
-	static string menu00[122];
 	static string menuMsg[130];
 	RenameMain();
 	~RenameMain();

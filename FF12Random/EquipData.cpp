@@ -28,10 +28,8 @@ EquipData::EquipData(char data[52])
 	this->power = data[0x1A];
 	this->element = data[0x1E];
 	this->hitChance = data[0x1F];
-	this->status1 = data[0x20];
-	this->status2 = data[0x21];
-	this->status3 = data[0x22];
-	this->status4 = data[0x23];
+	char stat[] = { data[0x20], data[0x21], data[0x22], data[0x23] };
+	this->status = *reinterpret_cast<unsigned int*>(stat);
 	this->ct = data[0x27];
 	char attr[] = { data[0x28] , data[0x29], data[0x2A], data[0x2B] };
 	this->attribute = *reinterpret_cast<unsigned int*>(attr);

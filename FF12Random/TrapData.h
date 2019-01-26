@@ -13,9 +13,6 @@ public:
 	int power;
 	int aoe;
 	int effect;
-	int status1;
-	int status2;
-	int status3;
-	int status4;
+	unsigned int status;
 };
 
