@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class ItemDataOffset
-{
-	us = 0x0001CB60
-};
-
 class ItemData
 {
 public:
-	static ItemDataOffset getDataIndex();
 	unsigned char order;
 	unsigned char unknown1;
 	unsigned char unknown2;

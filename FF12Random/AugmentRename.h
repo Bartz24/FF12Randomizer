@@ -17,9 +17,9 @@ using namespace std;
 class AugmentRename
 {
 private:
-	string data[129] = {};
 	string bpFileName;
 public:
+	string data[129] = {};
 	AugmentRename();
 	~AugmentRename();
 	void load();

@@ -23,7 +23,7 @@ public:
 	static string spellNames[81];
 	static string spellDescs[81];
 	static string trapNames[16];
-	static bool didRandSpells;
+	static bool didRandSpells, didRandStatus, didRandElement;
 	MagicRand();
 	~MagicRand();
 	void load();
@@ -38,8 +38,8 @@ public:
 	void randAoE(int value);
 	void randElements(int value);
 	void randStatus(int value);
-	void setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist);
-	void addStatus(unsigned int &num, initializer_list<Status> blacklist);
+	void setStatus(unsigned int &num, int chance, int* weights);
+	bool addStatus(unsigned int &num, int* weights);
 	void randSpells();
 	void randSpellsFull();
 	vector<string> split(const std::string &s, char delim);

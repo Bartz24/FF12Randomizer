@@ -2,7 +2,11 @@
 #include "LicenseBoardRand.h"
 
 LicenseBoardData LicenseBoardRand::boards[12] = {};
+string LicenseBoardRand::newBoardNames[12] = {};
+string LicenseBoardRand::type2Names[30][30] = {};
+int LicenseBoardRand::suggestedChars[12] = {};
 bool LicenseBoardRand::usingSingleBoard = false;
+bool LicenseBoardRand::type2 = false;
 
 LicenseBoardRand::LicenseBoardRand()
 {
@@ -41,10 +45,58 @@ void LicenseBoardRand::load()
 
 		delete[] buffer;
 	}
+
+	{
+		string line;
+		ifstream myfile("data\\type2Classes.csv");
+		if (myfile.is_open())
+		{
+			bool first = true;
+			int row = 0;
+			while (getline(myfile, line) && row < 30)
+			{
+				if (first)
+				{
+					first = false;
+					continue;
+				}
+
+				vector<string> data = Helpers::split(line, ',');
+				for (int c = 1; c < data.size(); c++)
+					type2Names[row][c - 1] = data[c];
+				row++;
+			}
+			myfile.close();
+		}
+	}
 }
 
 void LicenseBoardRand::process(FlagGroup flags)
 {
+	vector<int> forcedLicenses, weights;
+	if (flags.hasFlag("L"))
+	{
+		Helpers::addRangeToVector(forcedLicenses, 0, 29);
+		for (int i = 0; i < 6; i++)
+			weights.push_back(90);
+		for (int i = 6; i < 23; i++)
+			weights.push_back(30);
+		for (int i = 23; i < 27; i++)
+			weights.push_back(75);
+		weights.push_back(500);
+		weights.push_back(50);
+		weights.push_back(40);
+
+		Helpers::shuffle(forcedLicenses);
+	}
+
+	if (!flags.hasFlag("s") && flags.hasFlag("C"))
+	{
+		randomizeChars();
+	}
+	else
+		suggestedChars[0] = 0;
+
 	for (int i = 0; i < 12; i++)
 	{
 		if (usingSingleBoard && i > 0)
@@ -61,27 +113,44 @@ void LicenseBoardRand::process(FlagGroup flags)
 		{
 			setRandLicenses(licensesToUse, flags);
 		}
+		if (flags.hasFlag("L") && !usingSingleBoard)
+		{
+			if (flags.getFlag("L").isSmart())
+			{
+				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12]);
+				type2 = true;
+			}
+			else
+			{
+				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i);
+			}
+		}
 		if (flags.hasFlag("h"))
 		{
 			sortLicenses(licensesToUse);
 		}
 		bool layout[24][24];
 		getLayout(layout, boards[i]);
-		if (flags.hasFlag("l") || flags.hasFlag("h") || flags.hasFlag("b"))
+		if (flags.hasFlag("l") || flags.hasFlag("L") || flags.hasFlag("h") || flags.hasFlag("b"))
 		{
 			int numPathable = 0;
+			int attempts = 0;
 			do
 			{
+				attempts++;
 				vector<int> shortcutLocs = vector<int>();
-				if (flags.hasFlag("b"))
+				if (flags.hasFlag("b") || flags.hasFlag("L"))
 				{
 					if (flags.hasFlag("m"))
 					{
 						int shortcuts = 0;
-						for (int i = 0; i < licensesToUse.size(); i++)
+						if (!flags.hasFlag("L"))
 						{
-							if (licensesToUse[i] <= 0x001E || licensesToUse[i] == 0x0168)
-								shortcuts++;
+							for (int i = 0; i < licensesToUse.size(); i++)
+							{
+								if (licensesToUse[i] <= 0x001E || licensesToUse[i] == 0x0168)
+									shortcuts++;
+							}
 						}
 						setMazeLayout(layout, shortcutLocs, licensesToUse.size()-shortcuts, shortcuts);
 					}
@@ -92,7 +161,7 @@ void LicenseBoardRand::process(FlagGroup flags)
 					assignLoHiLicenses(boards[i], licensesToUse, *layout, shortcutLocs);
 				else
 					assignLicenses(boards[i], licensesToUse, *layout, shortcutLocs);
-			} while (!pathToLicense(boards[i], 18, numPathable) || !pathToLicense(boards[i], 360, numPathable) || numPathable < 20);
+			} while (attempts < 100 && (!pathToLicense(boards[i], 18, numPathable) || numPathable < 20 || !pathToLicense(boards[i], 360, numPathable) || numPathable < 20));
 		}
 	}
 }
@@ -219,6 +288,198 @@ void LicenseBoardRand::setRandLicenses(vector<unsigned short> &data, FlagGroup f
 		newData.push_back( possible[index]);
 		possible.erase(possible.begin() + index);
 	}
+	data = newData;
+}
+
+void LicenseBoardRand::randomizeChars()
+{
+	vector<int> chars;
+	for (int i = 1; i < 7; i++)
+	{
+		chars.push_back(i);
+		chars.push_back(-i);
+	}
+	Helpers::shuffle(chars);
+	for (int i = 0; i < 12; i++)
+		suggestedChars[i] = chars[i];
+}
+
+void LicenseBoardRand::addForcedLicenses(int type, std::string &display, std::vector<unsigned short> &newData)
+{
+
+	switch (type)
+	{
+	case 0:
+		display += "White Magicks";
+		Helpers::addRangeToVector(newData, 182, 189);
+		newData.push_back(355);
+		Helpers::addRangeToVector(newData, 208, 211);
+		break;
+	case 1:
+		display += "Black Magicks";
+		Helpers::addRangeToVector(newData, 190, 197);
+		newData.push_back(356);
+		newData.push_back(358);
+		Helpers::addRangeToVector(newData, 215, 217);
+		break;
+	case 2:
+		display += "Time Magicks";
+		Helpers::addRangeToVector(newData, 198, 204);
+		newData.push_back(357);
+		newData.push_back(359);
+		newData.push_back(218);
+		break;
+	case 3:
+		display += "Green Magicks";
+		Helpers::addRangeToVector(newData, 205, 207);
+		break;
+	case 4:
+		display += "Arcane Magicks";
+		Helpers::addRangeToVector(newData, 212, 214);
+		break;
+	case 5:
+		display += "Technicks";
+		Helpers::addRangeToVector(newData, 276, 299);
+		break;
+	case 6:
+		display += "Swords";
+		Helpers::addRangeToVector(newData, 32, 39);
+		Helpers::addRangeToVector(newData, 329, 331);
+		break;
+	case 7:
+		display += "Greatswords";
+		Helpers::addRangeToVector(newData, 40, 44);
+		Helpers::addRangeToVector(newData, 332, 333);
+		break;
+	case 8:
+		display += "Katanas";
+		Helpers::addRangeToVector(newData, 45, 49);
+		Helpers::addRangeToVector(newData, 334, 335);
+		break;
+	case 9:
+		display += "Ninja Swords";
+		Helpers::addRangeToVector(newData, 50, 52);
+		newData.push_back(336);
+		break;
+	case 10:
+		display += "Spears";
+		Helpers::addRangeToVector(newData, 53, 59);
+		newData.push_back(337);
+		break;
+	case 11:
+		display += "Poles";
+		Helpers::addRangeToVector(newData, 60, 65);
+		Helpers::addRangeToVector(newData, 338, 339);
+		break;
+	case 12:
+		display += "Bows";
+		Helpers::addRangeToVector(newData, 66, 72);
+		Helpers::addRangeToVector(newData, 340, 341);
+		break;
+	case 13:
+		display += "Crossbows";
+		Helpers::addRangeToVector(newData, 73, 76);
+		break;
+	case 14:
+		display += "Guns";
+		Helpers::addRangeToVector(newData, 77, 82);
+		newData.push_back(342);
+		break;
+	case 15:
+		display += "Axes & Hammers";
+		Helpers::addRangeToVector(newData, 83, 89);
+		newData.push_back(343);
+		break;
+	case 16:
+		display += "Daggers";
+		Helpers::addRangeToVector(newData, 90, 95);
+		newData.push_back(344);
+		break;
+	case 17:
+		display += "Rods";
+		Helpers::addRangeToVector(newData, 96, 100);
+		break;
+	case 18:
+		display += "Staves";
+		Helpers::addRangeToVector(newData, 101, 105);
+		newData.push_back(345);
+		break;
+	case 19:
+		display += "Maces";
+		Helpers::addRangeToVector(newData, 106, 110);
+		break;
+	case 20:
+		display += "Measures";
+		Helpers::addRangeToVector(newData, 111, 113);
+		newData.push_back(346);
+		break;
+	case 21:
+		display += "Hand-bombs";
+		Helpers::addRangeToVector(newData, 114, 116);
+		newData.push_back(347);
+		break;
+	case 22:
+		display += "Shields";
+		Helpers::addRangeToVector(newData, 117, 125);
+		newData.push_back(348);
+		break;
+	case 23:
+		display += "Heavy Armors";
+		Helpers::addRangeToVector(newData, 126, 136);
+		Helpers::addRangeToVector(newData, 349, 350);
+		break;
+	case 24:
+		display += "Light Armors";
+		Helpers::addRangeToVector(newData, 137, 148);
+		newData.push_back(351);
+		break;
+	case 25:
+		display += "Mystic Armors";
+		Helpers::addRangeToVector(newData, 149, 160);
+		newData.push_back(352);
+		break;
+	case 26:
+		display += "Accessories";
+		Helpers::addRangeToVector(newData, 161, 181);
+		Helpers::addRangeToVector(newData, 353, 354);
+		break;
+	case 27:
+		display += "Gambits";
+		Helpers::addRangeToVector(newData, 266, 275);
+		break;
+	case 28:
+		display += "Espers";
+		Helpers::addRangeToVector(newData, 19, 30);
+		break;
+	case 29:
+		display += "Augments";
+		Helpers::addRangeToVector(newData, 219, 265);
+		Helpers::addRangeToVector(newData, 300, 328);
+		break;
+	}
+}
+
+void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int type, int board, int type2)
+{
+	vector<unsigned short> newData = vector<unsigned short>();
+	newData.push_back(31); //Essentials
+	newData.push_back(360); //Second Board
+	newData.push_back(18); //Belias
+
+	string display="";
+	addForcedLicenses(type, display, newData);
+	if (type2 >= 0)
+	{
+		if (type < type2)
+			newBoardNames[board] = type2Names[29-type2][type];
+		else
+			newBoardNames[board] = type2Names[29-type][type2];
+		display += "/";
+		addForcedLicenses(type2, display, newData);
+		newBoardNames[board] += "\n" + display;
+	}
+	else
+		newBoardNames[board] = display;
 	data = newData;
 }
 

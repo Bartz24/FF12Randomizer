@@ -34,10 +34,11 @@ public:
 	static string helpMenu[200];
 	static string menuCmd[210];
 	static string menuMsg[130];
+	static string charNames[629];
 	RenameMain();
 	~RenameMain();
 	void load();
 	void save();
-	void process(string seed, string flags);
+	void process(string seed, string flags, bool randomizeEnemyNames);
 };
 

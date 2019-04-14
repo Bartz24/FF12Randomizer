@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "ActionData.h"
 
-
-ActionDataOffset ActionData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return ActionDataOffset::us;
-	return ActionDataOffset::us;
-}
-
 ActionData::ActionData(char data[60])
 {
 	for (int i = 0; i < 60; i++)
@@ -35,6 +26,7 @@ ActionData::ActionData(char data[60])
 	this->animation = *reinterpret_cast<unsigned short*>(animation);
 	char type[] = { data[0x2C] , data[0x2D] };
 	this->mType = *reinterpret_cast<unsigned short*>(type);
+	this->name = Helpers::readShort(data, 0x34);
 	this->specialType = data[0x36];
 	this->gambitPage = data[0x38];
 	this->gambitPageOrder = data[0x39];

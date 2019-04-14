@@ -22,7 +22,7 @@ void ItemRand::load()
 		char * buffer;
 		long size = 64 * 12; //Num items * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(ItemData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x4C));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -39,7 +39,7 @@ void ItemRand::load()
 		char * buffer2;
 		size = 266 * 10; //Num loots * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(LootData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x84));
 		buffer2 = new char[size];
 		file.read(buffer2, size);
 		file.close();
@@ -56,7 +56,7 @@ void ItemRand::load()
 		char * buffer3;
 		size = 256 * 32; //Num gambits * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(GambitData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x20));
 		buffer3 = new char[size];
 		file.read(buffer3, size);
 		file.close();
@@ -85,7 +85,7 @@ void ItemRand::save()
 	char * buffer;
 	long size = 64 * 12; //Num items * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(ItemData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x4C));
 	buffer = new char[size];
 
 	for (int i = 0; i < 64; i++)
@@ -114,7 +114,7 @@ void ItemRand::save()
 	char * buffer2;
 	size = 266 * 10; //Num loots * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(LootData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x84));
 	buffer2 = new char[size];
 
 	for (int i = 0; i < 266; i++)
@@ -141,7 +141,7 @@ void ItemRand::save()
 	char * buffer3;
 	size = 256 * 32; //Num gambits * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(GambitData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName,0x20));
 	buffer3 = new char[size];
 
 	for (int i = 0; i < 256; i++)

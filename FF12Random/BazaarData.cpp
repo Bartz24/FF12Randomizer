@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "BazaarData.h"
 
-
-BazaarDataOffset BazaarData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return BazaarDataOffset::us;
-	return BazaarDataOffset::us;
-}
-
 BazaarData::BazaarData(char data[36])
 {
 	int index = 0;

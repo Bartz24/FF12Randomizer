@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class RewardDataOffset
-{
-	us = 0x0001FFE8
-};
-
 class RewardData
 {
 public:
-	static RewardDataOffset getDataIndex();
 	unsigned int gil; // 00-03
 	unsigned short item1; // 04-05
 	unsigned char item1Amt; // 06

@@ -20,7 +20,7 @@ void LicenseRand::load()
 		char * buffer;
 		long size = 361 * 24; //Num licenses * license size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(LicenseData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x34));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -662,7 +662,7 @@ void LicenseRand::randEquipment(bool together, bool changeNum)
 			equip = vector<unsigned short>();
 			extractAbilities(equip, 66, 72, false);
 			extractAbilities(equip, 340, 341, false);
-			replaceAbilities(60, 72, equip);
+			replaceAbilities(66, 72, equip);
 			replaceAbilities(340, 341, equip);
 
 			//Crossbows
@@ -787,13 +787,42 @@ void LicenseRand::randAugments(bool includeBad)
 		augments.push_back(39);
 		augments.push_back(50);
 	}
+
+	{
+		vector<int> tempAugments;
+		vector<int> chances;
+		int maxChance = 0;
+
+		for (int i = 0; i < augments.size(); i++)
+		{
+			int val = 260 - min(255, max(0, augmentWorth(augments[i])));
+			chances.push_back(val);
+			maxChance += val;
+		}
+
+		while (augments.size() > 0)
+		{
+			int chance = Helpers::randInt(0, maxChance);
+			int i = 0;
+			for (; chance > chances[i] && i < chances.size(); i++) 
+			{
+				chance -= chances[i]; 				
+			}
+			maxChance -= chances[i];
+			tempAugments.insert(tempAugments.begin(), augments[i]);
+			augments.erase(augments.begin() + i);
+			chances.erase(chances.begin() + i);
+		}
+
+		augments = tempAugments;
+	}
+
 	for (int i = 0; i < 361; i++)
 	{
 		if (i >= 300 && i <= 328 || i >= 219 && i <= 265)
 		{
-			int index = Helpers::randInt(0, augments.size() - 1);
-			licenseData[i].otherData[0] = augments[index];
-			augments.erase(augments.begin() + index);
+			licenseData[i].otherData[0] = augments[augments.size() - 1];
+			augments.erase(augments.end() - 1);
 		}
 	}
 }
@@ -1016,7 +1045,7 @@ void LicenseRand::save()
 	char * buffer;
 	long size = 361 * 24; //Num licenses * license size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(LicenseData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x34));
 	buffer = new char[size];
 
 	for (int i = 0; i < 361; i++)

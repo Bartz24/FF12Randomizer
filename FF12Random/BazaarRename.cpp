@@ -50,6 +50,7 @@ BazaarRename::~BazaarRename()
 
 void BazaarRename::load()
 {
+	data[99] = data[100] = data[101] = data[102] = data[124] = data[125] = data[126] = ".IGNORE";
 }
 
 void BazaarRename::save()
@@ -73,6 +74,7 @@ void BazaarRename::save()
 			myfile << endl;
 	}
 	myfile.close();
+
 }
 
 void BazaarRename::process()

@@ -1,22 +1,6 @@
 #include "stdafx.h"
 #include "MagicData.h"
 
-MagicDataOffsetMagick MagicData::getMagDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return MagicDataOffsetMagick::us;
-	return MagicDataOffsetMagick::us;
-}
-
-MagicDataOffsetTechnick MagicData::getTechDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return MagicDataOffsetTechnick::us;
-	return MagicDataOffsetTechnick::us;
-}
-
 MagicData::MagicData(char costA, char costB, char id1, char icon, char id2, char unknown1, char order, char unknown2)
 {
 	char data[] = { costA , costB };

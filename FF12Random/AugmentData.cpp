@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "AugmentData.h"
 
-
-AugmentDataOffset AugmentData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return AugmentDataOffset::us;
-	return AugmentDataOffset::us;
-}
-
 AugmentData::AugmentData(char data[8])
 {
 	int index = 0;

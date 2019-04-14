@@ -153,6 +153,8 @@
   <ItemGroup>
     <ClInclude Include="ActionData.h" />
     <ClInclude Include="ActionRename.h" />
+    <ClInclude Include="AIAbility.h" />
+    <ClInclude Include="AIData.h" />
     <ClInclude Include="ARDData.h" />
     <ClInclude Include="AttributeData.h" />
     <ClInclude Include="AttributePoint.h" />
@@ -165,7 +167,10 @@
     <ClInclude Include="CharRand.h" />
     <ClInclude Include="CharRename.h" />
     <ClInclude Include="CharValue.h" />
+    <ClInclude Include="CommandPack.h" />
+    <ClInclude Include="CommandPackRand.h" />
     <ClInclude Include="DocumentationGen.h" />
+    <ClInclude Include="EBPTextEdit.h" />
     <ClInclude Include="ElementalValue.h" />
     <ClInclude Include="EnemyRand.h" />
     <ClInclude Include="EquipData.h" />
@@ -174,6 +179,7 @@
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagGroup.h" />
     <ClInclude Include="GambitData.h" />
+    <ClInclude Include="HTMLDocument.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="ItemFlagValue.h" />
     <ClInclude Include="ItemRand.h" />
@@ -187,6 +193,7 @@
     <ClInclude Include="MagicData.h" />
     <ClInclude Include="MagicRand.h" />
     <ClInclude Include="MapData.h" />
+    <ClInclude Include="NoChallengeRand.h" />
     <ClInclude Include="RandSpellData.h" />
     <ClInclude Include="RenameMain.h" />
     <ClInclude Include="RewardData.h" />
@@ -204,6 +211,8 @@
   <ItemGroup>
     <ClCompile Include="ActionData.cpp" />
     <ClCompile Include="ActionRename.cpp" />
+    <ClCompile Include="AIAbility.cpp" />
+    <ClCompile Include="AIData.cpp" />
     <ClCompile Include="ARDData.cpp" />
     <ClCompile Include="AttributeData.cpp" />
     <ClCompile Include="AttributePoint.cpp" />
@@ -216,7 +225,10 @@
     <ClCompile Include="CharRand.cpp" />
     <ClCompile Include="CharRename.cpp" />
     <ClCompile Include="CharValue.cpp" />
+    <ClCompile Include="CommandPack.cpp" />
+    <ClCompile Include="CommandPackRand.cpp" />
     <ClCompile Include="DocumentationGen.cpp" />
+    <ClCompile Include="EBPTextEdit.cpp" />
     <ClCompile Include="ElementalValue.cpp" />
     <ClCompile Include="EnemyRand.cpp" />
     <ClCompile Include="EquipData.cpp" />
@@ -225,6 +237,7 @@
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagGroup.cpp" />
     <ClCompile Include="GambitData.cpp" />
+    <ClCompile Include="HTMLDocument.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="ItemFlagValue.cpp" />
     <ClCompile Include="ItemRand.cpp" />
@@ -239,6 +252,7 @@
     <ClCompile Include="MagicData.cpp" />
     <ClCompile Include="MagicRand.cpp" />
     <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="NoChallengeRand.cpp" />
     <ClCompile Include="RandSpellData.cpp" />
     <ClCompile Include="RenameMain.cpp" />
     <ClCompile Include="RewardData.cpp" />

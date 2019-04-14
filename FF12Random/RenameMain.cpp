@@ -8,6 +8,7 @@ string RenameMain::gambitNames[284] = {};
 string RenameMain::helpMenu[200] = {};
 string RenameMain::menuCmd[210] = {};
 string RenameMain::menuMsg[130] = {};
+string RenameMain::charNames[629] = {};
 
 RenameMain::RenameMain()
 {
@@ -63,6 +64,17 @@ void RenameMain::load()
 		myfile.close();
 	}
 
+	myfile = ifstream("charNames.txt");
+	if (myfile.is_open())
+	{
+		for (int i = 0; i < 629; i++)
+		{
+			getline(myfile, line);
+			charNames[i] = line;
+		}
+		myfile.close();
+	}
+
 	myfile = ifstream("data\\help_menu.txt");
 	if (myfile.is_open())
 	{
@@ -74,7 +86,7 @@ void RenameMain::load()
 		myfile.close();
 	}
 
-	myfile = ifstream("data\\menu_command.txt");
+	myfile = ifstream("menu_command.txt");
 	if (myfile.is_open())
 	{
 		for (int i = 0; i < 210; i++)
@@ -101,6 +113,10 @@ void RenameMain::load()
 	bRename.load();
 	aRename.load();
 	cRename.load();
+	for (int i = 0; i < 545; i++)
+		abilityNames[i] = actRename.data[i];
+
+	std::experimental::filesystem::copy("data\\text", "text", std::experimental::filesystem::copy_options::recursive);
 }
 
 void RenameMain::save()
@@ -117,6 +133,16 @@ void RenameMain::save()
 	{
 		myfile << gambitNames[i];
 		if (i < 283)
+			myfile << endl;
+	}
+	myfile.close();
+
+	myfile = ofstream();
+	myfile.open("charNames.txt");
+	for (int i = 0; i < 629; i++)
+	{
+		myfile << charNames[i];
+		if (i < 628)
 			myfile << endl;
 	}
 	myfile.close();
@@ -178,6 +204,7 @@ void RenameMain::save()
 	remove("abilityNames.txt");
 	remove("abilityDescriptions.txt");
 	remove("abilityDescriptions2.txt");
+	remove("charNames.txt");
 	remove("equipmentNames.txt");
 	remove("menuNames.txt");
 	remove("lootNames.txt");
@@ -187,29 +214,67 @@ void RenameMain::save()
 	remove("menu_message.txt");
 	remove("penelosdiary.txt");
 	remove("menu00.txt");
+
+	std::experimental::filesystem::remove_all("text");
 }
 
-void RenameMain::process(string seed, string flags)
+void RenameMain::process(string seed, string flags, bool randomizeEnemyNames)
 {
+	if (LicenseBoardRand::usingSingleBoard)
+	{
+		for (int i = 4; i < 16; i++)
+		{
+			menuCmd[i] = "";
+		}
+	}
+
+	if (LicenseBoardRand::newBoardNames[0] != "")
+	{
+		for (int i = 4; i < 16; i++)
+		{
+			menuCmd[i] = Helpers::split(LicenseBoardRand::newBoardNames[i - 4],'\n')[0];
+		}
+		if (LicenseBoardRand::type2)
+		{
+			for (int i = 39; i < 51; i++)
+			{
+				menuMsg[i] = Helpers::split(LicenseBoardRand::newBoardNames[i - 39], '\n')[1] + "{02}" + menuMsg[i];
+			}
+		}
+	}
+
+	if (LicenseBoardRand::suggestedChars[0] != 0)
+	{
+		for (int i = 39; i < 51; i++)
+		{
+			int c = LicenseBoardRand::suggestedChars[i - 39];
+			if (c < 0)
+				menuMsg[i] = "This is " + cRename.data[abs(c) - 1 + 71] + "'s first board.{02}" + menuMsg[i];
+			else
+				menuMsg[i] = "This is " + cRename.data[abs(c) - 1 + 71] + "'s second board.{02}" + menuMsg[i];
+		}
+	}
+
 	actRename.process();
 	for (int i = 0; i < 545; i++)
 		abilityNames[i] = actRename.data[i];
-	lRename.process();
-	cRename.process();
+	string jobNames[12];
+	for (int i = 0; i < 12; i++)
+	{
+		int l = 2;
+		while (find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i].substr(0, l))) != jobNames + 12 && l < menuCmd[4 + i].length())
+			l++;
+		
+		jobNames[i] = Helpers::removeSpaces(menuCmd[4 + i].substr(0, l));
+	}
+	lRename.process(jobNames);
+	cRename.process(randomizeEnemyNames);
 	bRename.process();
 	aRename.process();
 
 	helpMenu[99].replace(helpMenu[99].find("%s"), 2, seed);
 	helpMenu[99].replace(helpMenu[99].find("%f"), 2, flags);
 	helpMenu[99].replace(helpMenu[99].find("%v"), 2, Helpers::version);
-
-	if (LicenseBoardRand::usingSingleBoard)
-	{
-		for (int i = 4; i < 17; i++)
-		{
-			menuCmd[i] = "";
-		}
-	}
 
 	for (int i = 0; i < 420; i++)
 	{
@@ -243,16 +308,16 @@ void RenameMain::process(string seed, string flags)
 string LicenseRename::getNameFromID(int id)
 {
 	if (id < 4000)
-		return RenameMain::abilityNames[id];
-	else return RenameMain::equipNames[id - 4096];
+		return RenameMain::abilityNames[MagicRand::actionData[id].name];
+	else return RenameMain::equipNames[EquipRand::equipData[id - 4096].id - 2048];
 }
 
 string BazaarRename::getNameFromID(int id)
 {
 	if (id < 64)
-		return RenameMain::abilityNames[id + 82];
+		return RenameMain::abilityNames[MagicRand::actionData[id + 82].name];
 	else if (id < 4600)
-		return RenameMain::equipNames[id - 4096];
+		return RenameMain::equipNames[EquipRand::equipData[id - 4096].id - 2048];
 	else if (id < 9000)
 		return RenameMain::lootNames[id - 8192];
 	else if (id < 13000)
@@ -279,5 +344,59 @@ void CharRename::fixGambitNames()
 	{
 		RenameMain::gambitNames[i + 163] = "Ally: " + data[i + 71];
 		RenameMain::gambitNames[i + 224] = "Foe: targeting " + data[i + 71];
+	}
+}
+
+void CharRename::randomizeEnemyNames()
+{
+	vector<char> vowels = { 'a','e','i','o','u','y' };
+	vector<int> vowelWeights = { 14810,21912,13318,14003,5246,3853 };
+	int vowelTotal = 0;
+	for (int i = 0; i < vowelWeights.size(); i++)
+		vowelTotal += vowelWeights[i];
+	vector<char> consanants = { 'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z' };
+	vector<int> consanantWeights = { 2715, 4943, 7874, 4200, 3693, 10795, 188, 1257, 7253, 4761, 12666, 3316, 205, 10977, 11450, 16587, 2019, 3819, 315, 128 };
+	int consanantTotal = 0;
+	for (int i = 0; i < consanantWeights.size(); i++)
+		consanantTotal += consanantWeights[i];
+
+	for (int i = 18; i < 629; i++)
+	{
+		if (RenameMain::charNames[i].find("No name") != string::npos)
+			continue;
+
+		string newName="";
+
+		for (int c = 0; c < RenameMain::charNames[i].length(); c++)
+		{
+			char ch = RenameMain::charNames[i][c];
+
+			char newCh;
+			if (find(vowels.begin(), vowels.end(), tolower(ch)) != vowels.end())
+			{
+				int pick = Helpers::randInt(0, vowelTotal - 1);
+				int p = 0;
+				for (;pick >= vowelWeights[p]; p++)
+					pick -= vowelWeights[p];
+				newCh = vowels[p];
+			}
+			else if (find(consanants.begin(), consanants.end(), tolower(ch)) != consanants.end())
+			{
+				int pick = Helpers::randInt(0, consanantTotal - 1);
+				int p = 0;
+				for (; pick >= consanantWeights[p]; p++)
+					pick -= consanantWeights[p];
+				newCh = consanants[p];
+			}
+			else
+			{
+				newName += ch;
+				continue;
+			}
+			if (isupper(ch))
+				newCh = toupper(newCh);
+			newName += newCh;
+		}
+		RenameMain::charNames[i] = newName;
 	}
 }

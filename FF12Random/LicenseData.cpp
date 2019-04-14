@@ -1,29 +1,6 @@
 #include "stdafx.h"
 #include "LicenseData.h"
 
-
-LicenseDataOffset LicenseData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return LicenseDataOffset::us;
-	if (language == "ch")
-		return LicenseDataOffset::ch;
-	if (language == "cn")
-		return LicenseDataOffset::cn;
-	if (language == "de")
-		return LicenseDataOffset::de;
-	if (language == "es")
-		return LicenseDataOffset::es;
-	if (language == "fr")
-		return LicenseDataOffset::fr;
-	if (language == "it")
-		return LicenseDataOffset::it;
-	if (language == "kr")
-		return LicenseDataOffset::kr;
-	return LicenseDataOffset::in;
-}
-
 LicenseData::LicenseData(char byteNameA, char byteNameB, char licenseGroup, char unknown, char lpCost, char licenseSubgroup, char licenseMechanic, char startingCharacters, char* otherData)
 {
 	this->licenseName = byteNameB | byteNameA << 8;

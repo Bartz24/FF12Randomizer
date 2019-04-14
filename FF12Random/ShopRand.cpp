@@ -21,7 +21,7 @@ void ShopRand::load()
 		char * buffer;
 		long size = 0x2E74; //Num shop * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(ShopData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x9C, 0xC28));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -56,7 +56,7 @@ void ShopRand::load()
 	char * buffer;
 	long size = 128 * 36; //Num bazaar * data size
 	ifstream file(fileName, ios::in | ios::binary | ios::ate);
-	file.seekg(int(BazaarData::getDataIndex()));
+	file.seekg(Helpers::getPointer(fileName, 0xB0));
 	buffer = new char[size];
 	file.read(buffer, size);
 	file.close();
@@ -90,7 +90,7 @@ void ShopRand::save()
 		char * buffer;
 		long size = 12 + shopData[i].itemCount * 2; //Num shop * data size
 		fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-		file.seekp(int(ShopData::getDataIndex()) + shopData[i].position);
+		file.seekp(Helpers::getPointer(fileName, 0x9C, 0xC28) + shopData[i].position);
 		buffer = new char[size];
 
 		ShopData d = shopData[i];
@@ -121,7 +121,7 @@ void ShopRand::save()
 	char * buffer;
 	long size = 128 * 36; //Num bazaar * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(BazaarData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0xB0));
 	buffer = new char[size];
 
 	for (int i = 0; i < 128; i++)

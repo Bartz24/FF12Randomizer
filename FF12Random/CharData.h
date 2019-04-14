@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class CharDataOffset
-{
-	us = 0x001B6C0
-};
-
 class CharData
 {
 public:
-	static CharDataOffset getDataIndex();
 	unsigned char unknown[128];
 	unsigned short weapon; // 0A-0B
 	unsigned short offHand; // 0C-0D
@@ -29,6 +23,7 @@ public:
 	unsigned char spd; // 27
 	unsigned char spdModifier; // 28
 	unsigned char gambits; // 2C
+	unsigned char level; // 2E
 	unsigned short items[10]; // 58-6B
 	unsigned char itemCount[10]; // 34-3D
 	unsigned char auto1; // 48

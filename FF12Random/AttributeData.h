@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class AttributeDataOffset
-{
-	us = 0x001218C
-};
-
 class AttributeData
 {
 public:
-	static AttributeDataOffset getDataIndex();
 	unsigned short hp; // 00-01
 	unsigned short mp; // 02-03
 	unsigned char str; // 04

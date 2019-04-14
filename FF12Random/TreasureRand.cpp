@@ -286,9 +286,9 @@ void TreasureRand::randTreasures(FlagGroup flags)
 				}
 			}
 			if (flags.hasFlag("s"))
-				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(0, 100, 70, 20, flags.getFlag("s").getValue());
+				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(1, 100, 70, 20, flags.getFlag("s").getValue());
 			if (flags.hasFlag("g"))
-				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(0, 100, 30, 20, flags.getFlag("g").getValue());
+				mapData[i].treasure[t].gilChance = Helpers::randNormControl(0, 100, 30, 20, flags.getFlag("g").getValue());
 			mapData[i].treasure[t].respawn = 0xFF;
 		}
 	}

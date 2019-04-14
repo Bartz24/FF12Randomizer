@@ -40,8 +40,8 @@ void CharRand::load()
 	{
 		char * buffer;
 		long size = 40 * 128; //Num chars * data size
-		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(CharData::getDataIndex()));
+		ifstream file(fileName, ios::in | ios::binary | ios::ate);	
+		file.seekg(Helpers::getPointer(fileName, 0x0044));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -61,7 +61,7 @@ void CharRand::load()
 		char * buffer2;
 		size = 7 * 64; //Num gambits * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(StartGambitData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x24));
 		buffer2 = new char[size];
 		file.read(buffer2, size);
 		file.close();
@@ -90,7 +90,7 @@ void CharRand::save()
 	char * buffer;
 	long size = 40 * 128; //Num chars * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(CharData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x0044));
 	buffer = new char[size];
 
 	for (int i = 0; i < 40; i++)
@@ -126,6 +126,7 @@ void CharRand::save()
 		buffer[i * 128 + 0x27] = d.spd;
 		buffer[i * 128 + 0x28] = d.spdModifier;
 		buffer[i * 128 + 0x2C] = d.gambits;
+		buffer[i * 128 + 0x2E] = d.level;
 		for (int item = 0; item < 10; item++)
 		{
 			buffer[i * 128 + 0x58 + item * 2] = U{ d.items[item] }.c[0];
@@ -152,7 +153,7 @@ void CharRand::save()
 	char * buffer2;
 	size = 7 * 64; //Num loots * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(StartGambitData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x24));
 	buffer2 = new char[size];
 
 	for (int i = 0; i < 7; i++)
@@ -199,6 +200,11 @@ void CharRand::process(FlagGroup flags)
 
 	charData[6].immune4 = 0x80;
 
+	if (flags.hasFlag("r"))
+	{
+		charData[6].level = flags.getFlag("r").getValue();
+	}
+
 	checkDangerousEquip(charData[0].accessory);
 	checkDangerousEquip(charData[0].head);
 	checkDangerousEquip(charData[0].body);
@@ -220,8 +226,18 @@ void CharRand::checkDangerousEquip(int itemID)
 
 		AttributeData data = EquipRand::attributeData[EquipRand::equipData[itemID - 4096].attribute / 24];
 		StatusValue status{ data.autoStatus };
-		if (statusDangerous(status))
-			itemID == 0xFFFF;
+		status.removeStatus(Status::Petrify);
+		status.removeStatus(Status::Death);
+		status.removeStatus(Status::Sap);
+		status.removeStatus(Status::Disable);
+		status.removeStatus(Status::Immobilize);
+		status.removeStatus(Status::Sleep);
+		status.removeStatus(Status::Stop);
+		status.removeStatus(Status::Confuse);
+		status.removeStatus(Status::Doom);
+		status.removeStatus(Status::Berserk);
+		status.removeStatus(Status::XZone);
+		data.autoStatus = status.getNumValue();
 	}
 }
 

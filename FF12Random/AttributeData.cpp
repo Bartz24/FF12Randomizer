@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "AttributeData.h"
 
-
-AttributeDataOffset AttributeData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return AttributeDataOffset::us;
-	return AttributeDataOffset::us;
-}
-
 AttributeData::AttributeData(char data[24])
 {
 	char hp[] = { data[0] , data[1] };

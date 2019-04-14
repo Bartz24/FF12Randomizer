@@ -1,14 +1,6 @@
 #include "stdafx.h"
 #include "ShopData.h"
 
-ShopDataOffset ShopData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return ShopDataOffset::us;
-	return ShopDataOffset::us;
-}
-
 ShopData::ShopData()
 {
 }

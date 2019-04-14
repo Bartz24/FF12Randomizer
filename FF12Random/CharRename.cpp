@@ -39,8 +39,11 @@ void CharRename::save()
 	myfile.close();
 }
 
-void CharRename::process()
+void CharRename::process(bool randEnemyNames)
 {
+	if (randEnemyNames)
+		randomizeEnemyNames();
+
 	string names[12] = { data[71], data[72], data[73], data[74], data[75], data[76], data[77], data[78], data[79], data[80],
 	data[81], data[82] };
 	for (int i = 0; i < 253; i++)

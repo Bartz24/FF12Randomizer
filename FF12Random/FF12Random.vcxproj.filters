@@ -162,6 +162,27 @@
     <ClInclude Include="AttributePoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CommandPackRand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandPack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIAbility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HTMLDocument.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoChallengeRand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EBPTextEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -309,6 +330,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AttributePoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandPackRand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandPack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIAbility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HTMLDocument.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NoChallengeRand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EBPTextEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

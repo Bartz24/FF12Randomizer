@@ -2,14 +2,6 @@
 #include "ItemData.h"
 
 
-ItemDataOffset ItemData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return ItemDataOffset::us;
-	return ItemDataOffset::us;
-}
-
 ItemData::ItemData(char order, char unknown1, char unknown2, char unknown3, char icon, char unknown4, char unknown5, char desc, char unknown7, char unknown8, char costA, char costB)
 {
 	this->order = order;

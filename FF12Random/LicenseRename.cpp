@@ -236,7 +236,7 @@ string LicenseRename::getGroup(int a)
 	return string();
 }
 
-void LicenseRename::process()
+void LicenseRename::process(string jobNames[12])
 {
 	for (int i = 32; i < 360; i++)
 	{
@@ -336,35 +336,39 @@ void LicenseRename::process()
 	if (!LicenseBoardRand::usingSingleBoard)
 	{
 		for (int i = 18; i < 360; i++)
-		{
-			vector<string> boardsWithLicense = vector<string>();
-
-			string names[12] = { "Wh", "Uh" , "Ma" , "Re" , "Kn" ,"Mo", "Ti" , "Fo" , "Ar" , "Bl" , "Bu" , "Sh" };
-
-			for (int board = 0; board < 12; board++)
-			{
-				for (int y = 0; y < 24; y++)
-				{
-					for (int x = 0; x < 24; x++)
-					{
-						if (LicenseBoardRand::boards[board].board[y][x] == i)
-							boardsWithLicense.push_back(names[board]);
-					}
-				}
-			}
-			data[i] = data[i] + " (";
-			if (boardsWithLicense.size() == 0)
-				data[i] = data[i] + "None";
-			else if (boardsWithLicense.size() == 12)
-				data[i] = data[i] + "All";
-			else
-			{
-				for (int name = 0; name < boardsWithLicense.size(); name++)
-				{
-					data[i] = data[i] + boardsWithLicense[name];
-				}
-			}
-			data[i] = data[i] + ")";
+		{			
+			data[i] += " (" + getPossibleJobs(i, jobNames) + ")";
 		}
 	}
+}
+
+string LicenseRename::getPossibleJobs(int i, string jobNames[12])
+{
+	string jobs = "";
+
+	vector<string> boardsWithLicense = vector<string>();
+
+	for (int board = 0; board < 12; board++)
+	{
+		for (int y = 0; y < 24; y++)
+		{
+			for (int x = 0; x < 24; x++)
+			{
+				if (LicenseBoardRand::boards[board].board[y][x] == i)
+					boardsWithLicense.push_back(jobNames[board]);
+			}
+		}
+	}
+	if (boardsWithLicense.size() == 0)
+		jobs += "None";
+	else if (boardsWithLicense.size() == 12)
+		jobs += "All";
+	else
+	{
+		for (int name = 0; name < boardsWithLicense.size(); name++)
+		{
+			jobs += boardsWithLicense[name];
+		}
+	}
+	return jobs;
 }

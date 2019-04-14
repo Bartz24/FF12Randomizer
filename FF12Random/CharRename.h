@@ -20,7 +20,8 @@ public:
 	~CharRename();
 	void load();
 	void save();
-	void process();
+	void process(bool randEnemyNames);
 	void fixGambitNames();
+	void randomizeEnemyNames();
 };
 

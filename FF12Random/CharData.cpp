@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "CharData.h"
 
-
-CharDataOffset CharData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return CharDataOffset::us;
-	return CharDataOffset::us;
-}
-
 CharData::CharData(char data[128])
 {
 	for (int i = 0; i < 128; i++)
@@ -41,6 +32,7 @@ CharData::CharData(char data[128])
 	this->spd = data[0x27];
 	this->spdModifier = data[0x28];
 	this->gambits = data[0x2C];
+	this->level = data[0x2E];
 	for (int i = 0; i < 10; i++)
 	{
 		char item[] = { data[0x58 + i * 2] , data[0x59 + i * 2] };

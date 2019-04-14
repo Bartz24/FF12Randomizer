@@ -145,8 +145,41 @@ void ActionRename::process()
 			data[i + 246] = MagicRand::trapNames[i];
 	}
 
-	data[107] = "Meteorite A";
-	data[108] = "Meteorite B";
-	data[109] = "Meteorite C";
-	data[110] = "Meteorite D";
+	data[107] = "Sap Meteorite (A)";
+	data[108] = "Disease Meteorite (B)";
+	data[109] = "Attack Meteorite (C)";
+	data[110] = "Attack Meteorite (D)";
+
+	if (MagicRand::didRandElement)
+	{
+
+		data[283] = "Elementa I";
+		data[284] = "Elementa II";
+		data[285] = "Elementaga";
+		data[286] = "Elementaja VI";
+		data[287] = "Elementaja I";
+		data[288] = "Elementaja II";
+		data[289] = "Elementaja IV";
+		data[290] = "Elementaja V";
+		data[291] = "Elementaja VIII";
+		data[292] = "Elementaja III";
+		data[293] = "Elementaja VII";
+
+		data[446] = "Piercing Elementaga I";
+		data[447] = "Piercing Elementaga II";
+		data[448] = "Piercing Elementaga III";
+		data[449] = "Piercing Elementaga IV";
+	}
+	if (MagicRand::didRandStatus)
+	{
+		data[294] = "Effectaga";
+		data[295] = "Effectaja";
+		data[296] = "Effectaza";
+		data[297] = "Effectara";
+		data[299] = "Lv.2 Effect";
+		data[300] = "Lv.3 Effect";
+		data[301] = "Lv.4 Effect";
+		data[302] = "Lv.5 Effect";
+		data[303] = "Prime Lv. Effect";
+	}
 }

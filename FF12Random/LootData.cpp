@@ -1,14 +1,6 @@
 #include "stdafx.h"
 #include "LootData.h"
 
-LootDataOffset LootData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return LootDataOffset::us;
-	return LootDataOffset::us;
-}
-
 LootData::LootData(char costA, char costB, char idA, char idB, char icon, char unknown1, char unknown2, char unknown3, char orderA, char orderB)
 {
 	char data[] = { costA , costB };

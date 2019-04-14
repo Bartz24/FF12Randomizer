@@ -21,7 +21,7 @@ void EquipRand::load()
 		char * buffer;
 		long size = 557 * 52; //Num equips * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(EquipData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x38));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -36,11 +36,13 @@ void EquipRand::load()
 			equipData[i] = EquipData{ data };
 		}
 
+		system("pause");
+
 		delete[] buffer;
 		char * buffer2;
 		size = 176 * 24; //Num attributes * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(AttributeData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x38, 0x7144));
 		buffer2 = new char[size];
 		file.read(buffer2, size);
 		file.close();
@@ -73,26 +75,26 @@ void EquipRand::save()
 	char * buffer;
 	long size = 557 * 52; //Num equips * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(EquipData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x38));
 	buffer = new char[size];
 
 	for (int i = 0; i < 557; i++)
 	{
 		EquipData d = equipData[i];
-		int index = 0;
 		for (int i2 = 0; i2 < 52; i2++)
 		{
-			if (i2 >= 0x11 && i2 <= 0x13 || i2 >= 0x18 && i2 <= 0x1A || i2 >= 0x1E && i2 <= 0x23 || i2 == 0x07 || i2 >= 0x27 && i2 <= 0x2B)
-				continue;
-			buffer[i * 52 + i2] = d.unknown[index];
-			index++;
+			buffer[i * 52 + i2] = d.unknown[i2];
 		}
+		Helpers::setShort(buffer, i * 52 + 0x02, d.id);
 		buffer[i * 52 + 0x11] = d.equipRequirements;
 		buffer[i * 52 + 0x12] = U{ d.cost }.c[0];
 		buffer[i * 52 + 0x13] = U{ d.cost }.c[1];
 		buffer[i * 52 + 0x18] = d.def;
 		buffer[i * 52 + 0x19] = d.mRes;
 		buffer[i * 52 + 0x1A] = d.power;
+		buffer[i * 52 + 0x1B] = d.knockback;
+		buffer[i * 52 + 0x1C] = d.critChance;
+		buffer[i * 52 + 0x1D] = d.evasion;
 		buffer[i * 52 + 0x1E] = d.element;
 		buffer[i * 52 + 0x1F] = d.hitChance;
 		buffer[i * 52 + 0x20] = U2{ d.status }.c[0];
@@ -116,7 +118,7 @@ void EquipRand::save()
 	char * buffer2;
 	size = 176 * 24; //Num attributes * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(AttributeData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x38, 0x7144));
 	buffer2 = new char[size];
 
 	for (int i = 0; i < 176; i++)
@@ -284,21 +286,20 @@ void EquipRand::randElements(int value)
 	for (int i = 0; i < 557; i++)
 	{
 		setElement(equipData[i].element);
-		if (equipData[i].element == 0x00)
-			setElementSingle(equipData[i].element, value);
+		setElementMultiple(equipData[i].element, value);
 	}
 	for (int i = 1; i < 176; i++)
 	{
 		setElement(attributeData[i].absorbElement);
-		setElementMultiple(attributeData[i].absorbElement, value / 4 + 1);
+		setElementMultiple(attributeData[i].absorbElement, value);
 		setElement(attributeData[i].immuneElement);
-		setElementMultiple(attributeData[i].immuneElement, value / 4 + 1);
+		setElementMultiple(attributeData[i].immuneElement, value);
 		setElement(attributeData[i].halfElement);
-		setElementMultiple(attributeData[i].halfElement, value / 4 + 1);
+		setElementMultiple(attributeData[i].halfElement, value);
 		setElement(attributeData[i].weakElement);
-		setElementMultiple(attributeData[i].weakElement, value / 4 + 1);
+		setElementMultiple(attributeData[i].weakElement, value);
 		setElement(attributeData[i].boostElement);
-		setElementMultiple(attributeData[i].boostElement, value / 4 + 1);
+		setElementMultiple(attributeData[i].boostElement, value);
 		ElementalValue absorb{ attributeData[i].absorbElement };
 		ElementalValue immune{ attributeData[i].immuneElement };
 		ElementalValue half{ attributeData[i].halfElement };
@@ -337,9 +338,10 @@ void EquipRand::randStatusEffects(int value)
 	{
 		StatusValue orig{ equipData[i].status };
 		equipData[i].status = 0;
-		while (StatusValue{ equipData[i].status }.statuses.size() < orig.statuses.size())
-			addStatus(equipData[i].status, { Status::Stone, Status::XZone });
-		setStatus(equipData[i].status, value, { Status::Stone, Status::XZone });
+		bool full = false;
+		while (!full && StatusValue{ equipData[i].status }.statuses.size() < orig.statuses.size())
+			full = addStatus(equipData[i].status, StatusValue::onHitWeights);
+		setStatus(equipData[i].status, value, StatusValue::onHitWeights);
 		StatusValue status{ equipData[i].status };
 		if (status.statuses.size() > 0)
 		{
@@ -351,10 +353,10 @@ void EquipRand::randStatusEffects(int value)
 	for (int i = 1; i < 176; i++)
 	{
 		attributeData[i].autoStatus = 0;
-		setStatus(attributeData[i].autoStatus, value / 2 + 1, { Status::Stone, Status::XZone, Status::Death, Status::Reverse });
+		setStatus(attributeData[i].autoStatus, value, StatusValue::onEquipWeights);
 
 		attributeData[i].immuneStatus = 0;
-		setStatus(attributeData[i].immuneStatus, value / 2 + 1, { Status::Stone, Status::XZone, Status::Death });
+		setStatus(attributeData[i].immuneStatus, value, StatusValue::immuneWeights);
 		StatusValue autoStatus{ attributeData[i].autoStatus };
 		StatusValue immuneStatus{ attributeData[i].immuneStatus };
 		for (int i = 0; i < autoStatus.statuses.size(); i++)
@@ -380,7 +382,6 @@ void EquipRand::randArmorEffects()
 	addRangeToVector(effects, 0x24, 0x25);
 	effects.push_back(0x27);
 	effects.push_back(0x67);
-	effects.push_back(0x72);	
 	for (int i = 0; i < 556; i++)
 	{
 		if (equipData[i].itemFlag >= 0x40)
@@ -418,7 +419,13 @@ void EquipRand::randWeaponPower(int value)
 		ItemFlagValue iFlag{ equipData[i].itemFlag };
 		if (!iFlag.hasItemFlag(ItemFlag::OffHand) && !iFlag.hasItemFlag(ItemFlag::Accessory) && !iFlag.hasItemFlag(ItemFlag::BodyArmor)
 			&& !iFlag.hasItemFlag(ItemFlag::HeadArmor))
+		{
 			equipData[i].power = Helpers::randNormControl(10, 255, 60, 20, value);
+			if (i >= 87 && i <= 97 || i == 197 || i >= 148 && i <= 150) // If gun or measure, nerf
+			{
+				equipData[i].power = pow(equipData[i].power, 0.8);
+			}
+		}
 	}
 }
 
@@ -429,7 +436,13 @@ void EquipRand::randWeaponPowerSmart(int value)
 		ItemFlagValue iFlag{ equipData[i].itemFlag };
 		if (!iFlag.hasItemFlag(ItemFlag::OffHand) && !iFlag.hasItemFlag(ItemFlag::Accessory) && !iFlag.hasItemFlag(ItemFlag::BodyArmor)
 			&& !iFlag.hasItemFlag(ItemFlag::HeadArmor))
+		{
 			equipData[i].power = Helpers::randInt(equipData[i].power - value, equipData[i].power + value, 10, 255);
+			if (i >= 87 && i <= 97 || i == 197 || i >= 148 && i <= 150) // If gun or measure, nerf
+			{
+				equipData[i].power *= 0.95;
+			}
+		}
 	}
 }
 
@@ -613,21 +626,23 @@ void EquipRand::modifyValue(int value, unsigned char &dataVal, int minN, int max
 	}
 }
 
-void EquipRand::setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist)
+void EquipRand::setStatus(unsigned int &num, int chance, int* weights)
 {
 	StatusValue status = StatusValue(num);
 	while (Helpers::randInt(0, 99) < chance)
 	{
-		status.addRandomStatus(blacklist);
+		status.addRandomStatus(weights);
 	}
 	num = status.getNumValue();
 }
 
-void EquipRand::addStatus(unsigned int & num, initializer_list<Status> blacklist)
+bool EquipRand::addStatus(unsigned int & num, int* weights)
 {
 	StatusValue status = StatusValue(num);
-	status.addRandomStatus(blacklist);
+	int size = status.statuses.size();
+	status.addRandomStatus(weights);
 	num = status.getNumValue();
+	return status.statuses.size() == size;
 }
 
 void EquipRand::setElement(unsigned char &num)

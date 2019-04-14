@@ -27,5 +27,6 @@ public:
 	int specialType;
 	int icon;
 	int castAnimation;
+	int enemyRarity;
 };
 

@@ -18,7 +18,7 @@ void EnemyRand::load()
 	for (string folder : folders)
 	{
 		string areaName = folder.substr(folder.size() - 5, 5);
-		if (areaName == "\\area")
+		if (!Helpers::fileExists(folder+"\\area") || areaName == "\\area")
 			continue;
 		string fileName = folder + "\\area\\" + areaName + ".ard";
 		
@@ -56,8 +56,9 @@ void EnemyRand::save()
 {
 	for (int i = 0; i < ardData.size(); i++)
 	{
-		string fileName = Helpers::mainPS2DataFolder + "\\plan_master\\in\\plan_map\\" + ardData[i].areaName + "\\area\\" + ardData[i].areaName + ".ard";
-		if (Helpers::fileExists(fileName))
+		string areaFolder = Helpers::mainPS2DataFolder + "\\plan_master\\in\\plan_map\\" + ardData[i].areaName + "\\area";
+		string fileName = areaFolder + "\\" + ardData[i].areaName + ".ard";
+		if (Helpers::fileExists(areaFolder) && Helpers::fileExists(fileName))
 		{
 			{
 				char * buffer;
@@ -215,6 +216,32 @@ void EnemyRand::save()
 
 				delete[] buffer;
 			}
+
+			{
+				char * buffer;
+				long size = ardData[i].aiData.unknownByteSize; // data size
+				fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
+				file.seekp(ardData[i].aiAdrs);
+				buffer = new char[size];
+
+				for (int i2 = 0; i2 < size; i2++)
+				{
+					buffer[i2] = ardData[i].aiData.unknown[i2];
+				}
+
+				for (int a = 0; a < ardData[i].aiData.abilities.size(); a++)
+				{
+					Helpers::setShort(buffer, ardData[i].aiData.abilities[a].pointer, ardData[i].aiData.abilities[a].ability);
+					Helpers::setShort(buffer, ardData[i].aiData.abilities[a].pointer + 5, ardData[i].aiData.abilities[a].targetType);
+				}
+
+				file.write(buffer, size);
+				file.close();
+
+				delete[] buffer;
+
+				delete[] ardData[i].aiData.unknown;
+			}
 		}
 	}
 }
@@ -267,6 +294,10 @@ void EnemyRand::process(FlagGroup flags)
 					modifyValue(flags.getFlag("x").getValue(), sec3.exp, false, dummyS, doubleE, 0, 999999);
 				}
 			}
+			if (flags.hasFlag("T"))
+				buffTrialMode(sec3, aData, flags.getFlag("T").getValue());
+			if (flags.hasFlag("C"))
+				sec3.cp = 1;
 		}
 		for (int s = 0; s < aData.section4Data.size(); s++)
 		{
@@ -482,6 +513,24 @@ void EnemyRand::randCanopicJarItem(ARDSec2 & sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.canopicJarDrop != 0xFFFF)
 		sec2Data.canopicJarDrop = getItem(itemIDs, Helpers::clamp(.9 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 4400, value, false);
+}
+
+void EnemyRand::buffTrialMode(ARDSec3 &sec3Data, ARDData aData, int value)
+{
+	if (aData.areaName.find("tri") != string::npos)
+	{
+		double mult = double(Helpers::randInt(100, value)) / double(100);
+		sec3Data.atk = Helpers::clamp(sec3Data.atk * mult, 0, 255);
+		sec3Data.mag = Helpers::clamp(sec3Data.mag * mult, 0, 255);
+		sec3Data.def = Helpers::clamp(sec3Data.def * mult, 0, 255);
+		sec3Data.str = Helpers::clamp(sec3Data.str * mult, 0, 255);
+		sec3Data.vit = Helpers::clamp(sec3Data.vit * mult, 0, 255);
+		sec3Data.eva = Helpers::clamp(sec3Data.eva * mult, 0, 255);
+		sec3Data.spd = Helpers::clamp(sec3Data.spd * mult, 0, 255);
+		sec3Data.mRes = Helpers::clamp(sec3Data.mRes * mult, 0, 255);
+		sec3Data.hp = Helpers::clamp(sec3Data.hp * mult, 0, 1e9);
+		sec3Data.mp = Helpers::clamp(sec3Data.mp * mult, 0, 9999);
+	}
 }
 
 int EnemyRand::getItem(std::vector<int> &data, int center, int std, int value, bool remove)

@@ -20,7 +20,7 @@ void AugmentRand::load()
 		char * buffer;
 		long size = 129 * 8; //Num augments * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(AugmentData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0xEC));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -49,7 +49,7 @@ void AugmentRand::save()
 	char * buffer;
 	long size = 129 * 8; //Num augments * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(AugmentData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0xEC));
 	buffer = new char[size];
 
 	for (int i = 0; i < 129; i++)

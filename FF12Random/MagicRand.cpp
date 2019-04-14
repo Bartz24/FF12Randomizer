@@ -7,6 +7,8 @@ string MagicRand::spellNames[81] = {};
 string MagicRand::trapNames[16] = {};
 string MagicRand::spellDescs[81] = {};
 bool MagicRand::didRandSpells = false;
+bool MagicRand::didRandElement = false;
+bool MagicRand::didRandStatus = false;
 
 MagicRand::MagicRand()
 {
@@ -25,7 +27,7 @@ void MagicRand::load()
 		char * buffer;
 		long size = 81 * 8; //Num magic * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(MagicData::getMagDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x78));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -41,7 +43,7 @@ void MagicRand::load()
 		char * buffer2;
 		size = 24 * 8; //Num tech * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(MagicData::getTechDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x78, 0x2D0));
 		buffer2 = new char[size];
 		file.read(buffer2, size);
 		file.close();
@@ -57,7 +59,7 @@ void MagicRand::load()
 		char * buffer3;
 		size = 497 * 60; //Num action * data size
 		file = ifstream(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(ActionData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x003C));
 		buffer3 = new char[size];
 		file.read(buffer3, size);
 		file.close();
@@ -74,71 +76,95 @@ void MagicRand::load()
 
 		delete[] buffer3;
 	}
-
-	string line;
-	ifstream myfile("data\\abilities.csv");
-	if (myfile.is_open())
 	{
-		bool first = true;
-		while (getline(myfile, line))
+		string line;
+		ifstream myfile("data\\abilities.csv");
+		if (myfile.is_open())
 		{
-			if (first)
+			bool first = true;
+			while (getline(myfile, line))
 			{
-				first = false;
-				continue;
-			}
+				if (first)
+				{
+					first = false;
+					continue;
+				}
 
-			vector<string> data = split(line, ',');
-			RandSpellData rData = RandSpellData();
-			rData.name = data[0];
-			rData.description = data[1];
-			rData.weight = stoi(data[2]);
-			rData.magicType = stoi(data[3]);
-			rData.power = stoi(data[4]);
-			rData.ct = stoi(data[5]);
-			rData.mp = stoi(data[6]);
-			rData.accuracy = stoi(data[7]);
-			rData.aoe = stoi(data[8]);
-			rData.onHit = stoi(data[9]);
-			rData.target = stoi(data[10]);
-			rData.effect = stoi(data[11]);
-			char stat[] = { stoi(data[12]), stoi(data[13]), stoi(data[14]), stoi(data[15]) };
-			rData.status = *reinterpret_cast<unsigned int*>(stat);
-			rData.element = stoi(data[16]);
-			rData.mType2 = stoi(data[17]);
-			rData.animation = stoi(data[18]);
-			rData.specialType = stoi(data[19]);
-			rData.icon = stoi(data[20]);
-			rData.castAnimation = stoi(data[21]);
-			spells.push_back(rData);
+				vector<string> data = split(line, ',');
+				RandSpellData rData = RandSpellData();
+				rData.name = data[0];
+				rData.description = data[1];
+				rData.weight = stoi(data[2]);
+				rData.magicType = stoi(data[3]);
+				rData.power = stoi(data[4]);
+				rData.ct = stoi(data[5]);
+				rData.mp = stoi(data[6]);
+				rData.accuracy = stoi(data[7]);
+				rData.aoe = stoi(data[8]);
+				rData.onHit = stoi(data[9]);
+				rData.target = stoi(data[10]);
+				rData.effect = stoi(data[11]);
+				char stat[] = { stoi(data[12]), stoi(data[13]), stoi(data[14]), stoi(data[15]) };
+				rData.status = *reinterpret_cast<unsigned int*>(stat);
+				rData.element = stoi(data[16]);
+				rData.mType2 = stoi(data[17]);
+				rData.animation = stoi(data[18]);
+				rData.specialType = stoi(data[19]);
+				rData.icon = stoi(data[20]);
+				rData.castAnimation = stoi(data[21]);
+				rData.enemyRarity = stoi(data[22]);
+				spells.push_back(rData);
+			}
+			myfile.close();
 		}
-		myfile.close();
 	}
-
-	myfile = ifstream("data\\traps.csv");
-	if (myfile.is_open())
 	{
-		bool first = true;
-		while (getline(myfile, line))
+		string line;
+		ifstream myfile("data\\enemyAbilities.csv");
+		if (myfile.is_open())
 		{
-			if (first)
+			int i = 0;
+			while (getline(myfile, line))
 			{
-				first = false;
-				continue;
-			}
+				vector<string> data = split(line, ',');
 
-			vector<string> data = split(line, ',');
-			TrapData tData = TrapData();
-			tData.name = data[0];
-			tData.description = data[1];
-			tData.power = stoi(data[2]);
-			tData.aoe = stoi(data[3]);
-			tData.effect = stoi(data[4]);
-			char stat[] = { stoi(data[5]), stoi(data[6]), stoi(data[7]), stoi(data[8]) };
-			tData.status = *reinterpret_cast<unsigned int*>(stat);
-			traps.push_back(tData);
+				if (line == "," || data[1] == "")
+					actionData[i].enemyRarity = 0;
+				else
+					actionData[i].enemyRarity = stoi(data[1]);
+
+				i++;
+			}
+			myfile.close();
 		}
-		myfile.close();
+	}
+	{
+		string line;
+		ifstream myfile("data\\traps.csv");
+		if (myfile.is_open())
+		{
+			bool first = true;
+			while (getline(myfile, line))
+			{
+				if (first)
+				{
+					first = false;
+					continue;
+				}
+
+				vector<string> data = split(line, ',');
+				TrapData tData = TrapData();
+				tData.name = data[0];
+				tData.description = data[1];
+				tData.power = stoi(data[2]);
+				tData.aoe = stoi(data[3]);
+				tData.effect = stoi(data[4]);
+				char stat[] = { stoi(data[5]), stoi(data[6]), stoi(data[7]), stoi(data[8]) };
+				tData.status = *reinterpret_cast<unsigned int*>(stat);
+				traps.push_back(tData);
+			}
+			myfile.close();
+		}
 	}
 }
 
@@ -157,7 +183,7 @@ void MagicRand::save()
 	char * buffer;
 	long size = 81 * 8; //Num magic * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(MagicData::getMagDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x78));
 	buffer = new char[size];
 
 	for (int i = 0; i < 81; i++)
@@ -182,7 +208,7 @@ void MagicRand::save()
 	char * buffer2;
 	size = 24 * 8; //Num tech * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(MagicData::getTechDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x78, 0x2D0));
 	buffer2 = new char[size];
 
 	for (int i = 0; i < 24; i++)
@@ -207,7 +233,7 @@ void MagicRand::save()
 	char * buffer3;
 	size = 497 * 60; //Num actions * data size
 	file = fstream(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(ActionData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x003C));
 	buffer3 = new char[size];
 
 	for (int i = 0; i < 497; i++)
@@ -238,6 +264,7 @@ void MagicRand::save()
 		buffer3[i * 60 + 0x25] = U{ d.animation }.c[1];
 		buffer3[i * 60 + 0x2C] = U{ d.mType }.c[0];
 		buffer3[i * 60 + 0x2D] = U{ d.mType }.c[1];
+		Helpers::setShort(buffer3, i * 60 + 0x34, d.name);
 		buffer3[i * 60 + 0x36] = d.specialType;
 		buffer3[i * 60 + 0x38] = d.gambitPage;
 		buffer3[i * 60 + 0x39] = d.gambitPageOrder;
@@ -382,6 +409,7 @@ void MagicRand::randAoE(int value)
 
 void MagicRand::randElements(int value)
 {
+	didRandElement = true;
 	for (int i = 278; i < 497; i++)
 	{
 		ElementalValue orig{ actionData[i].element };
@@ -397,13 +425,15 @@ void MagicRand::randElements(int value)
 
 void MagicRand::randStatus(int value)
 {
+	didRandStatus = true;
 	for (int i = 278; i < 497; i++)
 	{
 		StatusValue orig{ actionData[i].status };
 		actionData[i].status = 0;
-		while (StatusValue{ actionData[i].status }.statuses.size() < orig.statuses.size())
-			addStatus(actionData[i].status, { Status::Stone, Status::XZone });
-		setStatus(actionData[i].status, value, { Status::Stone, Status::XZone });
+		bool full = false;
+		while (!full && StatusValue{ actionData[i].status }.statuses.size() < orig.statuses.size())
+			full = addStatus(actionData[i].status, StatusValue::onHitWeights);
+		setStatus(actionData[i].status, value, StatusValue::onHitWeights);
 		StatusValue status{ actionData[i].status };
 		if (status.statuses.size() > 0 && actionData[i].hitChance < 100)
 		{
@@ -415,21 +445,23 @@ void MagicRand::randStatus(int value)
 }
 
 
-void MagicRand::setStatus(unsigned int &num, int chance, initializer_list<Status> blacklist)
+void MagicRand::setStatus(unsigned int &num, int chance, int* weights)
 {
 	StatusValue status = StatusValue(num);
 	while (Helpers::randInt(0, 99) < chance)
 	{
-		status.addRandomStatus(blacklist);
+		status.addRandomStatus(weights);
 	}
 	num = status.getNumValue();
 }
 
-void MagicRand::addStatus(unsigned int & num, initializer_list<Status> blacklist)
+bool MagicRand::addStatus(unsigned int & num, int* weights)
 {
 	StatusValue status = StatusValue(num);
-	status.addRandomStatus(blacklist);
+	int size = status.statuses.size();
+	status.addRandomStatus(weights);
 	num = status.getNumValue();
+	return status.statuses.size() == size;
 }
 
 //White		License IDs:	182-189, 355, 208-211
@@ -633,7 +665,7 @@ void MagicRand::randAllSpellsOfType(vector<int> idsReplace, int type, bool shuff
 				magicData[index].order = order;
 				actionData[index].gambitPage = order / 17 + 1;
 				actionData[index].gambitPageOrder = order % 17;
-				order++;
+				order++;			
 			}
 		}
 	}
@@ -651,7 +683,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type, bool good, bo
 			weights.push_back(spells[newSpells[i]].weight);
 	}
 	
-	vector<int> newIDs = vector<int>();
+	vector<int> newIDs = vector<int>();	
 	for (int i = 0; i < idsReplace.size(); i++)
 	{
 		int index = 0;
@@ -666,7 +698,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type, bool good, bo
 
 	if (shuffle)
 		random_shuffle(idsReplace.begin(), idsReplace.end());
-	sort(newIDs.begin(), newIDs.end());
+	std::sort(newIDs.begin(), newIDs.end());
 
 	for (int i = 0; i < idsReplace.size(); i++)
 	{
@@ -692,6 +724,7 @@ void MagicRand::randSpellsOfType(vector<int> idsReplace, int type, bool good, bo
 		actionData[rep].specialType = spell.specialType;
 		magicData[rep].icon = spell.icon;
 		actionData[rep].castAnimation = spell.castAnimation;
+		actionData[rep].enemyRarity = spell.enemyRarity;
 
 		if (shuffle)
 		{

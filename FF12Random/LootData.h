@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class LootDataOffset
-{
-	us = 0x0001D720
-};
-
 class LootData
 {
 public:
-	static LootDataOffset getDataIndex();
 	unsigned short cost;
 	unsigned short itemID;
 	unsigned char icon;

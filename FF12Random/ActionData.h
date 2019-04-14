@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class ActionDataOffset
-{
-	us = 0x0013230
-};
-
 class ActionData
 {
 public:
-	static ActionDataOffset getDataIndex();
 	unsigned char unknown[60];
 	unsigned short description; //00-01
 	unsigned char aoeRange; // 06
@@ -26,9 +20,11 @@ public:
 	unsigned char castAnimation; // 21
 	unsigned short animation; //24-25
 	unsigned short mType; // 2C-2D
+	unsigned short name; // 34-35
 	unsigned char specialType; // 36
 	unsigned char gambitPage; // 38
 	unsigned char gambitPageOrder; // 39
+	int enemyRarity;
 	ActionData();
 	ActionData(char data[60]);
 	~ActionData();

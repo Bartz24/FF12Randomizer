@@ -20,7 +20,7 @@ void RewardRand::load()
 		char * buffer;
 		long size = 512 * 12; //Num Rewards * data size
 		ifstream file(fileName, ios::in | ios::binary | ios::ate);
-		file.seekg(int(RewardData::getDataIndex()));
+		file.seekg(Helpers::getPointer(fileName, 0x94, 0x48));
 		buffer = new char[size];
 		file.read(buffer, size);
 		file.close();
@@ -53,7 +53,7 @@ void RewardRand::save()
 	char * buffer;
 	long size = 512 * 12; //Num Rewards * data size
 	fstream file(fileName, ios::out | ios::in | ios::binary | ios::ate);
-	file.seekp(int(RewardData::getDataIndex()));
+	file.seekp(Helpers::getPointer(fileName, 0x94, 0x48));
 	buffer = new char[size];
 
 	for (int i = 0; i < 512; i++)

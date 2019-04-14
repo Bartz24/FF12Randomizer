@@ -28,6 +28,7 @@ public:
 	void randCanopicJarRate(ARDSec2 &sec2Data, int value);
 	void randCanopicJarType(ARDSec2 &sec2Data);
 	void randCanopicJarItem(ARDSec2 &sec2Data, ARDData aData, int value);
+	void buffTrialMode(ARDSec3 &sec3Data, ARDData aData, int value);
 	int getItem(std::vector<int> &data, int center, int std, int value, bool remove);
 	int getCost(int itemID);
 	bool canAddItem(int actualCost, int center, int std, int value);

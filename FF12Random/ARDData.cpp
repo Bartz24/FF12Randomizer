@@ -147,6 +147,7 @@ ARDSec4 ARDSec2::getARDSec4(ARDData data)
 
 ARDData::ARDData()
 {
+
 }
 
 ARDData::ARDData(string areaName, char data[], int size)
@@ -154,6 +155,7 @@ ARDData::ARDData(string areaName, char data[], int size)
 	this->areaName = areaName;
 
 	this->section1Adrs = Helpers::readInt(data, 0x10);
+	this->aiAdrs = Helpers::readInt(data, 0x14);
 	this->section2Adrs = Helpers::readInt(data, 0x18);
 	this->section3Adrs = Helpers::readInt(data, 0x24);
 	this->section4Adrs = Helpers::readInt(data, 0x28);
@@ -201,6 +203,16 @@ ARDData::ARDData(string areaName, char data[], int size)
 		}
 		section4Data.push_back(ARDSec4(sec4Data));
 	}
+	
+	int aiSize = section2Adrs - aiAdrs;
+	char *aiDataArray = new char[aiSize];
+	for (int i = 0; i < aiSize; i++)
+	{
+		aiDataArray[i] = data[aiAdrs + i];
+	}
+	aiData = AIData{ aiDataArray, aiSize };
+
+	delete[] aiDataArray;
 }
 
 ARDData::~ARDData()

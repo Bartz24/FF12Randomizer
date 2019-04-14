@@ -1,15 +1,9 @@
 #pragma once
 #include "Helpers.h"
 
-enum class BazaarDataOffset
-{
-	us = 0x0025390
-};
-
 class BazaarData
 {
 public:
-	static BazaarDataOffset getDataIndex();
 	unsigned char unknown[13];
 	unsigned short result1; // 04-05
 	unsigned char result1Amt; // 06

@@ -29,6 +29,23 @@ bool Helpers::fileExists(std::string fileName)
 	return true;    // this is not a directory!
 }
 
+int Helpers::getPointer(string fileName, int pointerLocation, int offset)
+{
+	if (Helpers::fileExists(fileName))
+	{
+		char * buffer;
+		long size = 4;
+		ifstream file(fileName, ios::in | ios::binary | ios::ate);
+		file.seekg(int(pointerLocation));
+		buffer = new char[size];
+		file.read(buffer, size);
+		file.close();
+
+		return Helpers::readInt(buffer, 0) + offset;
+	}
+	return 0;
+}
+
 int Helpers::randInt(int low, int high)
 {
 	int offset = 0;
@@ -110,4 +127,37 @@ vector<string> Helpers::get_directories(const string& s)
 		if (p.status().type() == std::experimental::filesystem::file_type::directory)
 			r.push_back(p.path().string());
 	return r;
+}
+
+void Helpers::addRangeToVector(vector<int>& data, int low, int high)
+{
+	for (int i = low; i <= high; i++)
+		data.push_back(i);
+}
+
+void Helpers::addRangeToVector(vector<unsigned short>& data, unsigned short low, unsigned short high)
+{
+	for (unsigned short i = low; i <= high; i++)
+		data.push_back(i);
+}
+
+vector<string> Helpers::split(const std::string & s, char delim)
+{
+	vector<string> elems;
+	stringstream ss(s);
+	string str;
+	while (getline(ss, str, delim)) {
+		elems.push_back(str);
+	}
+	return elems;
+}
+
+string Helpers::removeSpaces(string in)
+{
+	for (int i = 0; i < in.length(); i++)
+	{
+		if (in[i] == ' ')
+			in.erase(in.begin() + i);
+	}
+	return in;
 }

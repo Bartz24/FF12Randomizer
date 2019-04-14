@@ -1,15 +1,6 @@
 #include "stdafx.h"
 #include "RewardData.h"
 
-
-RewardDataOffset RewardData::getDataIndex()
-{
-	string language = Helpers::language;
-	if (language == "us")
-		return RewardDataOffset::us;
-	return RewardDataOffset::us;
-}
-
 RewardData::RewardData(char data[12])
 {
 	char gil[] = { data[0x00] , data[0x01], data[0x02], data[0x03] };

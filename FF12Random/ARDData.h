@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Helpers.h"
+#include "AIData.h"
 
 enum MonographType
 {
@@ -132,10 +133,14 @@ public:
 	vector<ARDSec3> section3Data = vector<ARDSec3>();
 	vector<ARDSec4> section4Data = vector<ARDSec4>();
 
+	AIData aiData;
+
 	int section1Adrs;
 	int section2Adrs;
 	int section3Adrs;
 	int section4Adrs;
+
+	int aiAdrs;
 
 	ARDData();
 	ARDData(string areaName, char data[], int size);

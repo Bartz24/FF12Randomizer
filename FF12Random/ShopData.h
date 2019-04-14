@@ -2,15 +2,9 @@
 #include <vector>
 #include "Helpers.h"
 
-enum class ShopDataOffset
-{
-	us = 0x00022418
-};
-
 class ShopData
 {
 public:
-	static ShopDataOffset getDataIndex();
 	int position;
 	unsigned char header1;
 	unsigned char header2;

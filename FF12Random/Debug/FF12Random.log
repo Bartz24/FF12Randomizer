@@ -1,9 +1,155 @@
-﻿  FF12Random.cpp
-s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.h(41): warning C4369: 'FileSizeTableOffset::menu04':  enumerator value '4294967295' cannot be represented as 'int', value is '-1'
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(127): warning C4244: 'initializing': conversion from 'time_t' to 'size_t', possible loss of data
-s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(134): warning C4101: 'e': unreferenced local variable
+﻿  ActionData.cpp
+  ActionRename.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+  AIData.cpp
+  ARDData.cpp
+  AttributeData.cpp
+  AttributePoint.cpp
+s:\devstuff\c\ff12randomizer\ff12random\attributepoint.cpp(10): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\attributepoint.cpp(12): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\attributepoint.cpp(17): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+  BazaarRename.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+  CharRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(88): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(224): warning C4553: '==': result of expression not used; did you intend '='?
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(280): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(290): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(300): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(310): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\charrand.cpp(590): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  CharRename.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+  CommandPack.cpp
+  CommandPackRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+  DocumentationGen.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(51): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(57): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(60): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(181): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\documentationgen.cpp(184): warning C4018: '<': signed/unsigned mismatch
+  EnemyRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(28): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(57): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(69): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(101): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(152): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(189): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(231): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(248): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(251): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(255): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(277): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(287): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(295): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(299): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(321): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(330): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(336): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(337): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(338): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(372): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(381): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(399): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(408): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(426): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(435): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(447): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(449): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(451): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(461): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(463): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(471): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(491): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\enemyrand.cpp(508): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  EquipData.cpp
+  EquipRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(71): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(67): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(260): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(264): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(268): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(271): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(274): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(306): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(315): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(322): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(360): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(533): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(539): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(593): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(597): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(608): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\equiprand.cpp(612): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Flag.cpp
+  ItemRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\itemrand.cpp(83): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\itemrand.cpp(226): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   LicenseBoardRand.cpp
-s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(94): warning C4101: 'byte': unreferenced local variable
-s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(404): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(81): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(105): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(344): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(396): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(496): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenseboardrand.cpp(513): warning C4018: '<': signed/unsigned mismatch
+  FF12Random.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\filesizetablefix.h(41): warning C4369: 'FileSizeTableOffset::menu04':  enumerator value '4294967295' cannot be represented as 'int', value is '-1'
+s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(128): warning C4244: 'initializing': conversion from 'time_t' to 'size_t', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\ff12random.cpp(135): warning C4101: 'e': unreferenced local variable
+  LicenseRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(142): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(196): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(201): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(202): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\licenserand.cpp(1014): warning C4101: 'byte': unreferenced local variable
   Generating Code...
-LINK : fatal error LNK1168: cannot open S:\DevStuff\C\FF12Randomizer\Debug\FF12RProcessor.exe for writing
+  Compiling...
+  LicenseRename.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\licenserename.cpp(108): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenserename.cpp(144): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenserename.cpp(274): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenserename.cpp(303): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\licenserename.cpp(362): warning C4018: '<': signed/unsigned mismatch
+  MagicRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(105): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(137): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(155): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(151): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(325): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(328): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(595): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(612): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(628): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(646): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(655): warning C4018: '<': signed/unsigned mismatch
+s:\devstuff\c\ff12randomizer\ff12random\magicrand.cpp(671): warning C4018: '<': signed/unsigned mismatch
+  RandSpellData.cpp
+  RenameMain.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+  ShopRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(86): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(82): warning C4101: 'byte': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(209): warning C4244: '+=': conversion from 'double' to 'unsigned long', possible loss of data
+s:\devstuff\c\ff12randomizer\ff12random\shoprand.cpp(223): warning C4018: '>=': signed/unsigned mismatch
+  StatusValue.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.cpp(27): warning C4018: '<': signed/unsigned mismatch
+  TrapData.cpp
+  TreasureRand.cpp
+s:\devstuff\c\ff12randomizer\ff12random\statusvalue.h(15): warning C4369: 'Status::Blind':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
+s:\devstuff\c\ff12randomizer\ff12random\treasurerand.cpp(114): warning C4101: 'byte2': unreferenced local variable
+s:\devstuff\c\ff12randomizer\ff12random\treasurerand.cpp(110): warning C4101: 'byte': unreferenced local variable
+  Generating Code...
+  FF12Random.vcxproj -> S:\DevStuff\C\FF12Randomizer\Debug\FF12RProcessor.exe
