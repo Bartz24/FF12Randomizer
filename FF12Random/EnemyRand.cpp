@@ -217,6 +217,7 @@ void EnemyRand::save()
 				delete[] buffer;
 			}
 
+			
 			{
 				char * buffer;
 				long size = ardData[i].aiData.unknownByteSize; // data size
@@ -232,7 +233,7 @@ void EnemyRand::save()
 				for (int a = 0; a < ardData[i].aiData.abilities.size(); a++)
 				{
 					Helpers::setShort(buffer, ardData[i].aiData.abilities[a].pointer, ardData[i].aiData.abilities[a].ability);
-					Helpers::setShort(buffer, ardData[i].aiData.abilities[a].pointer + 5, ardData[i].aiData.abilities[a].targetType);
+				    Helpers::setShort(buffer, ardData[i].aiData.abilities[a].pointer + 5, ardData[i].aiData.abilities[a].targetType);
 				}
 
 				file.write(buffer, size);
@@ -242,6 +243,7 @@ void EnemyRand::save()
 
 				delete[] ardData[i].aiData.unknown;
 			}
+			
 		}
 	}
 }

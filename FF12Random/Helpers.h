@@ -52,6 +52,8 @@ public:
 	static void shuffle(vector<T> &data, int factor=3);
 	template <class T>
 	static void shuffleWeighted(vector<T> &data, vector<int> &weights, int factor = 3);
+	template <class T>
+	static void sortWeighted(vector<T> &data, vector<float> &weights);
 	static vector<string> split(const std::string &s, char delim);
 	static string removeSpaces(string in);
 };
@@ -89,4 +91,61 @@ inline void Helpers::shuffleWeighted(vector<T>& data, vector<int> &weights, int 
 	weights = newWeights;
 	if (factor > 1)
 		shuffleWeighted(data, weights, factor - 1);
+}
+
+template<class T>
+inline void Helpers::sortWeighted(vector<T>& data, vector<float>& weights)
+{
+	vector<T> newData;
+	vector<float> newWeights;
+	newData.push_back(data[0]);
+	data.erase(data.begin());
+	newWeights.push_back(weights[0]);
+	weights.erase(weights.begin());
+
+	while (weights.size() > 0)
+	{
+		bool added = false;
+		for (int w = 0; w < newWeights.size(); w++)
+		{
+			if (weights[0] > newWeights[w])
+			{
+				newWeights.insert(newWeights.begin() + w, weights[0]);
+				weights.erase(weights.begin() + 0);
+				newData.insert(newData.begin() + w, data[0]);
+				data.erase(data.begin());
+				added = true;
+				break;
+			}
+			else if (weights[0] == newWeights[w])
+			{
+				if (Helpers::randInt(0, 99) < 50)
+				{
+					newWeights.insert(newWeights.begin() + w, weights[0]);
+					weights.erase(weights.begin());
+					newData.insert(newData.begin() + w, data[0]);
+					data.erase(data.begin());
+				}
+				else
+				{
+					newWeights.insert(newWeights.begin() + w + 1, weights[0]);
+					weights.erase(weights.begin());
+					newData.insert(newData.begin() + w + 1, data[0]);
+					data.erase(data.begin());
+				}
+				added = true;
+				break;
+			}
+		}
+		if (!added)
+		{
+			newWeights.push_back(weights[0]);
+			weights.erase(weights.begin());
+			newData.push_back(data[0]);
+			data.erase(data.begin());
+		}
+	}
+
+	data = newData;
+	weights = newWeights;
 }

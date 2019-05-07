@@ -218,8 +218,10 @@ void RenameMain::save()
 	std::experimental::filesystem::remove_all("text");
 }
 
-void RenameMain::process(string seed, string flags, bool randomizeEnemyNames)
+void RenameMain::process(string seed, string flags, bool randomizeEnemyNames, bool updateBoardNames)
 {
+	menuCmd[70] = "Rando Primer";
+
 	if (LicenseBoardRand::usingSingleBoard)
 	{
 		for (int i = 4; i < 16; i++)
@@ -228,20 +230,44 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames)
 		}
 	}
 
-	if (LicenseBoardRand::newBoardNames[0] != "")
+	if (LicenseBoardRand::usingForcedBoards)
 	{
-		for (int i = 4; i < 16; i++)
+		for (int i = 39; i < 51; i++)
 		{
-			menuCmd[i] = Helpers::split(LicenseBoardRand::newBoardNames[i - 4],'\n')[0];
-		}
-		if (LicenseBoardRand::type2)
-		{
-			for (int i = 39; i < 51; i++)
-			{
-				menuMsg[i] = Helpers::split(LicenseBoardRand::newBoardNames[i - 39], '\n')[1] + "{02}" + menuMsg[i];
-			}
+			menuMsg[i] = LicenseBoardRand::newBoardNames[i - 39] + "{02}" + menuMsg[i];
 		}
 	}
+
+	if (updateBoardNames && (!LicenseBoardRand::usingSingleBoard || LicenseBoardRand::usingForcedBoards))
+	{
+		for (int board = 0; board < 12; board++)
+		{
+			vector<int> types;
+			Helpers::addRangeToVector(types, 0, 29);
+			vector<float> percents;
+			for (int i = 0; i < 30; i++)
+				percents.push_back(getPercentOfLicenses(i, board));
+			Helpers::sortWeighted(types, percents);
+			string name;
+			if (LicenseBoardRand::usingForcedBoards)
+			{
+				name = LicenseBoardRand::getBoardName(types[0], types[1]);
+			}
+			else
+			{
+				do {
+					int type1 = Helpers::randInt(0, 7);
+					int type2;
+					do {
+						type2 = Helpers::randInt(4, 11);
+					} while (type1 == type2);
+					name = LicenseBoardRand::getBoardName(type1, type2);
+				} while (find(menuCmd + 4, menuCmd + 16, name) != menuCmd + 16);
+			}
+			menuCmd[board + 4] = name;
+		}
+	}
+
 
 	if (LicenseBoardRand::suggestedChars[0] != 0)
 	{
@@ -262,10 +288,23 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames)
 	for (int i = 0; i < 12; i++)
 	{
 		int l = 2;
-		while (find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i].substr(0, l))) != jobNames + 12 && l < menuCmd[4 + i].length())
+		while (find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i]).substr(0, l)) != jobNames + 12 && l < menuCmd[4 + i].length())
+		{
+			int conflict = find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i].substr(0, l))) - jobNames;
+			string name = Helpers::removeSpaces(menuCmd[4 + conflict]);
+			jobNames[conflict] = name.substr(0, l + 1);
 			l++;
+		}
 		
-		jobNames[i] = Helpers::removeSpaces(menuCmd[4 + i].substr(0, l));
+		string name = Helpers::removeSpaces(menuCmd[4 + i]);
+		jobNames[i] = name.substr(0, l);
+	}
+	for (int i = 0; i < 12; i++)
+	{
+		if (jobNames[i].length() > 2)
+		{
+			jobNames[i] = jobNames[0] + jobNames[i].substr(jobNames[i].length() - 2, 2);
+		}
 	}
 	lRename.process(jobNames);
 	cRename.process(randomizeEnemyNames);
@@ -303,6 +342,172 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames)
 			equipNames[i] = elementDisplay + equipNames[i];
 		}
 	}
+}
+
+float RenameMain::getPercentOfLicenses(int type, int board)
+{
+	vector<int> licenses;
+	string display = "";
+	switch (type)
+	{
+	case 0:
+		display += "White Magicks";
+		Helpers::addRangeToVector(licenses, 182, 189);
+		licenses.push_back(355);
+		Helpers::addRangeToVector(licenses, 208, 211);
+		break;
+	case 1:
+		display += "Black Magicks";
+		Helpers::addRangeToVector(licenses, 190, 197);
+		licenses.push_back(356);
+		licenses.push_back(358);
+		Helpers::addRangeToVector(licenses, 215, 217);
+		break;
+	case 2:
+		display += "Time Magicks";
+		Helpers::addRangeToVector(licenses, 198, 204);
+		licenses.push_back(357);
+		licenses.push_back(359);
+		licenses.push_back(218);
+		break;
+	case 3:
+		display += "Green Magicks";
+		Helpers::addRangeToVector(licenses, 205, 207);
+		break;
+	case 4:
+		display += "Arcane Magicks";
+		Helpers::addRangeToVector(licenses, 212, 214);
+		break;
+	case 5:
+		display += "Technicks";
+		Helpers::addRangeToVector(licenses, 276, 299);
+		break;
+	case 6:
+		display += "Swords";
+		Helpers::addRangeToVector(licenses, 32, 39);
+		Helpers::addRangeToVector(licenses, 329, 331);
+		break;
+	case 7:
+		display += "Greatswords";
+		Helpers::addRangeToVector(licenses, 40, 44);
+		Helpers::addRangeToVector(licenses, 332, 333);
+		break;
+	case 8:
+		display += "Katanas";
+		Helpers::addRangeToVector(licenses, 45, 49);
+		Helpers::addRangeToVector(licenses, 334, 335);
+		break;
+	case 9:
+		display += "Ninja Swords";
+		Helpers::addRangeToVector(licenses, 50, 52);
+		licenses.push_back(336);
+		break;
+	case 10:
+		display += "Spears";
+		Helpers::addRangeToVector(licenses, 53, 59);
+		licenses.push_back(337);
+		break;
+	case 11:
+		display += "Poles";
+		Helpers::addRangeToVector(licenses, 60, 65);
+		Helpers::addRangeToVector(licenses, 338, 339);
+		break;
+	case 12:
+		display += "Bows";
+		Helpers::addRangeToVector(licenses, 66, 72);
+		Helpers::addRangeToVector(licenses, 340, 341);
+		break;
+	case 13:
+		display += "Crossbows";
+		Helpers::addRangeToVector(licenses, 73, 76);
+		break;
+	case 14:
+		display += "Guns";
+		Helpers::addRangeToVector(licenses, 77, 82);
+		licenses.push_back(342);
+		break;
+	case 15:
+		display += "Axes & Hammers";
+		Helpers::addRangeToVector(licenses, 83, 89);
+		licenses.push_back(343);
+		break;
+	case 16:
+		display += "Daggers";
+		Helpers::addRangeToVector(licenses, 90, 95);
+		licenses.push_back(344);
+		break;
+	case 17:
+		display += "Rods";
+		Helpers::addRangeToVector(licenses, 96, 100);
+		break;
+	case 18:
+		display += "Staves";
+		Helpers::addRangeToVector(licenses, 101, 105);
+		licenses.push_back(345);
+		break;
+	case 19:
+		display += "Maces";
+		Helpers::addRangeToVector(licenses, 106, 110);
+		break;
+	case 20:
+		display += "Measures";
+		Helpers::addRangeToVector(licenses, 111, 113);
+		licenses.push_back(346);
+		break;
+	case 21:
+		display += "Hand-bombs";
+		Helpers::addRangeToVector(licenses, 114, 116);
+		licenses.push_back(347);
+		break;
+	case 22:
+		display += "Shields";
+		Helpers::addRangeToVector(licenses, 117, 125);
+		licenses.push_back(348);
+		break;
+	case 23:
+		display += "Heavy Armors";
+		Helpers::addRangeToVector(licenses, 126, 136);
+		Helpers::addRangeToVector(licenses, 349, 350);
+		break;
+	case 24:
+		display += "Light Armors";
+		Helpers::addRangeToVector(licenses, 137, 148);
+		licenses.push_back(351);
+		break;
+	case 25:
+		display += "Mystic Armors";
+		Helpers::addRangeToVector(licenses, 149, 160);
+		licenses.push_back(352);
+		break;
+	case 26:
+		display += "Accessories";
+		Helpers::addRangeToVector(licenses, 161, 181);
+		Helpers::addRangeToVector(licenses, 353, 354);
+		break;
+	case 27:
+		display += "Gambits";
+		Helpers::addRangeToVector(licenses, 266, 275);
+		break;
+	case 28:
+		display += "Espers";
+		Helpers::addRangeToVector(licenses, 18, 30);
+		break;
+	case 29:
+		display += "Augments";
+		Helpers::addRangeToVector(licenses, 219, 265);
+		Helpers::addRangeToVector(licenses, 300, 328);
+		break;
+	}
+	int found = 0;
+	for (int y = 0; y < 24; y++)
+	{
+		for (int x = 0; x < 24; x++)
+		{
+			if (find(licenses.begin(), licenses.end(), LicenseBoardRand::boards[board].board[y][x]) != licenses.end())
+				found++;
+		}
+	}
+	return float(found) / float(licenses.size());
 }
 
 string LicenseRename::getNameFromID(int id)

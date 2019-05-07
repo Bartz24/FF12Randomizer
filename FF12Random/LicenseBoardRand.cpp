@@ -6,7 +6,7 @@ string LicenseBoardRand::newBoardNames[12] = {};
 string LicenseBoardRand::type2Names[30][30] = {};
 int LicenseBoardRand::suggestedChars[12] = {};
 bool LicenseBoardRand::usingSingleBoard = false;
-bool LicenseBoardRand::type2 = false;
+bool LicenseBoardRand::usingForcedBoards = false;
 
 LicenseBoardRand::LicenseBoardRand()
 {
@@ -115,14 +115,14 @@ void LicenseBoardRand::process(FlagGroup flags)
 		}
 		if (flags.hasFlag("L") && !usingSingleBoard)
 		{
+			usingForcedBoards = true;
 			if (flags.getFlag("L").isSmart())
 			{
-				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12]);
-				type2 = true;
+				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12], true);
 			}
 			else
 			{
-				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i);
+				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12], false);
 			}
 		}
 		if (flags.hasFlag("h"))
@@ -306,7 +306,6 @@ void LicenseBoardRand::randomizeChars()
 
 void LicenseBoardRand::addForcedLicenses(int type, std::string &display, std::vector<unsigned short> &newData)
 {
-
 	switch (type)
 	{
 	case 0:
@@ -459,28 +458,30 @@ void LicenseBoardRand::addForcedLicenses(int type, std::string &display, std::ve
 	}
 }
 
-void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int type, int board, int type2)
+void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int type, int board, int type2, bool useType2)
 {
 	vector<unsigned short> newData = vector<unsigned short>();
 	newData.push_back(31); //Essentials
 	newData.push_back(360); //Second Board
 	newData.push_back(18); //Belias
 
-	string display="";
+	string display = "";
 	addForcedLicenses(type, display, newData);
-	if (type2 >= 0)
+	if (useType2)
 	{
-		if (type < type2)
-			newBoardNames[board] = type2Names[29-type2][type];
-		else
-			newBoardNames[board] = type2Names[29-type][type2];
 		display += "/";
 		addForcedLicenses(type2, display, newData);
-		newBoardNames[board] += "\n" + display;
 	}
-	else
-		newBoardNames[board] = display;
+	newBoardNames[board] = display;
 	data = newData;
+}
+
+string LicenseBoardRand::getBoardName(int type, int type2)
+{
+	if (type < type2)
+		return type2Names[29 - type2][type];
+	else
+		return type2Names[29 - type][type2];
 }
 
 void LicenseBoardRand::getLayout(bool(&layout)[24][24], LicenseBoardData board)

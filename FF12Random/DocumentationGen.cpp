@@ -812,7 +812,9 @@ void DocumentationGen::addEnemyData()
 				ARDSec3 sec3 = sec2.getARDSec3(ard);
 
 				vector<string> entry = vector<string>();
-				entry.push_back(rename.charNames[sec2.name - 0x4000]);
+				string name = rename.charNames[sec2.name - 0x4000];
+				replace(name.begin(), name.end(), 'ú', 'u');
+				entry.push_back(name);
 				entry.push_back(to_string(sec3.hp));
 				entry.push_back(to_string(sec3.mp));
 				entry.push_back(to_string(sec3.str));

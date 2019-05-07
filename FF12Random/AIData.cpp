@@ -22,7 +22,7 @@ AIData::AIData(char data[], int size)
 				ability.unknown[i] = data[pointer - 4 + i];
 			ability.targetType = Helpers::readShort(data, pointer + 1);
 			ability.ability = Helpers::readShort(data, pointer - 4);
-			ability.pointer = pointer + 1;
+			ability.pointer = pointer - 4;
 			abilities.push_back(ability);
 		}
 	}

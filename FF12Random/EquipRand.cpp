@@ -36,7 +36,6 @@ void EquipRand::load()
 			equipData[i] = EquipData{ data };
 		}
 
-		system("pause");
 
 		delete[] buffer;
 		char * buffer2;

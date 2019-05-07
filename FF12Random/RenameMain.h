@@ -39,6 +39,7 @@ public:
 	~RenameMain();
 	void load();
 	void save();
-	void process(string seed, string flags, bool randomizeEnemyNames);
+	void process(string seed, string flags, bool randomizeEnemyNames, bool updateBoardNames);
+	float getPercentOfLicenses(int type, int board);
 };
 
