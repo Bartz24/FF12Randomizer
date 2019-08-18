@@ -12,7 +12,8 @@ private:
 	static string type2Names[30][30];
 public:
 	static LicenseBoardData boards[12];
-	static string newBoardNames[12];
+	static string boardDescriptions[12];
+	static vector<string> boardNames;
 	static int suggestedChars[12];
 	static bool usingSingleBoard, usingForcedBoards;
 	LicenseBoardRand();
@@ -25,8 +26,8 @@ public:
 	void setRandLicenses(vector<unsigned short> &data, FlagGroup flags);
 	void randomizeChars();
 	void addForcedLicenses(int type, std::string &display, std::vector<unsigned short> &newData);
-	void setForcedLicenseTypes(vector<unsigned short> &data, int type, int board, int type2, bool useType2);
-	static string getBoardName(int type, int type2);
+	void setForcedLicenseTypes(vector<unsigned short> &data, int type, int board, int type2, bool useType2, FlagGroup flags);
+	static string getBoardName(int board, int type2);
 	void getLayout(bool(&layout)[24][24], LicenseBoardData board);
 	void setRandLayout(bool (&layout)[24][24], int size);
 	void setMazeLayout(bool(&layout)[24][24], vector<int> &shortcutLocs, int size, int shortcutSpots);

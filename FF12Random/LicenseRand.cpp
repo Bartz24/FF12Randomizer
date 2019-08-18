@@ -162,7 +162,7 @@ void LicenseRand::randCost(int value)
 {
 	for (int i = 0; i < 361; i++)
 	{
-		licenseData[i].lpCost = Helpers::randNormControl(0, 255, 60, 30, value);
+		licenseData[i].lpCost = Helpers::randWeibullControl(0, 255, 60, 1.2, value);
 	}
 }
 
@@ -203,7 +203,7 @@ void LicenseRand::randCostSmart(int value)
 		}
 		else
 		{
-			licenseData[i].lpCost = Helpers::randNormControl(0, 255, 60, 30, value);
+			licenseData[i].lpCost = Helpers::randWeibullControl(0, 255, 60, 1.2, value);
 		}
 	}
 }

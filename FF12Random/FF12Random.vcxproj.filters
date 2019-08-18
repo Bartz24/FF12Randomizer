@@ -183,6 +183,12 @@
     <ClInclude Include="EBPTextEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MusicRand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -351,6 +357,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EBPTextEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicRand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

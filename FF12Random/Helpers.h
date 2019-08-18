@@ -38,14 +38,17 @@ public:
 	static int randInt(int low, int high);
 	static int randInt(int low, int high, int minN, int maxN);
 	static int randIntNorm(int low, int high, int center, int std);
+	static int randIntWeibull(int low, int high, double center, double a);
 	static int randIntControl(int low, int high, int norm, int ratio);
 	static int randNormControl(int low, int high, int center, int std, int ratio);
+	static int randWeibullControl(int low, int high, double center, double a, int ratio);
 	static unsigned int readInt(char bytes[], int index);
 	static unsigned short readShort(char bytes[], int index);
 	static void setInt(char *bytes, int index, unsigned int value);
 	static void setShort(char *bytes, int index, unsigned short value);
 	static int clamp(int value, int minN, int maxN);
 	static vector<string> get_directories(const string& s);
+	static vector<string> get_files(const string& s);
 	static void addRangeToVector(vector<int>& data, int low, int high);
 	static void addRangeToVector(vector<unsigned short>& data, unsigned short low, unsigned short high);
 	template <class T>

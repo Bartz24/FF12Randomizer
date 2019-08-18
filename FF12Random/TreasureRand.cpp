@@ -238,25 +238,25 @@ void TreasureRand::randTreasures(FlagGroup flags)
 				if (mapData[i].treasure[t].common1 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].common1 = getItem(data, 2000, 1000, flags.getFlag("c").getValue(), !emptied);
+						mapData[i].treasure[t].common1 = getItem(data, 200, 100, flags.getFlag("c").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].common2 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].common2 = getItem(data, 12000, 4000, flags.getFlag("o").getValue(), !emptied);
+						mapData[i].treasure[t].common2 = getItem(data, 1400, 600, flags.getFlag("o").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].rare1 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].rare1 = getItem(data, 30000, 8000, flags.getFlag("r").getValue(), !emptied);
+						mapData[i].treasure[t].rare1 = getItem(data, 10000, 8000, flags.getFlag("r").getValue(), !emptied);
 					filledTreasure = true;
 				}
 				if (mapData[i].treasure[t].rare2 == 0xFFFF)
 				{
 					if (Helpers::randInt(0, 99) < 20 && data.size() > 0)
-						mapData[i].treasure[t].rare2 = getItem(data, 50000, 10000, flags.getFlag("d").getValue(), !emptied);
+						mapData[i].treasure[t].rare2 = getItem(data, 40000, 7600, flags.getFlag("d").getValue(), !emptied);
 					filledTreasure = true;
 				}
 			}
@@ -281,14 +281,14 @@ void TreasureRand::randTreasures(FlagGroup flags)
 				}
 				else
 				{
-					mapData[i].treasure[t].gil1 = Helpers::randNormControl(0, 65535, 3000, 1000, flags.getFlag("a").getValue());
-					mapData[i].treasure[t].gil2 = Helpers::randNormControl(0, 65535, 20000, 8000, flags.getFlag("a").getValue());
+					mapData[i].treasure[t].gil1 = Helpers::randWeibullControl(0, 65535, 1000, 1.2, flags.getFlag("a").getValue());
+					mapData[i].treasure[t].gil2 = Helpers::randWeibullControl(0, 65535, 8000, 1.2, flags.getFlag("a").getValue());
 				}
 			}
 			if (flags.hasFlag("s"))
-				mapData[i].treasure[t].spawnChance = Helpers::randNormControl(1, 100, 70, 20, flags.getFlag("s").getValue());
+				mapData[i].treasure[t].spawnChance = Helpers::randWeibullControl(1, 100, 70, 1.2, flags.getFlag("s").getValue());
 			if (flags.hasFlag("g"))
-				mapData[i].treasure[t].gilChance = Helpers::randNormControl(0, 100, 30, 20, flags.getFlag("g").getValue());
+				mapData[i].treasure[t].gilChance = Helpers::randWeibullControl(0, 100, 30, 1.2, flags.getFlag("g").getValue());
 			mapData[i].treasure[t].respawn = 0xFF;
 		}
 	}
@@ -335,7 +335,7 @@ bool TreasureRand::canAddItem(int actualCost, int center, int std, int value)
 	float zScoreAbs = float(abs(actualCost - center)) / float(std);
 	int chance = int(exp(-zScoreAbs) * 10000.f); //chance in terms of % * 100
 
-	int actualChance = Helpers::randIntControl(0, 9999, chance, value);
+	int actualChance = int(Helpers::randInt(0, 9999) * value / 100.0f + (1.0f - value / 100.0f)*chance);
 
 	return Helpers::randInt(0, 9999) < actualChance;
 }

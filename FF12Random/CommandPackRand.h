@@ -9,6 +9,7 @@ private:
 	string fileName;
 
 public:
+	static vector<int> targetTypesSeen;
 	static CommandPack commandPackData[826];
 	static bool isBlackListedEnemyAbility(unsigned short ab);
 	CommandPackRand();

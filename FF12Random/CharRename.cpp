@@ -71,19 +71,19 @@ void CharRename::process(bool randEnemyNames)
 				data[i] = names[5];
 				break;
 			case 6:
-				data[i] = names[6];
+				data[i] = names[6] + "?";
 				break;
 			case 10:
-				data[i] = names[7];
+				data[i] = names[7] + "?";
 				break;
 			case 11:
-				data[i] = names[8];
+				data[i] = names[8] + "?";
 				break;
 			case 13:
-				data[i] = names[9];
+				data[i] = names[9] + "?";
 				break;
 			case 16:
-				data[i] = names[10];
+				data[i] = names[10] + "?";
 				break;
 			}
 		}
@@ -111,5 +111,6 @@ void CharRename::process(bool randEnemyNames)
 		else
 			data[i] = ".IGNORE";
 	}
-	fixGambitNames();
+	if (CharRand::names[0] != -1)
+		fixGambitNames();
 }

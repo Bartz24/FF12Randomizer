@@ -284,15 +284,9 @@ void CharRand::initialEquip()
 				}
 			}
 		}
-		if (i != 6)
-		{
-			if (weapons.size() > 0)
-				charData[i].weapon = weapons[Helpers::randInt(0, weapons.size() - 1)];
-			else
-				charData[i].weapon = 0xFFFF;
-		}		
 		if (i == 0 || i == 6)
 		{
+			EquipRand::equipData[charData[i].weapon - 4096].element = 0;
 			for (int slot = 0; slot < accessory.size(); slot++)
 			{
 				AttributeData data = EquipRand::attributeData[EquipRand::equipData[accessory[slot] - 4096].attribute / 24 - 3];
@@ -333,7 +327,33 @@ void CharRand::initialEquip()
 					slot--;
 				}
 			}
+			for (int slot = 0; slot < weapons.size(); slot++)
+			{
+				AttributeData data = EquipRand::attributeData[EquipRand::equipData[weapons[slot] - 4096].attribute / 24 - 3];
+				StatusValue status{ data.autoStatus };
+				if (statusDangerous(status))
+				{
+					weapons.erase(weapons.begin() + slot);
+					slot--;
+				}
+			}
 		}
+		if (i != 6)
+		{
+			if (weapons.size() > 0)
+				charData[i].weapon = weapons[Helpers::randInt(0, weapons.size() - 1)];
+			else
+				charData[i].weapon = 0xFFFF;
+		}
+		else {
+			AttributeData data = EquipRand::attributeData[EquipRand::equipData[charData[i].weapon - 4096].attribute / 24 - 3];
+			StatusValue status{ data.autoStatus };
+			if (statusDangerous(status))
+			{
+				EquipRand::attributeData[EquipRand::equipData[charData[i].weapon - 4096].attribute / 24 - 3].autoStatus = 0;
+			}
+		}
+
 		if (i != 6)
 		{
 			if (charData[i].weapon != 0xFFFF && EquipRand::equipData[charData[i].weapon - 4096].equipRequirements >= 0x17)

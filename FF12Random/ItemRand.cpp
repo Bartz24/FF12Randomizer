@@ -198,7 +198,7 @@ void ItemRand::randCost(int value)
 {
 	for (int i = 0; i < 64; i++)
 	{
-		itemData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 2500, 1000, value));
+		itemData[i].cost = unsigned short(Helpers::randWeibullControl(2, 65535, 2500, 1.2, value));
 	}
 }
 
@@ -220,9 +220,13 @@ void ItemRand::randCostSmart(int value)
 
 		if (MagicRand::actionData[i + 82].mType == 0xB000)
 			baseCost *= 80;
-		baseCost = pow(baseCost / 2.5f, 1.42f);
+		baseCost = pow(baseCost / 8.5f, 1.92f);
 
-		baseCost = max(10.f, min(baseCost, 65535.f));
+		if (i >= 22)
+			baseCost += 3000;
+		if (i == 24)
+			baseCost = 65535;
+
 		itemData[i].cost = unsigned short(Helpers::randIntControl(2, 65535, baseCost, value));
 	}
 }
@@ -232,7 +236,7 @@ void ItemRand::randCostLoot(int value)
 	for (int i = 0; i < 266; i++)
 	{
 		
-		lootData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 500, 400, value));
+		lootData[i].cost = unsigned short(Helpers::randWeibullControl(2, 65535, 200, 1.2, value));
 	}
 }
 
@@ -240,6 +244,6 @@ void ItemRand::randCostGambit(int value)
 {
 	for (int i = 0; i < 256; i++)
 	{
-		gambitData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 100, 150, value));
+		gambitData[i].cost = unsigned short(Helpers::randWeibullControl(2, 65535, 80, 1.2, value));
 	}
 }

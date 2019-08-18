@@ -239,7 +239,7 @@ void EquipRand::randCost(int value)
 	for (int i = 0; i < 557; i++)
 	{
 		if (equipData[i].cost > 0)
-			equipData[i].cost = unsigned short(float(value / 100.f) * Helpers::randInt(2, 65535) + float(1.f - (value / 100.f)) * Helpers::randIntNorm(200, 65535, 4000, 1800));
+			equipData[i].cost = unsigned short(Helpers::randWeibullControl(10,65535,4000,1.2,value));
 	}
 }
 
@@ -262,7 +262,8 @@ void EquipRand::randCostSmart(int value)
 		}
 		else if (ItemFlagValue{ equipData[i].itemFlag }.hasItemFlag(ItemFlag::OffHand))
 		{
-			baseCost *= 4.6f*pow((equipData[i].def + equipData[i].mRes), 1.7f);
+			baseCost *= 2.6f*pow((equipData[i].def + equipData[i].mRes), 1.94f);
+			baseCost += 620;
 		}
 		else
 		{
@@ -272,17 +273,19 @@ void EquipRand::randCostSmart(int value)
 		baseCost *= pow(1.11f, status.statuses.size());
 
 		ElementalValue elem{ equipData[i].element };
-		baseCost *= pow(1.03f, elem.elements.size());
+		baseCost *= pow(1.03f, elem.elements.size());		
 
+		baseCost /= 4250.;
+		baseCost = pow(baseCost, 1.25);
+		baseCost *= 3050;
 
-		baseCost = max(10.f, min(baseCost, 65535.f));
-		equipData[i].cost = unsigned short(float(value / 100.f) * Helpers::randInt(2, 65535) + float(1.f - (value / 100.f)) * baseCost);
+		equipData[i].cost = Helpers::randIntControl(10, 65535, baseCost, value);
 	}
 }
 
 void EquipRand::randElements(int value)
 {
-	for (int i = 0; i < 557; i++)
+	for (int i = 1; i < 557; i++)
 	{
 		setElement(equipData[i].element);
 		setElementMultiple(equipData[i].element, value);
@@ -419,7 +422,7 @@ void EquipRand::randWeaponPower(int value)
 		if (!iFlag.hasItemFlag(ItemFlag::OffHand) && !iFlag.hasItemFlag(ItemFlag::Accessory) && !iFlag.hasItemFlag(ItemFlag::BodyArmor)
 			&& !iFlag.hasItemFlag(ItemFlag::HeadArmor))
 		{
-			equipData[i].power = Helpers::randNormControl(10, 255, 60, 20, value);
+			equipData[i].power = Helpers::randWeibullControl(10, 255, 60, 1.8, value);
 			if (i >= 87 && i <= 97 || i == 197 || i >= 148 && i <= 150) // If gun or measure, nerf
 			{
 				equipData[i].power = pow(equipData[i].power, 0.8);
@@ -453,9 +456,9 @@ void EquipRand::randArmorDef(int value)
 		if (iFlag.hasItemFlag(ItemFlag::BodyArmor) || iFlag.hasItemFlag(ItemFlag::HeadArmor))
 		{
 			if (equipData[i].def > 0)
-				equipData[i].def = Helpers::randNormControl(0, 255, 22, 12, value);
+				equipData[i].def = Helpers::randWeibullControl(0, 255, 22, 1.8, value);
 			if (equipData[i].mRes > 0)
-				equipData[i].mRes = Helpers::randNormControl(0, 255, 22, 12, value);
+				equipData[i].mRes = Helpers::randWeibullControl(0, 255, 22, 1.8, value);
 		}
 	}
 }
@@ -480,9 +483,9 @@ void EquipRand::randShieldEva(int value)
 	for (int i = 200; i < 220; i++)
 	{
 		if (equipData[i].def > 0)
-			equipData[i].def = Helpers::randNormControl(0, 99, 14, 12, value);
+			equipData[i].def = Helpers::randWeibullControl(0, 99, 14, 1.8, value);
 		if (equipData[i].mRes > 0)
-			equipData[i].mRes = Helpers::randNormControl(0, 99, 14, 12, value);
+			equipData[i].mRes = Helpers::randWeibullControl(0, 99, 14, 1.8, value);
 	}
 }
 
@@ -501,7 +504,7 @@ void EquipRand::randAmmoPower(int value)
 {
 	for (int i = 388; i < 420; i++)
 	{
-		equipData[i].power = Helpers::randNormControl(1, 99, 1, 3, value);
+		equipData[i].power = Helpers::randWeibullControl(1, 99, 1, 1.8, value);
 	}
 }
 

@@ -206,22 +206,25 @@ void ShopRand::randShops(FlagGroup flags)
 		unsigned long gil = 0;
 		for (int c = 0; c < shopData[i].itemCount; c++)
 		{
-			gil += sqrt(float(Helpers::randInt(0, 40000)))*float(Helpers::randInt(1, 150))*(1.f-shopData[i].itemCount * 0.0035) + Helpers::randInt(-250, 250);
+			gil += int(double(Helpers::randIntWeibull(0, 60000, 1000, 1.2)) * (1.0 - 0.0025 * shopData[i].itemCount));
 		}
 		for (int item = 0; item < shopData[i].itemCount; item++)
 		{
 			if (data.size() == 0)
 				addAllShopItems(data, flags);
 			int itemID, cost = 99999, attempts = 0, itemIDindex;
-			do
-			{
-				itemIDindex = Helpers::randInt(0, data.size()-1);
-				itemID = data[itemIDindex];
-				cost = getCostOfItem(itemID);
-				attempts++;
+			if (gil > 0) {
+				do
+				{
+					itemIDindex = Helpers::randInt(0, data.size() - 1);
+					itemID = data[itemIDindex];
+					cost = getCostOfItem(itemID);
+					attempts++;
 
-			} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil));
-			if (attempts >= 100)
+				} while (attempts < 100 && (find(shopData[i].items.begin(), shopData[i].items.end(), itemID) != shopData[i].items.end() || cost >= gil));
+			}
+			
+			if (gil <= 0 || attempts >= 100)
 			{
 				do {
 					itemID = Helpers::randInt(24576, 24830);
@@ -332,7 +335,7 @@ void ShopRand::replaceBazaarRecipes(FlagGroup flags)
 		else
 		{
 			if (flags.hasFlag("z"))
-				bazaarData[i].cost = Helpers::randNormControl(100, 10000000, 100000, 500000, flags.getFlag("z").getValue());
+				bazaarData[i].cost = Helpers::randWeibullControl(100, 10000000, 100000, 1.2, flags.getFlag("z").getValue());
 		}
 	}
 	
@@ -354,7 +357,7 @@ void ShopRand::replaceBazaarRecipes(FlagGroup flags)
 					if (randNum < 50)
 						setItem(lootData, bazaarData[i].loot3, bazaarData[i].loot3Amt, true, flags);
 					if (flags.hasFlag("z"))
-						bazaarData[i].cost = Helpers::randNormControl(100, 10000000, 100000, 500000, flags.getFlag("z").getValue());
+						bazaarData[i].cost = Helpers::randWeibullControl(100, 10000000, 100000, 1.2, flags.getFlag("z").getValue());
 				}
 				else if (bazaarData[i].result2 == 0x0000)
 				{

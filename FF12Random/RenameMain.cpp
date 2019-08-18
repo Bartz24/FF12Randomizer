@@ -116,6 +116,8 @@ void RenameMain::load()
 	for (int i = 0; i < 545; i++)
 		abilityNames[i] = actRename.data[i];
 
+	if (Helpers::fileExists("text"))
+		std::experimental::filesystem::remove_all("text");
 	std::experimental::filesystem::copy("data\\text", "text", std::experimental::filesystem::copy_options::recursive);
 }
 
@@ -234,7 +236,7 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames, bo
 	{
 		for (int i = 39; i < 51; i++)
 		{
-			menuMsg[i] = LicenseBoardRand::newBoardNames[i - 39] + "{02}" + menuMsg[i];
+			menuMsg[i] = LicenseBoardRand::boardDescriptions[i - 39] + "{02}" + menuMsg[i];
 		}
 	}
 
@@ -242,19 +244,19 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames, bo
 	{
 		for (int board = 0; board < 12; board++)
 		{
-			vector<int> types;
-			Helpers::addRangeToVector(types, 0, 29);
-			vector<float> percents;
-			for (int i = 0; i < 30; i++)
-				percents.push_back(getPercentOfLicenses(i, board));
-			Helpers::sortWeighted(types, percents);
 			string name;
 			if (LicenseBoardRand::usingForcedBoards)
 			{
-				name = LicenseBoardRand::getBoardName(types[0], types[1]);
+				name = LicenseBoardRand::boardNames[board];
 			}
 			else
 			{
+				vector<int> types;
+				Helpers::addRangeToVector(types, 0, 29);
+				vector<float> percents;
+				for (int i = 0; i < 30; i++)
+					percents.push_back(getPercentOfLicenses(i, board));
+				Helpers::sortWeighted(types, percents);
 				do {
 					int type1 = Helpers::randInt(0, 7);
 					int type2;
@@ -264,7 +266,7 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames, bo
 					name = LicenseBoardRand::getBoardName(type1, type2);
 				} while (find(menuCmd + 4, menuCmd + 16, name) != menuCmd + 16);
 			}
-			menuCmd[board + 4] = name;
+			menuCmd[board + 4] = name + "(" + char(int('A') + board) + ")";
 		}
 	}
 
@@ -287,24 +289,7 @@ void RenameMain::process(string seed, string flags, bool randomizeEnemyNames, bo
 	string jobNames[12];
 	for (int i = 0; i < 12; i++)
 	{
-		int l = 2;
-		while (find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i]).substr(0, l)) != jobNames + 12 && l < menuCmd[4 + i].length())
-		{
-			int conflict = find(jobNames, jobNames + 12, Helpers::removeSpaces(menuCmd[4 + i].substr(0, l))) - jobNames;
-			string name = Helpers::removeSpaces(menuCmd[4 + conflict]);
-			jobNames[conflict] = name.substr(0, l + 1);
-			l++;
-		}
-		
-		string name = Helpers::removeSpaces(menuCmd[4 + i]);
-		jobNames[i] = name.substr(0, l);
-	}
-	for (int i = 0; i < 12; i++)
-	{
-		if (jobNames[i].length() > 2)
-		{
-			jobNames[i] = jobNames[0] + jobNames[i].substr(jobNames[i].length() - 2, 2);
-		}
+		jobNames[i] = char(int('A') + i);
 	}
 	lRename.process(jobNames);
 	cRename.process(randomizeEnemyNames);
@@ -544,7 +529,7 @@ string BazaarRename::getNameFromID(int id)
 }
 
 void CharRename::fixGambitNames()
-{
+{	
 	for (int i = 0; i < 6; i++)
 	{
 		RenameMain::gambitNames[i + 163] = "Ally: " + data[i + 71];

@@ -193,6 +193,8 @@
     <ClInclude Include="MagicData.h" />
     <ClInclude Include="MagicRand.h" />
     <ClInclude Include="MapData.h" />
+    <ClInclude Include="MusicData.h" />
+    <ClInclude Include="MusicRand.h" />
     <ClInclude Include="NoChallengeRand.h" />
     <ClInclude Include="RandSpellData.h" />
     <ClInclude Include="RenameMain.h" />
@@ -252,6 +254,8 @@
     <ClCompile Include="MagicData.cpp" />
     <ClCompile Include="MagicRand.cpp" />
     <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="MusicData.cpp" />
+    <ClCompile Include="MusicRand.cpp" />
     <ClCompile Include="NoChallengeRand.cpp" />
     <ClCompile Include="RandSpellData.cpp" />
     <ClCompile Include="RenameMain.cpp" />

@@ -329,7 +329,7 @@ void MagicRand::randCost(int value)
 {
 	for (int i = 0; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 9000, 4000, value));
+		magicData[i].cost = unsigned short(Helpers::randWeibullControl(2, 65535, 2000, 1.2, value));
 	}
 }
 
@@ -338,25 +338,15 @@ void MagicRand::randCostSmart(int value)
 {
 	for (int i = 0; i < 81; i++)
 	{
-		float baseCost = pow(float(actionData[i].cost), 1.6f) + 80.f;
-		if (actionData[i].power > 0)
-			baseCost *= pow(actionData[i].power / 13.f, 1.94f);
-		if (actionData[i].powerMult > 0)
-			baseCost *= actionData[i].powerMult;
-		if (actionData[i].aoeRange > 0)
-			baseCost *= pow(1.25f, actionData[i].aoeRange + 1);
-		if (actionData[i].accuracy > 0)
-			baseCost *= float(actionData[i].accuracy) / 20.f;
-		StatusValue status = StatusValue{ actionData[i].status };
-		if (status.statuses.size() > 0)
-			baseCost *= pow(1.55f, status.statuses.size() + 3);
+		float baseCost = 4 * float(actionData[i].cost) + 90.f;
 
-		baseCost = max(100.f, min(baseCost, 65535.f));
+		baseCost = pow(baseCost, 2.55) / 120;
+
 		magicData[i].cost = unsigned short(Helpers::randIntControl(2, 65535, baseCost, value));
 	}
 	for (int i = 81; i < 105; i++)
 	{
-		magicData[i].cost = unsigned short(Helpers::randNormControl(2, 65535, 14000, 6000, value));
+		magicData[i].cost = unsigned short(Helpers::randWeibullControl(2, 65535, 4000, 1.2, value));
 	}
 }
 
@@ -374,7 +364,7 @@ void MagicRand::randMPCost(int value)
 	for (int i = 0; i < 497; i++)
 	{
 		if (actionData[i].cost > 0 && !(i >= 262 && i <= 274 || i >= 208 && i <= 225))
-			actionData[i].cost = Helpers::randNormControl(1, 99, 30, 10, value);
+			actionData[i].cost = Helpers::randWeibullControl(1, 99, 30, 1.2, value);
 	}
 }
 
@@ -400,7 +390,7 @@ void MagicRand::randAoE(int value)
 {
 	for (int i = 0; i < 497; i++)
 	{
-		if (i >= 82 && i < 145 || i >= 262 && i <= 274 || i >= 208 && i <= 225)
+		if (i >= 82 && i < 145 || i >= 262 && i <= 274 || i >= 208 && i <= 225 || i < 105 && didRandSpells)
 			continue;
 		if(actionData[i].aoeRange > 0 || Helpers::randInt(0, 99) < value && actionData[i].aoeRange == 0)
 		actionData[i].aoeRange = Helpers::randInt(1, 20);
@@ -591,6 +581,7 @@ void MagicRand::randSpells()
 	{
 		actionData[i].description = 0x0FFE;
 	}
+	actionData[175].description = 0x0FFD;
 }
 
 void MagicRand::randSpellsFull()
@@ -603,6 +594,7 @@ void MagicRand::randSpellsFull()
 	{
 		actionData[i].description = 0x0FFE;
 	}
+	actionData[175].description = 0x0FFD;
 }
 
 vector<string> MagicRand::split(const std::string &s, char delim) {

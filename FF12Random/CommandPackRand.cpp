@@ -4,6 +4,7 @@
 #include "EnemyRand.h"
 
 CommandPack CommandPackRand::commandPackData[826] = {};
+vector<int> CommandPackRand::targetTypesSeen = vector<int>();
 
 bool CommandPackRand::isBlackListedEnemyAbility(unsigned short i)
 {
@@ -107,7 +108,7 @@ void CommandPackRand::shuffle(int value)
 				vector<unsigned short> possible;
 				for (int i = 0; i < abilities.size(); i++)
 				{
-					if (abs(MagicRand::actionData[abilities[i]].enemyRarity - rarity) <= ceil(double(value) / 100. * abs(double(rarity))))
+					if ((MagicRand::actionData[abilities[i]].enemyRarity < 0) == (rarity < 0) && abs(MagicRand::actionData[abilities[i]].enemyRarity - rarity) <= ceil(double(value) / 100. * abs(double(rarity))))
 						possible.push_back(abilities[i]);
 				}
 				commandPackData[i].abilities[a] = possible[Helpers::randInt(0, possible.size() - 1)];
@@ -115,20 +116,28 @@ void CommandPackRand::shuffle(int value)
 		}
 	}
 	
-	for (int i = 0; i < EnemyRand::ardData.size(); i++)
+	for (int e = 0; e < EnemyRand::ardData.size(); e++)
 	{
-		for (int a = 0; a < EnemyRand::ardData[i].aiData.abilities.size(); a++)
+		for (int a = 0; a < EnemyRand::ardData[e].aiData.abilities.size(); a++)
 		{
-			if (EnemyRand::ardData[i].aiData.abilities[a].ability < 0x8000 && !isBlackListedEnemyAbility(EnemyRand::ardData[i].aiData.abilities[a].ability))
+			if (EnemyRand::ardData[e].aiData.abilities[a].ability < 0x8000 && !isBlackListedEnemyAbility(EnemyRand::ardData[e].aiData.abilities[a].ability))
 			{
-				int rarity = MagicRand::actionData[EnemyRand::ardData[i].aiData.abilities[a].ability].enemyRarity;
+				int rarity = MagicRand::actionData[EnemyRand::ardData[e].aiData.abilities[a].ability].enemyRarity;
 				vector<unsigned short> possible;
 				for (int i = 0; i < abilities.size(); i++)
 				{
-					if (abs(MagicRand::actionData[abilities[i]].enemyRarity - rarity) <= ceil(double(value) / 100. * abs(double(rarity))))
+					/*if (find(targetTypesSeen.begin(), targetTypesSeen.end(), EnemyRand::ardData[e].aiData.abilities[a].targetType) == targetTypesSeen.end()) {
+						cout << hex << "0x" << EnemyRand::ardData[e].aiData.abilities[a].targetType << endl;
+						targetTypesSeen.push_back(EnemyRand::ardData[e].aiData.abilities[a].targetType);
+						system("pause");
+					}*/
+					if (rarity > 0 && EnemyRand::ardData[e].aiData.abilities[a].targetType != 0x0148 && MagicRand::actionData[abilities[i]].enemyRarity < 0) {
+						possible.push_back(abilities[i]);
+					}
+					else if ((MagicRand::actionData[abilities[i]].enemyRarity < 0) == (rarity < 0) && abs(MagicRand::actionData[abilities[i]].enemyRarity - rarity) <= ceil(double(value) / 100. * abs(double(rarity))))
 						possible.push_back(abilities[i]);
 				}
-				EnemyRand::ardData[i].aiData.abilities[a].ability = possible[Helpers::randInt(0, possible.size() - 1)];
+				EnemyRand::ardData[e].aiData.abilities[a].ability = possible[Helpers::randInt(0, possible.size() - 1)];
 			}
 		}
 	}

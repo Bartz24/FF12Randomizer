@@ -279,7 +279,7 @@ void EnemyRand::process(FlagGroup flags)
 			if (flags.hasFlag("l"))
 			{
 				if (flags.getFlag("l").isSmart())
-					sec3.lp = Helpers::clamp(round(double(sec3.lp) * sqrt(sec3.expMult)), 0, 255);
+					sec3.lp = Helpers::clamp(round(double(sec3.lp) * (sec3.expMult > 1 ? sqrt(sqrt(sec3.expMult)) : sec3.expMult)), 0, 255);
 				else
 				{
 					double dummyS = 1, doubleE = 1;
@@ -289,7 +289,7 @@ void EnemyRand::process(FlagGroup flags)
 			if (flags.hasFlag("x"))
 			{
 				if (flags.getFlag("x").isSmart())
-					sec3.exp = Helpers::clamp(round(double(sec3.exp) * sqrt(sec3.expMult)), 0, 999999);
+					sec3.exp = Helpers::clamp(round(double(sec3.exp) * (sec3.expMult > 1 ? sqrt(sqrt(sec3.expMult)) : sec3.expMult)), 0, 999999);
 				else
 				{
 					double dummyS = 1, doubleE = 1;
@@ -366,7 +366,79 @@ void EnemyRand::process(FlagGroup flags)
 			if (flags.hasFlag("q"))
 				randCanopicJarItem(sec2, aData, flags.getFlag("q").getValue());
 		}
+
+		for (int s = 0; s < aData.section1Data.size(); s++)
+		{
+			ARDSec1 &sec1 = aData.section1Data[s];
+			if (flags.hasFlag("E"))
+			{
+				randElements(sec1, flags.getFlag("E").getValue());
+			}
+		}
 	}
+}
+
+void EnemyRand::randElements(ARDSec1 &sec1Data, int value)
+{
+		setElement(sec1Data.absorbElement);
+		setElementMultiple(sec1Data.absorbElement, value);
+		setElement(sec1Data.immuneElement);
+		setElementMultiple(sec1Data.immuneElement, value);
+		setElement(sec1Data.halfElement);
+		setElementMultiple(sec1Data.halfElement, value);
+		setElement(sec1Data.weakElement);
+		setElementMultiple(sec1Data.weakElement, value);
+		setElement(sec1Data.boostElement);
+		setElementMultiple(sec1Data.boostElement, value);
+		ElementalValue absorb{ sec1Data.absorbElement };
+		ElementalValue immune{ sec1Data.immuneElement };
+		ElementalValue half{ sec1Data.halfElement };
+		ElementalValue weak{ sec1Data.weakElement };
+		for (int i = 0; i < absorb.elements.size(); i++)
+		{
+			if (immune.hasElement(absorb.elements[i]))
+				immune.elements.erase(find(immune.elements.begin(), immune.elements.end(), absorb.elements[i]));
+			if (half.hasElement(absorb.elements[i]))
+				half.elements.erase(find(half.elements.begin(), half.elements.end(), absorb.elements[i]));
+			if (weak.hasElement(absorb.elements[i]))
+				weak.elements.erase(find(weak.elements.begin(), weak.elements.end(), absorb.elements[i]));
+		}
+		for (int i = 0; i < immune.elements.size(); i++)
+		{
+			if (half.hasElement(immune.elements[i]))
+				half.elements.erase(find(half.elements.begin(), half.elements.end(), immune.elements[i]));
+			if (weak.hasElement(immune.elements[i]))
+				weak.elements.erase(find(weak.elements.begin(), weak.elements.end(), immune.elements[i]));
+		}
+		for (int i = 0; i < half.elements.size(); i++)
+		{
+			if (weak.hasElement(half.elements[i]))
+				weak.elements.erase(find(weak.elements.begin(), weak.elements.end(), half.elements[i]));
+		}
+		sec1Data.absorbElement = absorb.getNumValue();
+		sec1Data.immuneElement = immune.getNumValue();
+		sec1Data.halfElement = half.getNumValue();
+		sec1Data.weakElement = weak.getNumValue();
+}
+
+void EnemyRand::setElement(unsigned char &num)
+{
+	ElementalValue orig{ num };
+	num = 0;
+	ElementalValue element{ num };
+	while (element.elements.size() < orig.elements.size())
+		element.addRandomElement();
+	num = element.getNumValue();
+}
+
+void EnemyRand::setElementMultiple(unsigned char &num, int chance)
+{
+	ElementalValue element = ElementalValue(num);
+	while (Helpers::randInt(0, 99) < chance)
+	{
+		element.addRandomElement();
+	}
+	num = element.getNumValue();
 }
 
 void EnemyRand::modifyValue(int value, unsigned int &dataVal, bool inverse, double &sizeMult, double &expMult, int minN, int maxN, bool lvValue)
@@ -434,32 +506,26 @@ void EnemyRand::modifyValue(int value, unsigned char &dataVal, bool inverse, dou
 	{
 		dataVal = Helpers::clamp(round(double(dataVal)*mult), minN, maxN);
 		expMult *= mult;
-		if (!inverse)
-			sizeMult *= mult;
-		else
-			sizeMult /= mult;
+		sizeMult *= mult;
 	}
 	else
 	{
 		dataVal = Helpers::clamp(round(double(dataVal) / mult), minN, maxN);
 		expMult /= mult;
-		if (!inverse)
-			sizeMult /= mult;
-		else
-			sizeMult *= mult;
+		sizeMult /= mult;
 	}
 }
 
 void EnemyRand::randDrops(ARDSec2 &sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.drop40 != 0xFFFF)
-		sec2Data.drop40 = getItem(itemIDs, Helpers::clamp(.12 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 200, value, false);
+		sec2Data.drop40 = getItem(itemIDs, Helpers::clamp(.022 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 10, value, false);
 	if (sec2Data.drop25 != 0xFFFF)
-		sec2Data.drop25 = getItem(itemIDs, Helpers::clamp(.18 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 1000, value, false);
+		sec2Data.drop25 = getItem(itemIDs, Helpers::clamp(.041 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 16, value, false);
 	if (sec2Data.drop05 != 0xFFFF)
-		sec2Data.drop05 = getItem(itemIDs, Helpers::clamp(.3 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 6000, value, false);
+		sec2Data.drop05 = getItem(itemIDs, Helpers::clamp(.074 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 24, value, false);
 	if (sec2Data.drop01 != 0xFFFF)
-		sec2Data.drop01 = getItem(itemIDs, Helpers::clamp(sec2Data.getARDSec3(aData).hp, 0, 65535), 8000, value, false);
+		sec2Data.drop01 = getItem(itemIDs, Helpers::clamp(.116 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 82, value, false);
 	if (sec2Data.drop100 != 0xFFFF)
 		sec2Data.drop100 = getItem(itemIDs, Helpers::clamp(sec2Data.getARDSec3(aData).hp, 0, 65535), 2000, value, false);
 }
@@ -467,25 +533,25 @@ void EnemyRand::randDrops(ARDSec2 &sec2Data, ARDData aData, int value)
 void EnemyRand::randSteal(ARDSec2 &sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.steal55 != 0xFFFF)
-		sec2Data.steal55 = getItem(itemIDs, Helpers::clamp(.14 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 200, value, false);
+		sec2Data.steal55 = getItem(itemIDs, Helpers::clamp(.034 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 10, value, false);
 	if (sec2Data.steal10 != 0xFFFF)
-		sec2Data.steal10 = getItem(itemIDs, Helpers::clamp(.36 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 1800, value, false);
+		sec2Data.steal10 = getItem(itemIDs, Helpers::clamp(.117 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 30, value, false);
 	if (sec2Data.steal03 != 0xFFFF)
-		sec2Data.steal03 = getItem(itemIDs, Helpers::clamp(sec2Data.getARDSec3(aData).hp, 0, 65535), 6000, value, false);
+		sec2Data.steal03 = getItem(itemIDs, Helpers::clamp(.180 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 60, value, false);
 }
 
 void EnemyRand::randPoach(ARDSec2 &sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.poach95 != 0xFFFF)
-		sec2Data.poach95 = getItem(itemIDs, Helpers::clamp(.6 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 1000, value, false);
+		sec2Data.poach95 = getItem(itemIDs, Helpers::clamp(.081 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 15, value, false);
 	if (sec2Data.poach05 != 0xFFFF)
-		sec2Data.poach05 = getItem(itemIDs, Helpers::clamp(sec2Data.getARDSec3(aData).hp, 0, 65535), 3200, value, false);
+		sec2Data.poach05 = getItem(itemIDs, Helpers::clamp(.304 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 80, value, false);
 }
 
 void EnemyRand::randMonographRate(ARDSec2 & sec2Data, int value)
 {
 	if (sec2Data.monographDropRate != 0xFFFF)
-	sec2Data.monographDropRate = Helpers::randNormControl(1, 100, 30, 10, value);
+	sec2Data.monographDropRate = Helpers::randWeibullControl(1, 100, 30, 1.2, value);
 }
 
 void EnemyRand::randMonographType(ARDSec2 & sec2Data)
@@ -497,12 +563,12 @@ void EnemyRand::randMonographType(ARDSec2 & sec2Data)
 void EnemyRand::randMonographItem(ARDSec2 & sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.monographDrop != 0xFFFF)
-		sec2Data.monographDrop = getItem(itemIDs, Helpers::clamp(.5 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 1400, value, false);
+		sec2Data.monographDrop = getItem(itemIDs, Helpers::clamp(.1 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 20, value, false);
 }
 
 void EnemyRand::randCanopicJarRate(ARDSec2 & sec2Data, int value)
 {
-	sec2Data.canopicJarDropRate = Helpers::randNormControl(1, 100, 5, 5, value);
+	sec2Data.canopicJarDropRate = Helpers::randWeibullControl(1, 100, 5, 1.2, value);
 }
 
 void EnemyRand::randCanopicJarType(ARDSec2 & sec2Data)
@@ -514,7 +580,7 @@ void EnemyRand::randCanopicJarType(ARDSec2 & sec2Data)
 void EnemyRand::randCanopicJarItem(ARDSec2 & sec2Data, ARDData aData, int value)
 {
 	if (sec2Data.canopicJarDrop != 0xFFFF)
-		sec2Data.canopicJarDrop = getItem(itemIDs, Helpers::clamp(.9 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 4400, value, false);
+		sec2Data.canopicJarDrop = getItem(itemIDs, Helpers::clamp(.15 * double(sec2Data.getARDSec3(aData).hp), 0, 65535), 44, value, false);
 }
 
 void EnemyRand::buffTrialMode(ARDSec3 &sec3Data, ARDData aData, int value)
@@ -547,7 +613,7 @@ int EnemyRand::getItem(std::vector<int> &data, int center, int std, int value, b
 		itemID = data[index];
 		cost = getCost(itemID);
 		tries++;
-	} while (tries < 100 && !canAddItem(cost, center, std, value) && (itemID > 8000 && itemID < 9000 ? false : Helpers::randInt(0,99) < 80));
+	} while (tries < 1000 && !canAddItem(cost, center, std, value));
 	if (remove)
 		data.erase(data.begin() + index);
 	return itemID;
@@ -576,7 +642,7 @@ bool EnemyRand::canAddItem(int actualCost, int center, int std, int value)
 	float zScoreAbs = float(abs(actualCost - center)) / float(std);
 	int chance = int(exp(-zScoreAbs) * 10000.f); //chance in terms of % * 100
 
-	int actualChance = Helpers::randIntControl(0, 9999, chance, value);
+	int actualChance = int(Helpers::randInt(0, 9999) * value / 100.0f + (1.0f - value / 100.0f)*chance);
 
 	return Helpers::randInt(0, 9999) < actualChance;
 }

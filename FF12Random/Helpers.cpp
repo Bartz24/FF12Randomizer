@@ -71,14 +71,26 @@ int Helpers::randIntNorm(int low, int high, int center, int std)
 	return max(low, min(high, num));
 }
 
+int Helpers::randIntWeibull(int low, int high, double center, double a)
+{
+	weibull_distribution<double> dist(a, center);
+	int num = dist(rng);
+	return max(low, min(high, num));
+}
+
 int Helpers::randIntControl(int low, int high, int norm, int ratio)
 {
-	return float(ratio / 100.f) * Helpers::randInt(low, high) + float(1.f - (ratio / 100.f)) * norm;
+	return max(low, min(high, float(ratio / 100.f) * Helpers::randIntWeibull(low, high, low + (high - low) / 6.7, 1.8) + float(1.f - (ratio / 100.f)) * norm));
 }
 
 int Helpers::randNormControl(int low, int high, int center, int std, int ratio)
 {
 	return randIntControl(low, high, Helpers::randIntNorm(low, high, center, std), ratio);
+}
+
+int Helpers::randWeibullControl(int low, int high, double center, double a, int ratio)
+{
+	return randIntControl(low, high, Helpers::randIntWeibull(low, high, center, a), ratio);
 }
 
 unsigned int Helpers::readInt(char bytes[], int index)
@@ -125,6 +137,15 @@ vector<string> Helpers::get_directories(const string& s)
 	vector<string> r;
 	for (auto& p : std::experimental::filesystem::recursive_directory_iterator(s))
 		if (p.status().type() == std::experimental::filesystem::file_type::directory)
+			r.push_back(p.path().string());
+	return r;
+}
+
+vector<string> Helpers::get_files(const string& s)
+{
+	vector<string> r;
+	for (auto& p : std::experimental::filesystem::recursive_directory_iterator(s))
+		if (p.status().type() == std::experimental::filesystem::file_type::regular)
 			r.push_back(p.path().string());
 	return r;
 }

@@ -33,5 +33,8 @@ public:
 	int getCost(int itemID);
 	bool canAddItem(int actualCost, int center, int std, int value);
 	void addRangeToVector(vector<int> &data, int low, int high);
+	void randElements(ARDSec1 &sec1Data, int value);
+	void setElement(unsigned char &num);
+	void setElementMultiple(unsigned char &num, int chance);
 };
 

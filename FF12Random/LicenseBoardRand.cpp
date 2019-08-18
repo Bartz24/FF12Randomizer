@@ -2,7 +2,8 @@
 #include "LicenseBoardRand.h"
 
 LicenseBoardData LicenseBoardRand::boards[12] = {};
-string LicenseBoardRand::newBoardNames[12] = {};
+string LicenseBoardRand::boardDescriptions[12] = {};
+vector<string> LicenseBoardRand::boardNames = vector<string>();
 string LicenseBoardRand::type2Names[30][30] = {};
 int LicenseBoardRand::suggestedChars[12] = {};
 bool LicenseBoardRand::usingSingleBoard = false;
@@ -73,22 +74,6 @@ void LicenseBoardRand::load()
 
 void LicenseBoardRand::process(FlagGroup flags)
 {
-	vector<int> forcedLicenses, weights;
-	if (flags.hasFlag("L"))
-	{
-		Helpers::addRangeToVector(forcedLicenses, 0, 29);
-		for (int i = 0; i < 6; i++)
-			weights.push_back(90);
-		for (int i = 6; i < 23; i++)
-			weights.push_back(30);
-		for (int i = 23; i < 27; i++)
-			weights.push_back(75);
-		weights.push_back(500);
-		weights.push_back(50);
-		weights.push_back(40);
-
-		Helpers::shuffle(forcedLicenses);
-	}
 
 	if (!flags.hasFlag("s") && flags.hasFlag("C"))
 	{
@@ -115,15 +100,22 @@ void LicenseBoardRand::process(FlagGroup flags)
 		}
 		if (flags.hasFlag("L") && !usingSingleBoard)
 		{
+			int type1, type2;
+			do {
+				type1 = Helpers::randInt(0, 29);
+				type2 = Helpers::randInt(0, 29);
+			} while (type2 == type1 || find(boardNames.begin(), boardNames.end(), getBoardName(type1, type2)) != boardNames.end());
+
 			usingForcedBoards = true;
 			if (flags.getFlag("L").isSmart())
 			{
-				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12], true);
+				setForcedLicenseTypes(licensesToUse, type1, i, type2, true, flags);
 			}
 			else
 			{
-				setForcedLicenseTypes(licensesToUse, forcedLicenses[i], i, forcedLicenses[i + 12], false);
+				setForcedLicenseTypes(licensesToUse, type1, i, type2, false, flags);
 			}
+			boardNames.push_back(getBoardName(type1, type2));
 		}
 		if (flags.hasFlag("h"))
 		{
@@ -458,7 +450,7 @@ void LicenseBoardRand::addForcedLicenses(int type, std::string &display, std::ve
 	}
 }
 
-void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int type, int board, int type2, bool useType2)
+void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int type, int board, int type2, bool useType2, FlagGroup flags)
 {
 	vector<unsigned short> newData = vector<unsigned short>();
 	newData.push_back(31); //Essentials
@@ -467,12 +459,52 @@ void LicenseBoardRand::setForcedLicenseTypes(vector<unsigned short>& data, int t
 
 	string display = "";
 	addForcedLicenses(type, display, newData);
-	if (useType2)
+	display += "/";
+	addForcedLicenses(type2, display, newData);
+
+	if (flags.hasFlag("g")) //Gambits
 	{
-		display += "/";
-		addForcedLicenses(type2, display, newData);
+		for (int i = 266; i < 276; i++)
+		{
+			if (find(newData.begin(), newData.end(), i) == newData.end())
+				newData.push_back(i);
+		}
 	}
-	newBoardNames[board] = display;
+	if (flags.hasFlag("e")) //Espers
+	{
+		for (int i = 19; i < 31; i++)
+		{
+			if (find(newData.begin(), newData.end(), i) == newData.end())
+				newData.push_back(i);
+		}
+	}
+	if (flags.hasFlag("a")) //Accessories
+	{
+		for (int i = 161; i < 182; i++)
+		{
+			if (find(newData.begin(), newData.end(), i) == newData.end())
+				newData.push_back(i);
+		}
+		if (find(newData.begin(), newData.end(), 353) == newData.end())
+			newData.push_back(353);
+		if (find(newData.begin(), newData.end(), 354) == newData.end())
+			newData.push_back(354);
+	}
+	if (!useType2) {
+		vector<unsigned short> possible = vector<unsigned short>();
+		for (int i = 0; i < 361; i++)
+		{
+			if (find(newData.begin(), newData.end(), i) == newData.end())
+				possible.push_back(i);
+		}
+		while (newData.size() < data.size())
+		{
+			int index = Helpers::randInt(0, possible.size() - 1);
+			newData.push_back(possible[index]);
+			possible.erase(possible.begin() + index);
+		}
+	}
+	boardDescriptions[board] = display;
 	data = newData;
 }
 

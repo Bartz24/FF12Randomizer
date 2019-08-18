@@ -114,7 +114,7 @@ void RewardRand::randValue(FlagGroup flags)
 			if (randNum < flags.getFlag("g").getValue())
 			{
 				if (flags.hasFlag("a"))
-					rewardData[i].gil = Helpers::randNormControl(1, 1000000, 10000, 8000, flags.getFlag("a").getValue());
+					rewardData[i].gil = Helpers::randWeibullControl(1, 1000000, 10000, 1.2, flags.getFlag("a").getValue());
 			}
 			else
 			{
