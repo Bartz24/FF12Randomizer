@@ -1,5 +1,6 @@
 ﻿.vs
-FF12Randomizer2.0/bin
-FF12Randomizer2.0/obj
-packages
-FF12Randomizer2.0/Properties
+FF12Data/bin
+FF12Data/obj
+FF12Randomizer/bin
+FF12Randomizer/obj
+FF12Randomizer/Properties
